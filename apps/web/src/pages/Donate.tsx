@@ -16,13 +16,16 @@ export const Donate = () => {
         { value: 10000, label: 'Sponsor', emoji: '⭐', color: 'bg-pink-900/30 border-pink-700 hover:border-pink-500' },
     ];
 
+    const [question, setQuestion] = useState("");
+
     const handleDonate = async () => {
         setLoading(true);
         setError(null);
         try {
             const res = await api.post('/donations', {
                 amount: selectedAmount,
-                message: "From Web Donation"
+                message: question || "No question provided", // Send the question as message
+                donor_name: "Anonymous" // Simplify for now
             });
             if (res.data.url) {
                 window.location.href = res.data.url;
@@ -38,41 +41,51 @@ export const Donate = () => {
 
     return (
         <>
-            <SEO title="Donate" description="活動ご支援のお願い" />
+            <SEO title="おやつ代と質問ボックス" description="おやつ代と一緒に質問を送ろう" />
             <div className="min-h-screen bg-neutral-900 text-white pt-32 pb-24">
                 <div className="container mx-auto px-6 max-w-4xl">
 
                     {/* Header */}
                     <div className="text-center mb-16">
                         <div className="flex justify-center mb-6">
-                            <div className="p-6 bg-pink-900/30 rounded-full">
-                                <Heart size={64} className="text-pink-400 animate-pulse" fill="currentColor" />
+                            <div className="p-6 bg-amber-900/30 rounded-full">
+                                <span className="text-6xl animate-bounce block">🍪</span>
                             </div>
                         </div>
-                        <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-amber-400">
-                            Donation
+                        <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">
+                            おやつ代と質問ボックス
                         </h1>
-                        <p className="text-xl md:text-2xl text-neutral-300 font-bold leading-relaxed max-w-2xl mx-auto border-l-8 border-pink-500 pl-6 py-2 text-left">
-                            Support Our Research
+                        <p className="text-xl md:text-2xl text-neutral-300 font-bold leading-relaxed max-w-2xl mx-auto border-l-8 border-amber-500 pl-6 py-2 text-left">
+                            Snacks & Questions
                         </p>
                     </div>
 
-                    {/* Message */}
+                    {/* Message / Form */}
                     <div className="bg-neutral-800/50 backdrop-blur-sm p-8 md:p-12 rounded-3xl border border-neutral-700 shadow-2xl mb-12">
-                        <p className="text-lg leading-loose text-neutral-200 mb-6 font-medium">
-                            日々の研究・開発活動をご支援いただける方を募集しています。
-                        </p>
-                        <p className="text-base leading-relaxed text-neutral-300">
-                            ご支援いただいた資金は、サーバー費用、API利用料、新しいインタフェースの研究開発機材に充てさせていただきます。
+                        <div className="mb-8">
+                            <label htmlFor="question" className="block text-xl font-bold text-neutral-200 mb-4">
+                                聞きたいことをどうぞ！
+                            </label>
+                            <textarea
+                                id="question"
+                                value={question}
+                                onChange={(e) => setQuestion(e.target.value)}
+                                placeholder="例：好きなプログラミング言語は？ 研究のモチベーションは？ (ここに質問を入力)"
+                                className="w-full bg-neutral-900 border border-neutral-700 rounded-xl p-6 text-lg text-white placeholder-neutral-500 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all min-h-[150px]"
+                            />
+                        </div>
+
+                        <p className="text-base leading-relaxed text-neutral-300 mb-4">
+                            おやつ代（50円〜）を添えて送ると、回答が返ってくるかも...？
                             <br />
-                            <span className="text-pink-300 font-bold">より面白い未来</span>を作るために、ぜひご協力をお願いいたします。
+                            <span className="text-amber-300 font-bold">おいしいおやつ</span>を楽しみに待ってます！
                         </p>
                     </div>
 
                     {/* Amount Selection */}
                     <div className="mb-12">
                         <h2 className="text-2xl font-bold mb-6 text-center text-neutral-200">
-                            Select Amount
+                            おやつ代を選ぶ
                         </h2>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                             {amounts.map((amount) => (
@@ -115,7 +128,7 @@ export const Donate = () => {
                                 ) : (
                                     <>
                                         <CreditCard size={32} />
-                                        <span>Donate ¥{selectedAmount.toLocaleString()}</span>
+                                        <span>おやつを送る (¥{selectedAmount.toLocaleString()})</span>
                                     </>
                                 )}
                             </div>
