@@ -1,0 +1,16 @@
+{
+    "name": "Furukawa Archive OS",
+    "short_name": "FurukawaLab",
+    "description": "Interactive Research Portfolio & Digital Archive",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#171717",
+    "theme_color": "#06b6d4",
+    "icons": [
+        {
+            "src": "/icon.png",
+            "sizes": "192x192 512x512",
+            "type": "image/png"
+        }
+    ]
+}
