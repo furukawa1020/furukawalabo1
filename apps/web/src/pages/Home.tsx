@@ -13,16 +13,17 @@ export const Home = () => {
             <section className="relative h-screen flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 bg-grid-slate-200/50 dark:bg-grid-slate-800/50 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
                 <div className="container mx-auto px-6 relative z-10 text-center">
-                    <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 bg-gradient-to-r from-neutral-900 to-neutral-500 dark:from-white dark:to-neutral-500 bg-clip-text text-transparent">
-                        Re-designing<br />
-                        Tech & Society
+                    <h2 className="text-xl md:text-2xl font-bold tracking-[0.3em] text-cyan-400 mb-6 uppercase drop-shadow-md">
+                        Furukawa Archive OS v1.0
+                    </h2>
+                    <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-10 leading-[0.9] 
+                        bg-gradient-to-br from-white via-cyan-300 to-purple-400 bg-clip-text text-transparent filter drop-shadow-2xl">
+                        LET'S ENJOY<br />
+                        CONSTRAINTS<br />
+                        HACK!
                     </h1>
-                    <p className="text-xl md:text-2xl text-neutral-600 dark:text-neutral-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-                        誰もが「生きててよかった」と思える瞬間をmakeする。
-                        <br />
-                        <span className="text-base md:text-lg opacity-80 mt-2 block">
-                            HCI Researcher / Prototyper / Community Builder
-                        </span>
+                    <p className="text-xl md:text-3xl text-neutral-300 font-bold mb-12 max-w-3xl mx-auto leading-relaxed drop-shadow-lg">
+                        誰もが<span className="text-cyan-300 inline-block mx-2">「生きててよかった」</span>と思える瞬間をmakeする。
                     </p>
                     <div className="flex flex-col md:flex-row gap-4 justify-center">
                         <Link to="/research" className="group px-8 py-4 bg-neutral-900 dark:bg-white text-white dark:text-black rounded-full font-bold transition-all hover:scale-105 flex items-center justify-center gap-2">

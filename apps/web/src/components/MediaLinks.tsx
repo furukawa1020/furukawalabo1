@@ -33,20 +33,20 @@ export const MediaLinks = ({ type = 'all', className = '' }: { type?: 'all' | 'i
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`group flex flex-col justify-between p-6 rounded-2xl ${item.color} text-white transition-all hover:scale-[1.02] shadow-lg`}
+                    className={`group flex flex-row items-center justify-between p-5 rounded-xl ${item.color} text-white transition-all hover:scale-[1.02] shadow-lg hover:shadow-xl w-full`}
                 >
-                    <div>
+                    <div className="flex-1 pr-4">
                         {item.date && (
-                            <span className="text-xs font-mono opacity-80 mb-2 block">
+                            <span className="text-[10px] opacity-90 mb-1 block font-mono bg-black/20 w-fit px-2 py-0.5 rounded">
                                 {item.date}
                             </span>
                         )}
-                        <h3 className="font-bold text-lg leading-tight">
+                        <h3 className="font-bold text-base leading-snug w-full">
                             {item.title}
                         </h3>
                     </div>
-                    <div className="mt-4 flex justify-end">
-                        <svg className="w-6 h-6 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="flex-shrink-0">
+                        <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                         </svg>
                     </div>

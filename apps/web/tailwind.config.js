@@ -6,7 +6,12 @@ export default {
         "./src/**/*.{js,ts,jsx,tsx}",
     ],
     theme: {
-        extend: {},
+        extend: {
+            fontFamily: {
+                sans: ['Outfit', 'Noto Sans JP', 'sans-serif'],
+                mono: ['monospace'],
+            },
+        },
     },
     plugins: [],
 }
