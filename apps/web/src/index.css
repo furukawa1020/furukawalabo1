@@ -11,6 +11,8 @@
 body {
   font-family: var(--font-sans);
   line-height: 1.75;
+  image-rendering: -webkit-optimize-contrast;
+  /* For clearer images */
 }
 
 h1,
