@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { SEO } from '../components/SEO';
-import { Heart, CreditCard, Loader2, AlertCircle } from 'lucide-react';
+import { CreditCard, Loader2, AlertCircle } from 'lucide-react';
 import api from '../api/client';
 
 export const Donate = () => {
