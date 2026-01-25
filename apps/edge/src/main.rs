@@ -35,7 +35,10 @@ async fn health_check() -> impl IntoResponse {
 
 // Real proxy handler for API
 async fn proxy_api(mut req: Request<Body>) -> impl IntoResponse {
-    let client = Client::new();
+    let client = match Client::builder().build() {
+        Ok(c) => c,
+        Err(e) => return (StatusCode::INTERNAL_SERVER_ERROR, format!("Failed to create HTTP client: {}", e)).into_response(),
+    };
     let path = req.uri().path();
     let query = req.uri().query().map(|q| format!("?{}", q)).unwrap_or_default();
     
@@ -64,8 +67,12 @@ async fn proxy_api(mut req: Request<Body>) -> impl IntoResponse {
             
             // Build Axum response
             let mut builder = axum::http::Response::builder().status(status);
-            *builder.headers_mut().unwrap() = headers;
-            builder.body(Body::from(bytes)).unwrap()
+            if let Some(h) = builder.headers_mut() {
+                *h = headers;
+            }
+            builder.body(Body::from(bytes)).unwrap_or_else(|e| {
+                (StatusCode::INTERNAL_SERVER_ERROR, format!("Failed to build response body: {}", e)).into_response()
+            })
         },
         Err(e) => {
             (StatusCode::BAD_GATEWAY, format!("Proxy Error: {}", e)).into_response()
@@ -74,7 +81,10 @@ async fn proxy_api(mut req: Request<Body>) -> impl IntoResponse {
 }
 
 async fn proxy_web(req: Request<Body>) -> impl IntoResponse {
-    let client = Client::new();
+    let client = match Client::builder().build() {
+        Ok(c) => c,
+        Err(e) => return (StatusCode::INTERNAL_SERVER_ERROR, format!("Failed to create HTTP client: {}", e)).into_response(),
+    };
     let path = req.uri().path();
     let query = req.uri().query().map(|q| format!("?{}", q)).unwrap_or_default();
     
@@ -100,8 +110,12 @@ async fn proxy_web(req: Request<Body>) -> impl IntoResponse {
             let headers = res.headers().clone();
             let bytes = res.bytes().await.unwrap_or_default();
             let mut builder = axum::http::Response::builder().status(status);
-            *builder.headers_mut().unwrap() = headers;
-            builder.body(Body::from(bytes)).unwrap()
+            if let Some(h) = builder.headers_mut() {
+                *h = headers;
+            }
+            builder.body(Body::from(bytes)).unwrap_or_else(|e| {
+                (StatusCode::INTERNAL_SERVER_ERROR, format!("Failed to build response body: {}", e)).into_response()
+            })
         },
         Err(e) => {
             (StatusCode::BAD_GATEWAY, format!("Proxy Error: {}", e)).into_response()
@@ -111,7 +125,10 @@ async fn proxy_web(req: Request<Body>) -> impl IntoResponse {
 
 // Real proxy handler for AI
 async fn proxy_ai(mut req: Request<Body>) -> impl IntoResponse {
-    let client = Client::new();
+    let client = match Client::builder().build() {
+        Ok(c) => c,
+        Err(e) => return (StatusCode::INTERNAL_SERVER_ERROR, format!("Failed to create HTTP client: {}", e)).into_response(),
+    };
     let path = req.uri().path(); // e.g. /ai/predict
     
     let path_no_prefix = if path.starts_with("/ai") {
@@ -142,8 +159,12 @@ async fn proxy_ai(mut req: Request<Body>) -> impl IntoResponse {
             let headers = res.headers().clone();
             let bytes = res.bytes().await.unwrap_or_default();
             let mut builder = axum::http::Response::builder().status(status);
-            *builder.headers_mut().unwrap() = headers;
-            builder.body(Body::from(bytes)).unwrap()
+            if let Some(h) = builder.headers_mut() {
+                *h = headers;
+            }
+            builder.body(Body::from(bytes)).unwrap_or_else(|e| {
+                (StatusCode::INTERNAL_SERVER_ERROR, format!("Failed to build response body: {}", e)).into_response()
+            })
         },
         Err(e) => {
             (StatusCode::BAD_GATEWAY, format!("AI Proxy Error: {}", e)).into_response()
