@@ -1,4 +1,4 @@
-FROM rust:1.84-slim
+FROM rustlang/rust:nightly-slim
 
 WORKDIR /app
 
