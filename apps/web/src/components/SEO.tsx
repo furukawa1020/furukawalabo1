@@ -25,7 +25,27 @@ export const SEO = ({
             <meta property="og:type" content={type} />
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:creator" content="@HATAKE55555" />
-            <meta name="keywords" content="古川耕太郎, Kotaro Furukawa, HATAKE, HCI, 未踏, 技育博, 研究, ポートフォリオ" />
+            <meta name="keywords" content="古川耕太郎, Kotaro Furukawa, HATAKE, HCI, 未踏, 技育博, 研究, ポートフォリオ, 金沢大学, 生理反応, 主観的意味づけ, 感情コンピューティング, インタラクション" />
+
+            <script type="application/ld+json">
+                {JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "Person",
+                    "name": "Kotaro Furukawa (HATAKE)",
+                    "url": "https://furukawa.netlify.app",
+                    "sameAs": [
+                        "https://twitter.com/HATAKE55555",
+                        "https://github.com/furukawa1020",
+                        "https://protopedia.net/prototyper/hatake"
+                    ],
+                    "jobTitle": "HCI Researcher & Prototyper",
+                    "worksFor": {
+                        "@type": "Organization",
+                        "name": "Kanazawa University"
+                    },
+                    "description": "Anyone can hack 'the moment they feel glad to be alive'. Exploring the variability of subjective meaning in physiological responses."
+                })}
+            </script>
         </Helmet>
     );
 };
