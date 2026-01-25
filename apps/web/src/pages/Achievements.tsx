@@ -3,7 +3,24 @@ import axios from 'axios';
 import { SEO } from '../components/SEO';
 import { Award, Briefcase, Users, FileText, Star, Mic } from 'lucide-react';
 
-// ... (types are same)
+type AchievementItem = {
+    year: string | number;
+    title: string;
+    detail: string;
+    detail_secondary?: string;
+    date?: string;
+    image?: string;
+};
+
+type AchievementSection = {
+    name: string;
+    items: AchievementItem[];
+    gallery?: string[];
+};
+
+type AchievementsData = {
+    sections: AchievementSection[];
+};
 
 export const Achievements = () => {
     const [data, setData] = useState<AchievementsData | null>(null);
