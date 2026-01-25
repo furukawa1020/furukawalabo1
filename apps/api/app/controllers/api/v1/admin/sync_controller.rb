@@ -19,6 +19,8 @@ module Api
         def trigger_sync
           # Trigger Go Worker sync
           worker_url = ENV['WORKER_URL'] || 'http://localhost:8080'
+          # Ensure no trailing slash
+          worker_url = worker_url.chomp('/')
           auth_token = ENV['WORKER_AUTH_TOKEN'] || 'default-secret-token'
 
           begin
