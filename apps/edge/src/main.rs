@@ -41,7 +41,9 @@ async fn health_check() -> impl IntoResponse {
 
 // Real proxy handler for API
 async fn proxy_api(mut req: Request<Body>) -> impl IntoResponse {
-    let client = match Client::builder().build() {
+    let client = match Client::builder()
+        .redirect(reqwest::redirect::Policy::none())
+        .build() {
         Ok(c) => c,
         Err(e) => return (StatusCode::INTERNAL_SERVER_ERROR, format!("Failed to create HTTP client: {}", e)).into_response(),
     };
@@ -50,6 +52,7 @@ async fn proxy_api(mut req: Request<Body>) -> impl IntoResponse {
     
     // Get upstream URL from env
     let api_base = env::var("API_URL").unwrap_or_else(|_| "http://api:3000".to_string());
+    let api_base = api_base.trim_end_matches('/');
     let target_url = format!("{}{}", api_base, path); 
     
     let (parts, body) = req.into_parts();
@@ -89,7 +92,9 @@ async fn proxy_api(mut req: Request<Body>) -> impl IntoResponse {
 
 // Real proxy handler for AI
 async fn proxy_ai(mut req: Request<Body>) -> impl IntoResponse {
-    let client = match Client::builder().build() {
+    let client = match Client::builder()
+        .redirect(reqwest::redirect::Policy::none())
+        .build() {
         Ok(c) => c,
         Err(e) => return (StatusCode::INTERNAL_SERVER_ERROR, format!("Failed to create HTTP client: {}", e)).into_response(),
     };
@@ -104,6 +109,7 @@ async fn proxy_ai(mut req: Request<Body>) -> impl IntoResponse {
     
     // Get upstream URL from env
     let ai_base = env::var("AI_URL").unwrap_or_else(|_| "http://ai:5000".to_string());
+    let ai_base = ai_base.trim_end_matches('/');
     let target_url = format!("{}{}", ai_base, path_no_prefix); 
     
     let (parts, body) = req.into_parts();
