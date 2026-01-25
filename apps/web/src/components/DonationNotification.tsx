@@ -45,10 +45,10 @@ export const DonationNotification = () => {
     }, []);
 
     return (
-        <div className="fixed bottom-6 left-6 z-50 flex flex-col gap-2 pointer-events-none">
+        <div className="fixed top-24 right-4 md:top-auto md:right-auto md:bottom-6 md:left-6 z-50 flex flex-col gap-2 pointer-events-none items-end md:items-start">
             {/* Online Count Badge */}
             {visitorCount > 0 && (
-                <div className="pointer-events-auto bg-neutral-900/80 backdrop-blur text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 border border-white/10 w-fit">
+                <div className="pointer-events-auto bg-neutral-900/80 backdrop-blur text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 border border-white/10 w-fit shadow-lg">
                     <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>

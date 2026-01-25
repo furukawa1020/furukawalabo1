@@ -89,7 +89,7 @@ function App() {
                                         to={link.to}
                                         onClick={() => setMobileMenuOpen(false)}
                                         className={link.special
-                                            ? "px-6 py-3 bg-neutral-900 dark:bg-white/10 text-white dark:text-white rounded-full text-center font-medium hover:bg-neutral-700 dark:hover:bg-white/20 transition-colors"
+                                            ? "px-6 py-3 bg-neutral-900 dark:bg-white/10 text-white dark:text-white rounded-full text-center font-medium hover:bg-neutral-700 dark:hover:bg-white/20 transition-colors text-sm"
                                             : "px-6 py-3 text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors font-medium"
                                         }
                                     >
