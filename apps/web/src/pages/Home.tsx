@@ -18,7 +18,7 @@ export const Home = () => {
                         Tech & Society
                     </h1>
                     <p className="text-xl md:text-2xl text-neutral-600 dark:text-neutral-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-                        For a future where everyone can say "I'm glad to be alive."
+                        誰もが「生きててよかった」と思える瞬間をmakeする。
                         <br />
                         <span className="text-base md:text-lg opacity-80 mt-2 block">
                             HCI Researcher / Prototyper / Community Builder
@@ -42,14 +42,14 @@ export const Home = () => {
                     <h2 className="text-3xl font-bold mb-12 text-center text-neutral-900 dark:text-white">Highlights</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <HighlightCard
-                            icon={<Star className="text-yellow-500" />}
+                            icon={<Star className="text-cyan-500" />}
                             title="Interaction 2026"
-                            desc="Premium Interactive Presentation Accepted"
+                            desc="Interactive Presentation (Premium) Accepted"
                         />
                         <HighlightCard
-                            icon={<Trophy className="text-cyan-500" />}
-                            title="Jigieki Expo 2025"
-                            desc="Sponsor Award (Yumemi) & Corporate Award"
+                            icon={<Trophy className="text-yellow-500" />}
+                            title="Gikihaku 2025"
+                            desc="Yumemi Sponsor Award & Corporate Award"
                         />
                         <HighlightCard
                             icon={<Code className="text-purple-500" />}
@@ -59,7 +59,7 @@ export const Home = () => {
                         <HighlightCard
                             icon={<Activity className="text-green-500" />}
                             title="40+ Prototypes"
-                            desc="Published on Protopedia with 70+ likes"
+                            desc="Published on Protopedia with 72+ likes"
                         />
                     </div>
                 </div>

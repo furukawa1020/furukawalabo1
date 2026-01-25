@@ -70,9 +70,9 @@ export const Works = () => {
                         <h1 className="text-4xl font-bold mb-4">Works</h1>
                         <p className="text-neutral-500 dark:text-neutral-400">Latest 40+ Prototypes synced from Protopedia</p>
                     </div>
-                    {/* Filters Mock */}
+                    {/* Filters */}
                     <div className="flex gap-2 text-sm overflow-x-auto pb-2">
-                        {['All', 'HCI', 'AI', 'Hardware', 'Community'].map(filter => (
+                        {['All', 'HCI', 'AI', 'Hardware', 'Community', 'Research'].map(filter => (
                             <button key={filter} className="px-4 py-2 rounded-full border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors whitespace-nowrap">
                                 {filter}
                             </button>
