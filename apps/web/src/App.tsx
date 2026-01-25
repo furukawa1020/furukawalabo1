@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { useState } from 'react';
 import { Home } from './pages/Home';
 import { Research } from './pages/Research';
 import { Works } from './pages/Works';
@@ -10,26 +11,76 @@ import { Admin } from './pages/Admin';
 import { CookieConsent } from './components/CookieConsent';
 import { ThemeProvider } from './components/ThemeContext';
 import { ThemeToggle } from './components/ThemeToggle';
+import { Menu, X } from 'lucide-react';
 
 function App() {
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    const navLinks = [
+        { to: '/about', label: 'About' },
+        { to: '/research', label: 'Research' },
+        { to: '/works', label: 'Works' },
+        { to: '/achievements', label: 'Achievements' },
+        { to: '/blog', label: 'Blog' },
+        { to: '/donate', label: '寄付のお願い', special: true },
+    ];
+
     return (
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
             <Router>
                 <div className="min-h-screen bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50 font-sans selection:bg-cyan-500 selection:text-white transition-colors duration-300">
                     <header className="fixed top-0 left-0 right-0 z-40 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border-b border-neutral-200 dark:border-white/10 transition-colors duration-300">
                         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-                            <Link to="/" className="font-bold text-lg tracking-wider font-mono">FUR.ARCHIVE</Link>
-                            <div className="flex items-center gap-6">
+                            <Link to="/" className="font-bold text-lg tracking-wider font-mono" onClick={() => setMobileMenuOpen(false)}>FUR.ARCHIVE</Link>
+
+                            <div className="flex items-center gap-4">
+                                {/* Desktop Navigation */}
                                 <nav className="hidden md:flex gap-8 text-sm font-medium text-neutral-600 dark:text-neutral-400">
-                                    <Link to="/about" className="hover:text-black dark:hover:text-white transition-colors">About</Link>
-                                    <Link to="/research" className="hover:text-black dark:hover:text-white transition-colors">Research</Link>
-                                    <Link to="/works" className="hover:text-black dark:hover:text-white transition-colors">Works</Link>
-                                    <Link to="/achievements" className="hover:text-black dark:hover:text-white transition-colors">Achievements</Link>
-                                    <Link to="/blog" className="hover:text-black dark:hover:text-white transition-colors">Blog</Link>
-                                    <Link to="/donate" className="px-4 py-2 bg-neutral-900 dark:bg-white/10 text-white dark:text-white rounded-full hover:bg-neutral-700 dark:hover:bg-white/20 transition-colors">寄付のお願い</Link>
+                                    {navLinks.map(link => (
+                                        <Link
+                                            key={link.to}
+                                            to={link.to}
+                                            className={link.special
+                                                ? "px-4 py-2 bg-neutral-900 dark:bg-white/10 text-white dark:text-white rounded-full hover:bg-neutral-700 dark:hover:bg-white/20 transition-colors"
+                                                : "hover:text-black dark:hover:text-white transition-colors"
+                                            }
+                                        >
+                                            {link.label}
+                                        </Link>
+                                    ))}
                                 </nav>
+
                                 <ThemeToggle />
+
+                                {/* Mobile Menu Button */}
+                                <button
+                                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                    className="md:hidden p-2 text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors"
+                                    aria-label="Toggle menu"
+                                >
+                                    {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                                </button>
                             </div>
+                        </div>
+
+                        {/* Mobile Navigation Drawer */}
+                        <div className={`md:hidden absolute top-16 left-0 right-0 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 transition-all duration-300 ${mobileMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+                            }`}>
+                            <nav className="flex flex-col p-6 gap-4">
+                                {navLinks.map(link => (
+                                    <Link
+                                        key={link.to}
+                                        to={link.to}
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className={link.special
+                                            ? "px-6 py-3 bg-neutral-900 dark:bg-white/10 text-white dark:text-white rounded-full text-center font-medium hover:bg-neutral-700 dark:hover:bg-white/20 transition-colors"
+                                            : "px-6 py-3 text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors font-medium"
+                                        }
+                                    >
+                                        {link.label}
+                                    </Link>
+                                ))}
+                            </nav>
                         </div>
                     </header>
 
