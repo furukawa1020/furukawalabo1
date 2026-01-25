@@ -3,6 +3,22 @@ import axios from 'axios';
 import { SEO } from '../components/SEO';
 import { Award, Briefcase, Users, FileText, Star, Mic } from 'lucide-react';
 
+import imgRobocup from '../assets/images/robocup-main.jpg';
+import imgAwardGold from '../assets/images/awards/award-gold.jpg';
+import imgAward1 from '../assets/images/awards/award-1.jpg';
+import imgAward2 from '../assets/images/awards/award-2.jpg';
+import imgAward3 from '../assets/images/awards/award-3.jpg';
+import imgAward4 from '../assets/images/awards/award-4.jpg';
+
+const IMAGE_MAP: Record<string, string> = {
+    '/images/robocup-main.jpg': imgRobocup,
+    '/images/awards/award-gold.jpg': imgAwardGold,
+    '/images/awards/award-1.jpg': imgAward1,
+    '/images/awards/award-2.jpg': imgAward2,
+    '/images/awards/award-3.jpg': imgAward3,
+    '/images/awards/award-4.jpg': imgAward4,
+};
+
 type AchievementItem = {
     year: string | number;
     title: string;
