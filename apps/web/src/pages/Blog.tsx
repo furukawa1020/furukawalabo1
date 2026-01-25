@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
-import api from '../api/client';
+import axios from 'axios';
 import { SEO } from '../components/SEO';
 import { Calendar } from 'lucide-react';
 
@@ -20,18 +20,23 @@ export const Blog = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Fetch list
-        api.get('/blogs')
+        // Fetch list from static index
+        axios.get('/content/blog/index.json')
             .then(res => setPosts(res.data))
-            .catch(err => console.error(err))
+            .catch(err => console.error('Failed to load blog index', err))
             .finally(() => setLoading(false));
     }, []);
 
     useEffect(() => {
         if (selectedPost) {
             setLoading(true);
-            api.get(`/blogs/${selectedPost}`)
-                .then(res => setContent(res.data.content)) // API returns { content: "..." }
+            axios.get(`/content/blog/${selectedPost}.md`)
+                .then(res => {
+                    // Extract body from markdown (removing frontmatter if present)
+                    const raw = res.data;
+                    const body = raw.replace(/^---[\s\S]*?---/, '');
+                    setContent(body);
+                })
                 .catch(err => console.error('Failed to load post', err))
                 .finally(() => setLoading(false));
         }

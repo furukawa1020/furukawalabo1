@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Trophy, Code, Star, Activity } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 import api from '../api/client';
 
 export const Home = () => {
@@ -76,7 +77,10 @@ const LatestContent = () => {
 
     useEffect(() => {
         api.get('/works').then(res => setWorks(res.data.works?.slice(0, 6) || [])).catch(() => { });
-        api.get('/blogs').then(res => setPosts(res.data?.slice(0, 3) || [])).catch(() => { });
+        // Fetch blogs from static index
+        axios.get('/content/blog/index.json')
+            .then(res => setPosts(res.data.slice(0, 3)))
+            .catch(() => { });
     }, []);
 
     if (works.length === 0 && posts.length === 0) return null;

@@ -12,7 +12,11 @@ export const About = () => {
 
     useEffect(() => {
         axios.get('/content/pages/about.md')
-            .then(res => setContent(res.data))
+            .then(res => {
+                const raw = res.data;
+                const body = raw.replace(/^---[\s\S]*?---/, '');
+                setContent(body);
+            })
             .catch(err => console.error('Failed to load about', err));
     }, []);
 

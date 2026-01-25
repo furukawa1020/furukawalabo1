@@ -1,0 +1,20 @@
+[
+    {
+        "slug": "2026-01-25-hello",
+        "title": "Furukawa Archive OS、起動！",
+        "date": "2026-01-25",
+        "summary": "ポートフォリオ兼、実験場兼、脳内アーカイブ。ついにローンチしました！"
+    },
+    {
+        "slug": "2026-01-26-why-overengineering",
+        "title": "なぜポートフォリオサイトをフルスタックで作ったのか",
+        "date": "2026-01-26",
+        "summary": "Next.jsで作れば10分で終わるものを、あえてマイクロサービスで構築した理由。"
+    },
+    {
+        "slug": "2026-01-27-railway-deployment-hell",
+        "title": "Railwayでのデプロイ、めちゃくちゃ沼った話",
+        "date": "2026-01-27",
+        "summary": "502エラーの海から這い上がるまでの記録。Rust、Port、CORS、すべてが罠だった。"
+    }
+]
