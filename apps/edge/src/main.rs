@@ -57,7 +57,8 @@ async fn proxy_api(mut req: Request<Body>) -> impl IntoResponse {
     
     let (parts, body) = req.into_parts();
     let method = parts.method;
-    let headers = parts.headers;
+    let mut headers = parts.headers;
+    headers.remove("host"); // Let reqwest set the correct Host header
     
     // Convert axum body to reqwest body
     let body_bytes = axum::body::to_bytes(body, usize::MAX).await.unwrap_or_default();
@@ -114,7 +115,9 @@ async fn proxy_ai(mut req: Request<Body>) -> impl IntoResponse {
     
     let (parts, body) = req.into_parts();
     let method = parts.method;
-    let headers = parts.headers;
+    let mut headers = parts.headers;
+    headers.remove("host");
+    
     let body_bytes = axum::body::to_bytes(body, usize::MAX).await.unwrap_or_default();
 
     let resp = client.request(method, target_url + &query)
