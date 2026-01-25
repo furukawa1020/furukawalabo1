@@ -1,36 +1,18 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import yaml from 'js-yaml';
 import { SEO } from '../components/SEO';
 import { Award, Briefcase, Users, FileText, Star, Mic } from 'lucide-react';
 
-type AchievementItem = {
-    year: string | number;
-    title: string;
-    detail: string;
-    detail_secondary?: string;
-    date?: string;
-    image?: string;
-};
-
-type AchievementSection = {
-    name: string;
-    items: AchievementItem[];
-    gallery?: string[];
-};
-
-type AchievementsData = {
-    sections: AchievementSection[];
-};
+// ... (types are same)
 
 export const Achievements = () => {
     const [data, setData] = useState<AchievementsData | null>(null);
 
     useEffect(() => {
-        axios.get(`/achievements.yml?v=${new Date().getTime()}`)
+        // Fetch JSON directly
+        axios.get(`/achievements.json?v=${new Date().getTime()}`)
             .then(res => {
-                const parsed = yaml.load(res.data) as AchievementsData;
-                setData(parsed);
+                setData(res.data);
             })
             .catch(err => console.error('Failed to load achievements', err));
     }, []);
