@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import { SEO } from '../components/SEO';
 import { SocialLinks } from '../components/SocialLinks';
+import { MediaLinks } from '../components/MediaLinks';
 
 export const About = () => {
     // Currently re-using Home or just redirecting essentially, 
@@ -34,6 +35,11 @@ export const About = () => {
 
                 <div className="mt-12 flex justify-center md:justify-start">
                     <SocialLinks />
+                </div>
+
+                <div className="mt-24 border-t border-neutral-800 pt-12">
+                    <h2 className="text-2xl font-bold mb-8 text-neutral-200">Media Coverage & Third-party Validation</h2>
+                    <MediaLinks />
                 </div>
             </div>
         </>

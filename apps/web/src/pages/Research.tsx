@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import { SEO } from '../components/SEO';
+import { MediaLinks } from '../components/MediaLinks';
 
 export const Research = () => {
     const [content, setContent] = useState('');
@@ -19,6 +20,11 @@ export const Research = () => {
                 <article className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-4xl prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6 prose-p:leading-relaxed prose-li:marker:text-neutral-400">
                     <ReactMarkdown>{content}</ReactMarkdown>
                 </article>
+
+                <div className="mt-16 border-t border-neutral-800 pt-12">
+                    <h2 className="text-2xl font-bold mb-8 text-neutral-200">Featured Interview</h2>
+                    <MediaLinks type="interview" className="max-w-md" />
+                </div>
             </div>
         </>
     );
