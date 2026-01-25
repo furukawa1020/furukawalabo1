@@ -1,7 +1,9 @@
 FROM rustlang/rust:nightly-slim
 
 WORKDIR /app
-# Force Railway Rebuild: v2
+
+# Install system dependencies required for OpenSSL
+RUN apt-get update && apt-get install -y pkg-config libssl-dev && rm -rf /var/lib/apt/lists/*
 
 COPY Cargo.toml .
 # Create dummy main to cache dependencies
