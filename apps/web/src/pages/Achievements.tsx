@@ -86,7 +86,7 @@ export const Achievements = () => {
                                         {section.gallery.map((imgSrc, idx) => (
                                             <div key={idx} className="relative group cursor-pointer rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-700 shadow-sm">
                                                 <img
-                                                    src={imgSrc}
+                                                    src={IMAGE_MAP[imgSrc] || imgSrc}
                                                     alt={`Award ${idx + 1}`}
                                                     className="w-full aspect-[4/3] object-cover group-hover:scale-110 transition-transform duration-500"
                                                 />
@@ -115,7 +115,7 @@ export const Achievements = () => {
                                         {item.image && (
                                             <div className="mt-4 rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-700">
                                                 <img
-                                                    src={item.image}
+                                                    src={IMAGE_MAP[item.image] || item.image}
                                                     alt={item.title}
                                                     className="w-full h-auto max-h-64 object-cover hover:scale-105 transition-transform duration-500"
                                                 />
