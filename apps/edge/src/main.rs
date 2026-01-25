@@ -8,6 +8,8 @@ use axum::{
 use std::net::SocketAddr;
 use reqwest::Client;
 use std::env;
+use tower_http::cors::{CorsLayer, Any};
+
 
 #[tokio::main]
 async fn main() {
@@ -18,7 +20,10 @@ async fn main() {
         .route("/health", any(health_check))
         .route("/api/*path", any(proxy_api)) // Forward to Rails
         .route("/ai/*path", any(proxy_ai))   // Forward to AI
-        .fallback(proxy_web); // Forward everything else to Web
+        .layer(CorsLayer::new()
+            .allow_origin(Any)
+            .allow_methods(Any)
+            .allow_headers(Any));
 
     let port = env::var("PORT").unwrap_or_else(|_| "8000".to_string());
     let addr_str = format!("0.0.0.0:{}", port);
@@ -80,48 +85,6 @@ async fn proxy_api(mut req: Request<Body>) -> impl IntoResponse {
     }
 }
 
-async fn proxy_web(req: Request<Body>) -> impl IntoResponse {
-    let client = match Client::builder().build() {
-        Ok(c) => c,
-        Err(e) => return (StatusCode::INTERNAL_SERVER_ERROR, format!("Failed to create HTTP client: {}", e)).into_response(),
-    };
-    let path = req.uri().path();
-    let query = req.uri().query().map(|q| format!("?{}", q)).unwrap_or_default();
-    
-    // Get upstream URL from env. Default to http://web:5173 (Vite default) or http://web:3000 
-    // In Dockerfile we saw npm run dev --host, which usually defaults to 5173
-    let web_base = env::var("WEB_URL").unwrap_or_else(|_| "http://web:5173".to_string());
-    let target_url = format!("{}{}{}", web_base, path, query);
-    
-    let (parts, body) = req.into_parts();
-    let method = parts.method;
-    let headers = parts.headers;
-    let body_bytes = axum::body::to_bytes(body, usize::MAX).await.unwrap_or_default();
-
-    let resp = client.request(method, target_url)
-        .headers(headers)
-        .body(body_bytes)
-        .send()
-        .await;
-        
-    match resp {
-        Ok(res) => {
-            let status = res.status();
-            let headers = res.headers().clone();
-            let bytes = res.bytes().await.unwrap_or_default();
-            let mut builder = axum::http::Response::builder().status(status);
-            if let Some(h) = builder.headers_mut() {
-                *h = headers;
-            }
-            builder.body(Body::from(bytes)).unwrap_or_else(|e| {
-                (StatusCode::INTERNAL_SERVER_ERROR, format!("Failed to build response body: {}", e)).into_response()
-            })
-        },
-        Err(e) => {
-            (StatusCode::BAD_GATEWAY, format!("Proxy Error: {}", e)).into_response()
-        }
-    }
-}
 
 // Real proxy handler for AI
 async fn proxy_ai(mut req: Request<Body>) -> impl IntoResponse {
