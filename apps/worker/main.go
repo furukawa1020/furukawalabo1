@@ -30,24 +30,44 @@ type WorkItem struct {
 }
 
 func main() {
-	// Database connection
+	// Database connection with retry
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
 		log.Fatal("DATABASE_URL not set")
 	}
 
-	db, err := sql.Open("postgres", dbURL)
-	if err != nil {
-		log.Fatal("Failed to connect to database:", err)
+	var db *sql.DB
+	var err error
+
+	// 1. Connect to Database (Retry loop)
+	for i := 0; i < 30; i++ {
+		db, err = sql.Open("postgres", dbURL)
+		if err == nil {
+			if err = db.Ping(); err == nil {
+				fmt.Println("✅ Connected to database")
+				break
+			}
+		}
+		fmt.Printf("⏳ Waiting for database... (%d/30)\n", i+1)
+		time.Sleep(2 * time.Second)
+	}
+	if err != nil || db == nil {
+		log.Fatal("Failed to connect to database after retries:", err)
 	}
 	defer db.Close()
 
-	// Test connection
-	if err := db.Ping(); err != nil {
-		log.Fatal("Database ping failed:", err)
+	// 2. Wait for Migrations (Check if 'works' table exists)
+	fmt.Println("🔍 Checking for 'works' table...")
+	for i := 0; i < 30; i++ {
+		var exists bool
+		query := "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'works')"
+		if err := db.QueryRow(query).Scan(&exists); err == nil && exists {
+			fmt.Println("✅ Table 'works' found. Ready to sync.")
+			break
+		}
+		fmt.Printf("⏳ Waiting for migrations... Table 'works' not ready yet. (%d/30)\n", i+1)
+		time.Sleep(3 * time.Second)
 	}
-
-	fmt.Println("✅ Connected to database")
 
 	// Run initial sync
 	syncProtopedia(db)
