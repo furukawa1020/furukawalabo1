@@ -1,5 +1,5 @@
 import { SEO } from '../components/SEO';
-import { ExternalLink, Github, Monitor, RefreshCw } from 'lucide-react';
+import { ExternalLink, RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import api from '../api/client';
 import { Loader2 } from 'lucide-react';
