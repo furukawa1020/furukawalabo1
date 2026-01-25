@@ -17,36 +17,59 @@ module Api
         private
 
         def trigger_sync
-          # Trigger Go Worker sync
-          worker_url = ENV['WORKER_URL'] || 'http://localhost:8080'
-          # Ensure no trailing slash
-          worker_url = worker_url.chomp('/')
-          auth_token = ENV['WORKER_AUTH_TOKEN'] || 'default-secret-token'
+          # Fallback: Direct sync in Rails to avoid Worker connection issues
+          require 'open-uri'
+          require 'nokogiri'
 
-          begin
-            response = HTTP.auth("Bearer #{auth_token}")
-                          .timeout(5)
-                          .post("#{worker_url}/sync")
+          work_ids = [
+            "6345", "6347", "6348", "6349", "6549", "6554", "6555", "6613", "6692", "6694",
+            "7255", "7408", "7495", "7496", "7527", "7528", "7529", "7538", "7539", "7553",
+            "7571", "7600", "7617", "7648", "7672", "7694", "7833", "7834", "7842", "7844",
+            "7852", "7866", "7889", "7895", "7908", "7916", "7952", "7984", "7995", "8059",
+            "8097"
+          ]
 
-            if response.status.success?
-              render json: { 
-                status: 'success', 
-                message: 'Protopedia sync triggered successfully via Worker',
-                worker_response: JSON.parse(response.body.to_s)
-              }
-            else
-              render json: { 
-                status: 'error', 
-                message: 'Worker returned error',
-                code: response.status
-              }, status: :bad_gateway
+          success_count = 0
+          errors = []
+
+          # Run in a separate thread to avoid timeout
+          Thread.new do
+            work_ids.each do |id|
+              begin
+                url = "https://protopedia.net/prototype/#{id}"
+                html = URI.open(url).read
+                doc = Nokogiri::HTML(html)
+
+                title = doc.title.split(' | ').first
+                description = doc.at('meta[name="description"]')&.[]('content') || ''
+                # Try og:image first, fallback to None
+                thumbnail_url = doc.at('meta[property="og:image"]')&.[]('content')
+                
+                # Create or Update
+                work = Work.find_or_initialize_by(external_id: id)
+                work.update(
+                  title: title,
+                  summary: description,
+                  url: url,
+                  thumbnail_url: thumbnail_url,
+                  published_at: Time.current,
+                  tags: ["Protopedia"]
+                )
+                success_count += 1
+              rescue => e
+                Rails.logger.error "Failed to sync work #{id}: #{e.message}"
+                errors << { id: id, error: e.message }
+              end
+              sleep(0.5) # Be gentle to the target server
             end
-          rescue => e
-            render json: { 
-              status: 'error', 
-              message: "Failed to trigger sync: #{e.message}" 
-            }, status: :internal_server_error
+            Rails.logger.info "Direct Sync Completed: #{success_count}/#{work_ids.length} works synced."
           end
+
+          render json: { 
+            status: 'success', 
+            message: 'Direct sync started in background. Please wait ~30 seconds and refresh /works.',
+            target_count: work_ids.length
+          }
         end
 
         def authenticate_admin!
