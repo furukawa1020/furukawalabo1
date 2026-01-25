@@ -5,7 +5,7 @@ import { Research } from './pages/Research';
 import { Works } from './pages/Works';
 import { Achievements } from './pages/Achievements';
 import { Blog } from './pages/Blog';
-import { Donate } from './pages/Donate';
+// import { Donate } from './pages/Donate';
 import { About } from './pages/About';
 import { Admin } from './pages/Admin';
 import { CookieConsent } from './components/CookieConsent';
@@ -16,7 +16,13 @@ import { Menu, X } from 'lucide-react';
 function App() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    const navLinks = [
+    type NavLink = {
+        to: string;
+        label: string;
+        special?: boolean;
+    };
+
+    const navLinks: NavLink[] = [
         { to: '/about', label: 'About' },
         { to: '/research', label: 'Research' },
         { to: '/works', label: 'Works' },
