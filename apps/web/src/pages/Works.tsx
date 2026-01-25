@@ -2,6 +2,7 @@ import { SEO } from '../components/SEO';
 import { ExternalLink, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import api from '../api/client';
+import axios from 'axios';
 
 export const Works = () => {
     const [works, setWorks] = useState<any[]>([]);
@@ -13,10 +14,16 @@ export const Works = () => {
 
         // 1. Data Fetching
         const load = new Promise<void>((resolve, reject) => {
-            api.get('/works')
-                .then(res => {
+            Promise.all([
+                api.get('/works').catch(() => ({ data: { works: [] } })),
+                axios.get('/content/works.json').catch(() => ({ data: [] }))
+            ])
+                .then(([apiRes, localRes]) => {
                     if (isMounted) {
-                        if (res.data.works) setWorks(res.data.works);
+                        const apiWorks = apiRes.data.works || [];
+                        const localWorks = localRes.data || [];
+                        // Merge local works (RoboCup, etc) with API works
+                        setWorks([...localWorks, ...apiWorks]);
                         resolve();
                     }
                 })

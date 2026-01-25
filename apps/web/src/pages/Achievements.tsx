@@ -10,6 +10,7 @@ type AchievementItem = {
     detail: string;
     detail_secondary?: string;
     date?: string;
+    image?: string;
 };
 
 type AchievementSection = {
@@ -81,6 +82,15 @@ export const Achievements = () => {
                                             <p className="text-neutral-500 dark:text-neutral-500 text-xs mt-2 italic">
                                                 {item.detail_secondary}
                                             </p>
+                                        )}
+                                        {item.image && (
+                                            <div className="mt-4 rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-700">
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.title}
+                                                    className="w-full h-auto max-h-64 object-cover hover:scale-105 transition-transform duration-500"
+                                                />
+                                            </div>
                                         )}
                                     </div>
                                 ))}

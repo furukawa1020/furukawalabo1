@@ -1,1 +1,17 @@
-[]
+[
+    {
+        "id": "robocup-junior",
+        "title": "RoboCup Junior (Soccer Lightweight)",
+        "thumbnail_url": "/images/robocup-main.jpg",
+        "summary": "2018-2023. 全国大会4年連続出場、郡上ノード優勝、大垣オープン準優勝。自律移動ロボットのハードウェア設計・回路製作・組込みプログラミングまでを一人で完遂。",
+        "published_at": "2023-01-01",
+        "category": "Pre-University",
+        "tags": [
+            "Robotics",
+            "C++",
+            "Circuit Design",
+            "Competition"
+        ],
+        "url": null
+    }
+]
