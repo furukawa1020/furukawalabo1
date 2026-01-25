@@ -12,6 +12,7 @@ import { CookieConsent } from './components/CookieConsent';
 import { ThemeProvider } from './components/ThemeContext';
 import { ThemeToggle } from './components/ThemeToggle';
 import { Menu, X } from 'lucide-react';
+import { SpotlightOverlay } from './components/Spotlight';
 
 function App() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -35,6 +36,7 @@ function App() {
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
             <Router>
                 <div className="min-h-screen bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50 font-sans selection:bg-cyan-500 selection:text-white transition-colors duration-300">
+                    <SpotlightOverlay />
                     <header className="fixed top-0 left-0 right-0 z-40 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border-b border-neutral-200 dark:border-white/10 transition-colors duration-300">
                         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
                             <Link to="/" className="font-bold text-lg tracking-wider font-mono" onClick={() => setMobileMenuOpen(false)}>FUR.ARCHIVE</Link>
