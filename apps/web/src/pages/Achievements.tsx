@@ -65,6 +65,19 @@ export const Achievements = () => {
                             </div>
 
                             <div className="space-y-6">
+                                {section.gallery && (
+                                    <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        {section.gallery.map((imgSrc, idx) => (
+                                            <div key={idx} className="relative group cursor-pointer rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                                                <img
+                                                    src={imgSrc}
+                                                    alt={`Award ${idx + 1}`}
+                                                    className="w-full aspect-[4/3] object-cover group-hover:scale-110 transition-transform duration-500"
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                                 {section.items.map((item, i) => (
                                     <div key={i} className="group relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl hover:border-neutral-300 dark:hover:border-neutral-700 transition-all hover:shadow-lg dark:hover:shadow-neutral-900/50">
                                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-2 mb-2">
