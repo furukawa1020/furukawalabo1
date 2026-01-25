@@ -1,0 +1,67 @@
+[
+    {
+        "id": "sushi-piano",
+        "title": "お寿司deゲーミングピアノ！",
+        "category": "Art",
+        "year": "2025",
+        "tags": [
+            "Hardware",
+            "Music",
+            "Creative"
+        ],
+        "thumbnail_url": "https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&q=80&w=800",
+        "summary": "お寿司を叩くと光って音が鳴る、ゲーミングな楽器デバイス。技育博2025ゆめみ賞受賞。"
+    },
+    {
+        "id": "menfugu",
+        "title": "めんふぐ",
+        "category": "Community",
+        "year": "2025",
+        "tags": [
+            "App",
+            "UX",
+            "Social"
+        ],
+        "thumbnail_url": "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=800",
+        "summary": "メンタルヘルスと食を繋げるSNSプラットフォーム。技育博2025企業賞受賞。"
+    },
+    {
+        "id": "frogecho",
+        "title": "FrogEcho 〜カエルの合唱!!!〜",
+        "category": "HCI",
+        "year": "2025",
+        "tags": [
+            "Sound",
+            "Interactive",
+            "Nature"
+        ],
+        "thumbnail_url": "https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&q=80&w=800",
+        "summary": "カエルの鳴き声をエコーさせて楽しむインタラクティブ・サウンドインスタレーション。"
+    },
+    {
+        "id": "horse-racing-ai",
+        "title": "金沢競馬予想AI (RTX5060版)",
+        "category": "AI",
+        "year": "2026",
+        "tags": [
+            "Python",
+            "ML",
+            "GPU"
+        ],
+        "thumbnail_url": "https://images.unsplash.com/photo-1520333789090-1afc82db536a?auto=format&fit=crop&q=80&w=800",
+        "summary": "最新のRTX5060を搭載した競馬予想サーバー。38%の的中率を誇る。"
+    },
+    {
+        "id": "loopcutmini2",
+        "title": "LoopCutMini2",
+        "category": "Hardware",
+        "year": "2024",
+        "tags": [
+            "ESP32",
+            "3DPrinting",
+            "IoT"
+        ],
+        "thumbnail_url": "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800",
+        "summary": "テープを1mm単位で自動カットする、卓上型テープカッター。電子工作を支える相棒。"
+    }
+]

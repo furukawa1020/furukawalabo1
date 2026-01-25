@@ -28,24 +28,36 @@ const MOCK_WORKS = [
     }
 ];
 
+import axios from 'axios';
+
 export const Works = () => {
     const [works, setWorks] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        setLoading(true);
+        // Step 1: Try API
         api.get('/works')
             .then(res => {
                 if (res.data.works && res.data.works.length > 0) {
                     setWorks(res.data.works);
+                    setLoading(false);
                 } else {
-                    setWorks(MOCK_WORKS);
+                    throw new Error("Empty works list");
                 }
             })
-            .catch(err => {
-                console.error("API Error, using fallback", err);
-                setWorks(MOCK_WORKS);
-            })
-            .finally(() => setLoading(false));
+            .catch(() => {
+                // Step 2: Fallback to static JSON
+                axios.get('/content/works.json')
+                    .then(res => {
+                        setWorks(res.data);
+                    })
+                    .catch(err => {
+                        console.error("Static fetch failed", err);
+                        setWorks(MOCK_WORKS);
+                    })
+                    .finally(() => setLoading(false));
+            });
     }, []);
 
     if (loading) return <div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin" /></div>;

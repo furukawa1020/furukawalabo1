@@ -76,7 +76,21 @@ const LatestContent = () => {
     const [posts, setPosts] = useState<any[]>([]);
 
     useEffect(() => {
-        api.get('/works').then(res => setWorks(res.data.works?.slice(0, 6) || [])).catch(() => { });
+        // Fetch works
+        api.get('/works')
+            .then(res => {
+                if (res.data.works && res.data.works.length > 0) {
+                    setWorks(res.data.works.slice(0, 6));
+                } else {
+                    throw new Error("Empty works");
+                }
+            })
+            .catch(() => {
+                axios.get('/content/works.json')
+                    .then(res => setWorks(res.data.slice(0, 6)))
+                    .catch(() => { });
+            });
+
         // Fetch blogs from static index
         axios.get('/content/blog/index.json')
             .then(res => setPosts(res.data.slice(0, 3)))
