@@ -19,13 +19,14 @@ export const Hero = () => {
                     <h2 className="text-sm md:text-base font-medium tracking-[0.2em] text-cyan-400 mb-6 uppercase">
                         Furukawa Archive OS v1.0
                     </h2>
-                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 bg-gradient-to-r from-white via-neutral-200 to-neutral-400 bg-clip-text text-transparent">
-                        Re-designing <br className="hidden md:block" />
-                        Tech & Society
+                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                        LET'S ENJOY<br className="hidden md:block" />
+                        CONSTRAINTS HACK!
                     </h1>
-                    <p className="max-w-2xl mx-auto text-lg md:text-xl text-neutral-400 mb-12 leading-relaxed">
-                        誰もが生きててよかったと思える瞬間をmakeする。<br />
-                        意味づけの科学と、心に響くものづくり。
+                    <p className="max-w-2xl mx-auto text-lg md:text-xl mb-12 leading-relaxed">
+                        <span className="text-white font-medium">誰もが「生きててよかった」と思える瞬間をmakeする。</span>
+                        <br />
+                        <span className="text-cyan-300">意味づけの科学</span>と、<span className="text-purple-300">心に響くものづくり</span>。
                     </p>
 
                     <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-8">
