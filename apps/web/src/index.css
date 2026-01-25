@@ -10,13 +10,7 @@
 
 body {
   font-family: var(--font-sans);
-  font-size: 18px;
-  /* Base size up for readability */
   line-height: 1.75;
-  color: #e5e5e5;
-  /* Higher contrast text */
-  background-color: #171717;
-  /* Neutral-900 */
 }
 
 h1,
