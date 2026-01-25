@@ -1,5 +1,11 @@
 [
     {
+        "slug": "2026-01-25-ai-pair-programming",
+        "title": "AIエージェントとペアプログラミングで爆速開発した話",
+        "date": "2026-01-25",
+        "summary": "Google DeepMindのAgentic Modeを使って、このFurukawa Archive OSを構築した記録。"
+    },
+    {
         "slug": "2026-01-25-hello",
         "title": "Furukawa Archive OS、起動！",
         "date": "2026-01-25",
