@@ -1,19 +1,35 @@
 import { useState, useEffect } from 'react';
 import api from '../api/client';
 import { SEO } from '../components/SEO';
-import { Save, Loader2, Check } from 'lucide-react';
+import { Save, Loader2, Check, Plus, Trash2, Edit } from 'lucide-react';
 
 const FILES = [
     { id: 'achievements', name: 'Achievements (YAML)' },
     { id: 'about', name: 'About (Markdown)' },
     { id: 'research', name: 'Research (Markdown)' },
-    { id: 'images', name: 'Images (Upload)' } // New Tab
+    { id: 'blogs', name: 'Blogs (Markdown)' },
+    { id: 'images', name: 'Images (Upload)' }
 ];
+
+type BlogPost = {
+    slug: string;
+    title: string;
+    date: string;
+    summary: string;
+    body?: string;
+};
 
 export const Admin = () => {
     const [selectedFile, setSelectedFile] = useState(FILES[0].id);
     const [content, setContent] = useState('');
     const [images, setImages] = useState<{ name: string, url: string }[]>([]);
+
+    // Blog State
+    const [blogs, setBlogs] = useState<BlogPost[]>([]);
+    const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
+    const [isEditingBlog, setIsEditingBlog] = useState(false);
+    const [blogForm, setBlogForm] = useState<BlogPost>({ slug: '', title: '', date: '', summary: '', body: '' });
+
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
@@ -21,6 +37,8 @@ export const Admin = () => {
     useEffect(() => {
         if (selectedFile === 'images') {
             refreshImages();
+        } else if (selectedFile === 'blogs') {
+            refreshBlogs();
         } else {
             setLoading(true);
             api.get(`/admin/contents/${selectedFile}`)
@@ -38,6 +56,14 @@ export const Admin = () => {
             .finally(() => setLoading(false));
     };
 
+    const refreshBlogs = () => {
+        setLoading(true);
+        api.get('/admin/blogs')
+            .then(res => setBlogs(res.data.posts))
+            .catch(err => console.error(err))
+            .finally(() => setLoading(false));
+    };
+
     const handleSave = async () => {
         setSaving(true);
         try {
@@ -50,6 +76,83 @@ export const Admin = () => {
         } finally {
             setSaving(false);
         }
+    };
+
+    const handleBlogSave = async () => {
+        if (!blogForm.slug || !blogForm.title) {
+            alert('Slug and Title are required');
+            return;
+        }
+
+        setSaving(true);
+        try {
+            if (isEditingBlog && selectedBlog) {
+                // Update
+                await api.put(`/admin/blogs/${selectedBlog.slug}`, {
+                    new_slug: blogForm.slug,
+                    title: blogForm.title,
+                    date: blogForm.date,
+                    summary: blogForm.summary,
+                    body: blogForm.body
+                });
+            } else {
+                // Create
+                await api.post('/admin/blogs', blogForm);
+            }
+            setSaved(true);
+            setTimeout(() => setSaved(false), 2000);
+
+            // Reset view to list
+            setIsEditingBlog(false);
+            setSelectedBlog(null);
+            refreshBlogs();
+        } catch (e) {
+            alert('Save failed');
+            console.error(e);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleBlogDelete = async (slug: string) => {
+        if (!confirm('Are you sure you want to delete this post?')) return;
+        setSaving(true);
+        try {
+            await api.delete(`/admin/blogs/${slug}`);
+            refreshBlogs();
+        } catch (e) {
+            alert('Delete failed');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const startEditBlog = async (post: BlogPost) => {
+        setLoading(true);
+        try {
+            const res = await api.get(`/admin/blogs/${post.slug}`);
+            const raw = res.data.content;
+
+            // Basic parsing of frontmatter for body
+            // This is a naive split
+            const parts = raw.split('---');
+            const body = parts.length > 2 ? parts.slice(2).join('---').trim() : raw;
+
+            setBlogForm({ ...post, body });
+            setSelectedBlog(post);
+            setIsEditingBlog(true);
+        } catch (e) {
+            alert('Failed to load post');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const startNewBlog = () => {
+        const today = new Date().toISOString().split('T')[0];
+        setBlogForm({ slug: '', title: '', date: today, summary: '', body: '' });
+        setSelectedBlog(null);
+        setIsEditingBlog(true);
     };
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,7 +186,10 @@ export const Admin = () => {
                         {FILES.map(f => (
                             <button
                                 key={f.id}
-                                onClick={() => setSelectedFile(f.id)}
+                                onClick={() => {
+                                    setSelectedFile(f.id);
+                                    setIsEditingBlog(false);
+                                }}
                                 className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${selectedFile === f.id
                                     ? 'bg-neutral-900 text-white dark:bg-white dark:text-black'
                                     : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
@@ -95,7 +201,7 @@ export const Admin = () => {
                     </div>
                 </div>
 
-                <div className="flex-grow relative bg-neutral-900 rounded-xl overflow-hidden">
+                <div className="flex-grow relative bg-neutral-900 rounded-xl overflow-hidden shadow-2xl border border-neutral-800">
                     {loading ? (
                         <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/80 backdrop-blur-sm z-10 text-white">
                             <Loader2 className="animate-spin" />
@@ -138,6 +244,126 @@ export const Admin = () => {
                                 ※ 注意: アップロード後は必ず `UPDATE_CONTENT.bat` で同期（またはデプロイ）してください。
                             </p>
                         </div>
+                    ) : selectedFile === 'blogs' ? (
+                        <div className="h-full flex flex-col text-white">
+                            {isEditingBlog ? (
+                                // Blog Editor
+                                <div className="flex flex-col h-full">
+                                    <div className="p-4 border-b border-neutral-800 flex items-center gap-4 bg-neutral-900 z-10">
+                                        <button onClick={() => setIsEditingBlog(false)} className="text-sm text-neutral-400 hover:text-white">
+                                            ← List
+                                        </button>
+                                        <span className="font-bold">
+                                            {selectedBlog ? 'Edit Post' : 'New Post'}
+                                        </span>
+                                    </div>
+                                    <div className="flex-grow p-6 overflow-y-auto space-y-4">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-xs text-neutral-500 mb-1">Title</label>
+                                                <input
+                                                    type="text"
+                                                    value={blogForm.title}
+                                                    onChange={e => setBlogForm({ ...blogForm, title: e.target.value })}
+                                                    className="w-full bg-neutral-800 border border-neutral-700 rounded p-2 text-sm"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs text-neutral-500 mb-1">Slug (URL)</label>
+                                                <input
+                                                    type="text"
+                                                    value={blogForm.slug}
+                                                    onChange={e => setBlogForm({ ...blogForm, slug: e.target.value })}
+                                                    className="w-full bg-neutral-800 border border-neutral-700 rounded p-2 text-sm font-mono"
+                                                    placeholder="my-new-post"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-xs text-neutral-500 mb-1">Date (YYYY-MM-DD)</label>
+                                                <input
+                                                    type="text"
+                                                    value={blogForm.date}
+                                                    onChange={e => setBlogForm({ ...blogForm, date: e.target.value })}
+                                                    className="w-full bg-neutral-800 border border-neutral-700 rounded p-2 text-sm font-mono"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs text-neutral-500 mb-1">Summary</label>
+                                                <input
+                                                    type="text"
+                                                    value={blogForm.summary}
+                                                    onChange={e => setBlogForm({ ...blogForm, summary: e.target.value })}
+                                                    className="w-full bg-neutral-800 border border-neutral-700 rounded p-2 text-sm"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="h-full flex flex-col">
+                                            <label className="block text-xs text-neutral-500 mb-1">Body (Markdown)</label>
+                                            <textarea
+                                                value={blogForm.body}
+                                                onChange={e => setBlogForm({ ...blogForm, body: e.target.value })}
+                                                className="w-full h-96 bg-neutral-800 border border-neutral-700 rounded p-4 font-mono text-sm resize-none focus:outline-none focus:border-cyan-500"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="p-4 border-t border-neutral-800 flex justify-end">
+                                        <button
+                                            onClick={handleBlogSave}
+                                            disabled={saving}
+                                            className="px-6 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg flex items-center gap-2"
+                                        >
+                                            {saving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
+                                            Save Post
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                // Blog List
+                                <div className="p-6 h-full overflow-y-auto">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h2 className="text-xl font-bold">Blog Posts</h2>
+                                        <button
+                                            onClick={startNewBlog}
+                                            className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg flex items-center gap-2 text-sm"
+                                        >
+                                            <Plus size={16} /> New Post
+                                        </button>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {blogs.map(post => (
+                                            <div key={post.slug} className="flex items-center justify-between p-4 bg-neutral-800 rounded-xl border border-neutral-700 hover:border-neutral-500 group">
+                                                <div>
+                                                    <h3 className="font-bold">{post.title}</h3>
+                                                    <div className="flex gap-4 text-xs text-neutral-500 mt-1">
+                                                        <span className="font-mono">{post.date}</span>
+                                                        <span className="font-mono">{post.slug}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <button
+                                                        onClick={() => startEditBlog(post)}
+                                                        className="p-2 bg-neutral-700 rounded-lg hover:bg-cyan-600/20 hover:text-cyan-400"
+                                                    >
+                                                        <Edit size={16} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleBlogDelete(post.slug)}
+                                                        className="p-2 bg-neutral-700 rounded-lg hover:bg-red-900/20 hover:text-red-400"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {blogs.length === 0 && (
+                                            <p className="text-neutral-500 italic">No posts found.</p>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     ) : (
                         <textarea
                             value={content}
@@ -148,7 +374,7 @@ export const Admin = () => {
                     )}
                 </div>
 
-                {selectedFile !== 'images' && (
+                {selectedFile !== 'images' && selectedFile !== 'blogs' && (
                     <div className="mt-6 flex justify-end">
                         <button
                             onClick={handleSave}
