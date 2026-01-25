@@ -34,7 +34,47 @@ export const Admin = () => {
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
 
+    const [credentials, setCredentials] = useState({ username: '', password: '' });
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
     useEffect(() => {
+        // Check if we have credentials in session storage
+        const stored = sessionStorage.getItem('admin_auth');
+        if (stored) {
+            const { username, password } = JSON.parse(stored);
+            setCredentials({ username, password });
+            setIsAuthenticated(true);
+        }
+    }, []);
+
+    const handleLogin = (e: React.FormEvent) => {
+        e.preventDefault();
+        // Basic validation or just set it and let API fail if wrong
+        if (credentials.username && credentials.password) {
+            const auth = btoa(`${credentials.username}:${credentials.password}`);
+            // Configure global or local api client header
+            api.defaults.headers.common['Authorization'] = `Basic ${auth}`;
+            sessionStorage.setItem('admin_auth', JSON.stringify(credentials));
+            setIsAuthenticated(true);
+        }
+    };
+
+    const logout = () => {
+        sessionStorage.removeItem('admin_auth');
+        delete api.defaults.headers.common['Authorization'];
+        setIsAuthenticated(false);
+        setCredentials({ username: '', password: '' });
+    };
+
+    useEffect(() => {
+        if (!isAuthenticated) return;
+
+        // Apply auth header if rehydrating (e.g. refresh)
+        if (credentials.username && credentials.password) {
+            const auth = btoa(`${credentials.username}:${credentials.password}`);
+            api.defaults.headers.common['Authorization'] = `Basic ${auth}`;
+        }
+
         if (selectedFile === 'images') {
             refreshImages();
         } else if (selectedFile === 'blogs') {
@@ -43,10 +83,52 @@ export const Admin = () => {
             setLoading(true);
             api.get(`/admin/contents/${selectedFile}`)
                 .then(res => setContent(res.data.content))
-                .catch(err => console.error(err))
+                .catch(err => {
+                    console.error(err);
+                    if (err.response?.status === 401) {
+                        alert('Authentication failed');
+                        logout();
+                    }
+                })
                 .finally(() => setLoading(false));
         }
-    }, [selectedFile]);
+    }, [selectedFile, isAuthenticated]); // Re-run when auth changes
+
+    if (!isAuthenticated) {
+        return (
+            <>
+                <SEO title="Admin Login" />
+                <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-6">
+                    <form onSubmit={handleLogin} className="bg-neutral-800 p-8 rounded-2xl border border-neutral-700 w-full max-w-sm shadow-2xl">
+                        <h1 className="text-2xl font-bold text-white mb-6 text-center">Admin Access</h1>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm text-neutral-400 mb-1">Username</label>
+                                <input
+                                    type="text"
+                                    value={credentials.username}
+                                    onChange={e => setCredentials({ ...credentials, username: e.target.value })}
+                                    className="w-full bg-neutral-900 border border-neutral-700 rounded-lg p-3 text-white focus:border-cyan-500 outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm text-neutral-400 mb-1">Password</label>
+                                <input
+                                    type="password"
+                                    value={credentials.password}
+                                    onChange={e => setCredentials({ ...credentials, password: e.target.value })}
+                                    className="w-full bg-neutral-900 border border-neutral-700 rounded-lg p-3 text-white focus:border-cyan-500 outline-none"
+                                />
+                            </div>
+                            <button type="submit" className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-lg transition-colors">
+                                Login
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </>
+        );
+    }
 
     const refreshImages = () => {
         setLoading(true);
@@ -181,7 +263,10 @@ export const Admin = () => {
             <SEO title="Admin" />
             <div className="container mx-auto px-6 py-24 h-screen flex flex-col">
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold">Content Editor</h1>
+                    <div className="flex items-center gap-4">
+                        <h1 className="text-2xl font-bold">Content Editor</h1>
+                        <button onClick={logout} className="text-xs text-red-400 hover:text-red-300 underline">Logout</button>
+                    </div>
                     <div className="flex gap-2 text-xs md:text-sm overflow-x-auto pb-2">
                         {FILES.map(f => (
                             <button
