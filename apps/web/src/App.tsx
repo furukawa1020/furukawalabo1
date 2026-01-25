@@ -15,6 +15,7 @@ import { Menu, X } from 'lucide-react';
 import { SpotlightOverlay } from './components/Spotlight';
 import { UniversalAccess } from './components/UniversalAccess';
 import { HyperText } from './components/HyperText';
+import { DonationNotification } from './components/DonationNotification';
 
 function App() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -113,6 +114,7 @@ function App() {
                     </footer>
 
                     <CookieConsent />
+                    <DonationNotification />
                 </div>
             </Router>
         </ThemeProvider>

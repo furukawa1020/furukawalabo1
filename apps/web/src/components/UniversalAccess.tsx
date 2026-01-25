@@ -1,17 +1,24 @@
 import { useState, useEffect } from 'react';
-import { Accessibility, Type, Sun, ZapOff, Check, X } from 'lucide-react';
+import { PersonStanding, Type, Sun, ZapOff, Check, X } from 'lucide-react';
 
 export const UniversalAccess = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [settings, setSettings] = useState({
-        textSize: 'normal', // normal, large, xlarge
-        highContrast: false,
-        reduceMotion: false,
-        readableFont: false,
+
+    // Load settings from localStorage or use defaults
+    const [settings, setSettings] = useState(() => {
+        const saved = localStorage.getItem('ua_settings');
+        return saved ? JSON.parse(saved) : {
+            textSize: 'normal', // normal, large, xlarge
+            highContrast: false,
+            reduceMotion: false,
+            readableFont: false,
+        };
     });
 
-    // Apply settings to document
+    // Save settings to localStorage whenever they change
     useEffect(() => {
+        localStorage.setItem('ua_settings', JSON.stringify(settings));
+
         const root = document.documentElement;
 
         // Text Size
@@ -45,7 +52,7 @@ export const UniversalAccess = () => {
             `}>
                 <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-neutral-100/50 dark:bg-neutral-800/50">
                     <h3 className="font-bold flex items-center gap-2 text-sm">
-                        <Accessibility size={16} />
+                        <PersonStanding size={16} />
                         Universal Access
                     </h3>
                     <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded full transition-colors">
@@ -63,7 +70,7 @@ export const UniversalAccess = () => {
                             {(['normal', 'large', 'xlarge'] as const).map((size) => (
                                 <button
                                     key={size}
-                                    onClick={() => setSettings(s => ({ ...s, textSize: size }))}
+                                    onClick={() => setSettings((s: any) => ({ ...s, textSize: size }))}
                                     className={`
                                         py-2 px-1 rounded-lg text-sm border transition-all
                                         ${settings.textSize === size
@@ -82,7 +89,7 @@ export const UniversalAccess = () => {
                     {/* Toggles */}
                     <div className="space-y-3">
                         <button
-                            onClick={() => setSettings(s => ({ ...s, highContrast: !s.highContrast }))}
+                            onClick={() => setSettings((s: any) => ({ ...s, highContrast: !s.highContrast }))}
                             className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${settings.highContrast
                                 ? 'bg-yellow-400 text-black border-yellow-500 font-bold'
                                 : 'bg-neutral-100 dark:bg-neutral-800 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600'
@@ -96,7 +103,7 @@ export const UniversalAccess = () => {
                         </button>
 
                         <button
-                            onClick={() => setSettings(s => ({ ...s, reduceMotion: !s.reduceMotion }))}
+                            onClick={() => setSettings((s: any) => ({ ...s, reduceMotion: !s.reduceMotion }))}
                             className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${settings.reduceMotion
                                 ? 'bg-cyan-500 text-white border-cyan-500 font-bold'
                                 : 'bg-neutral-100 dark:bg-neutral-800 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600'
@@ -110,7 +117,7 @@ export const UniversalAccess = () => {
                         </button>
 
                         <button
-                            onClick={() => setSettings(s => ({ ...s, readableFont: !s.readableFont }))}
+                            onClick={() => setSettings((s: any) => ({ ...s, readableFont: !s.readableFont }))}
                             className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${settings.readableFont
                                 ? 'bg-cyan-500 text-white border-cyan-500 font-bold'
                                 : 'bg-neutral-100 dark:bg-neutral-800 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600'
@@ -137,7 +144,7 @@ export const UniversalAccess = () => {
                 `}
                 aria-label="Universal Access Menu"
             >
-                <Accessibility size={24} />
+                <PersonStanding size={24} />
             </button>
         </div>
     );

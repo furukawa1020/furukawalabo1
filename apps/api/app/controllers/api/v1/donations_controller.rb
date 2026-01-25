@@ -52,7 +52,7 @@ module Api
           session = event['data']['object']
           
           # Fulfill the purchase...
-          Donation.create!(
+          donation = Donation.create!(
             amount: session['amount_total'],
             currency: session['currency'],
             status: 'succeeded',
@@ -60,6 +60,14 @@ module Api
             message: session['metadata']['message'],
             donor_name: session['metadata']['donor_name']
           )
+
+          # Broadcast to ActionCable
+          ActionCable.server.broadcast('donations_channel', {
+            amount: donation.amount,
+            donor_name: donation.donor_name,
+            message: donation.message,
+            timestamp: Time.current
+          })
         end
 
         render json: { status: 'success' }
