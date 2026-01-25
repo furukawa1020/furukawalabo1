@@ -15,6 +15,7 @@ export const Hero = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
+                >
                     <h2 className="text-lg md:text-xl font-bold tracking-[0.3em] text-cyan-400 mb-8 uppercase drop-shadow-md">
                         Furukawa Archive OS v1.0
                     </h2>
