@@ -7,6 +7,7 @@ use axum::{
 };
 use std::net::SocketAddr;
 use reqwest::Client;
+use std::env;
 
 #[tokio::main]
 async fn main() {
@@ -19,7 +20,9 @@ async fn main() {
         .route("/ai/*path", any(proxy_ai))   // Forward to AI
         .fallback(proxy_web); // Forward everything else to Web
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
+    let port = env::var("PORT").unwrap_or_else(|_| "8000".to_string());
+    let addr_str = format!("0.0.0.0:{}", port);
+    let addr: SocketAddr = addr_str.parse().expect("Invalid address");
     println!("Edge Gateway listening on {}", addr);
     
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
@@ -36,10 +39,9 @@ async fn proxy_api(mut req: Request<Body>) -> impl IntoResponse {
     let path = req.uri().path();
     let query = req.uri().query().map(|q| format!("?{}", q)).unwrap_or_default();
     
-    // Assume API is on proper host/port in Docker network.
-    // In docker-compose, service name is "api", internal port 3000 (Rails default usually 3000)
-    // IMPORTANT: Make sure `api` service is actually listening on 3000 inside container.
-    let target_url = format!("http://api:3000{}", path); 
+    // Get upstream URL from env
+    let api_base = env::var("API_URL").unwrap_or_else(|_| "http://api:3000".to_string());
+    let target_url = format!("{}{}", api_base, path); 
     
     let (parts, body) = req.into_parts();
     let method = parts.method;
@@ -75,7 +77,11 @@ async fn proxy_web(req: Request<Body>) -> impl IntoResponse {
     let client = Client::new();
     let path = req.uri().path();
     let query = req.uri().query().map(|q| format!("?{}", q)).unwrap_or_default();
-    let target_url = format!("http://web:80{}{}", path, query);
+    
+    // Get upstream URL from env. Default to http://web:5173 (Vite default) or http://web:3000 
+    // In Dockerfile we saw npm run dev --host, which usually defaults to 5173
+    let web_base = env::var("WEB_URL").unwrap_or_else(|_| "http://web:5173".to_string());
+    let target_url = format!("{}{}{}", web_base, path, query);
     
     let (parts, body) = req.into_parts();
     let method = parts.method;
@@ -107,9 +113,7 @@ async fn proxy_web(req: Request<Body>) -> impl IntoResponse {
 async fn proxy_ai(mut req: Request<Body>) -> impl IntoResponse {
     let client = Client::new();
     let path = req.uri().path(); // e.g. /ai/predict
-    // Strip /ai prefix if needed? usually services expect their own root, or we keep it.
-    // For simplicity, we forward as is, assuming AI service handles /ai/xxx or we rewrite.
-    // Let's rewrite: /ai/foo -> /foo
+    
     let path_no_prefix = if path.starts_with("/ai") {
         &path[3..]
     } else {
@@ -117,8 +121,9 @@ async fn proxy_ai(mut req: Request<Body>) -> impl IntoResponse {
     };
     let query = req.uri().query().map(|q| format!("?{}", q)).unwrap_or_default();
     
-    // AI service is on port 5000
-    let target_url = format!("http://ai:5000{}", path_no_prefix); 
+    // Get upstream URL from env
+    let ai_base = env::var("AI_URL").unwrap_or_else(|_| "http://ai:5000".to_string());
+    let target_url = format!("{}{}", ai_base, path_no_prefix); 
     
     let (parts, body) = req.into_parts();
     let method = parts.method;
