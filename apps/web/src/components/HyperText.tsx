@@ -5,10 +5,9 @@ const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#
 type HyperTextProps = {
     children: string;
     className?: string;
-    duration?: number;
 };
 
-export const HyperText = ({ children, className = "", duration = 800 }: HyperTextProps) => {
+export const HyperText = ({ children, className = "" }: HyperTextProps) => {
     const [text, setText] = useState(children);
     const intervalRef = useRef<number | null>(null);
 
@@ -22,7 +21,7 @@ export const HyperText = ({ children, className = "", duration = 800 }: HyperTex
             setText((prev) =>
                 prev
                     .split("")
-                    .map((char, index) => {
+                    .map((_, index) => {
                         if (index < iteration) {
                             return children[index];
                         }
