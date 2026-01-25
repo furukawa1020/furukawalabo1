@@ -1,6 +1,7 @@
 FROM rustlang/rust:nightly-slim
 
 WORKDIR /app
+# Force Railway Rebuild: v2
 
 COPY Cargo.toml .
 # Create dummy main to cache dependencies
