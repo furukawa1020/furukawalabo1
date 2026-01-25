@@ -30,7 +30,7 @@ export const Donate = () => {
 
     return (
         <>
-            <SEO title="Donate" description="ご支援のお願い" />
+            <SEO title="寄付のお願い" description="ご支援のお願い" />
             <div className="container mx-auto px-6 py-24 max-w-2xl text-center">
                 <div className="flex justify-center mb-6">
                     <div className="p-4 bg-cyan-900/30 rounded-full text-cyan-400">
