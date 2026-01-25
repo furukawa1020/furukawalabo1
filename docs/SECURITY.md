@@ -1,22 +1,14 @@
-# Security Policy
+# Furukawa Archive OS Security Policy
 
-## Reporting a Vulnerability
+## Core Principles
+- **Minimal Surface Area**: Microservices are containerized and only the Edge Gateway is exposed to the public.
+- **Data Integrity**: All database interactions use parameterized queries to prevent SQL injection.
+- **Compliance**: Cookie consent management (category-based) is enforced for all tracking activities.
 
-Please report security vulnerabilities to [f.kotaro.0530@gmail.com](mailto:f.kotaro.0530@gmail.com).
+## Implementation Details
+- **Stripe**: All payment processing is handled by Stripe. No credit card information touches our servers. Webhook signatures are strictly verified.
+- **Edge Gateway**: Rate limiting is implemented in the Rust gateway to prevent DDoS and brute-force attacks.
+- **Content Security**: Markdown content is sanitized before rendering to prevent XSS.
 
-## Policy
-
-*   **Stripe**: We use Stripe for payments. We do not store credit card information on our servers. All explicit payment processing is handled by Stripe.
-*   **Data Privacy**:
-    *   Cookie consents are stored to comply with privacy laws.
-    *   Donation records are stored for accounting transparency but contain minimal personal data (Name, Message).
-*   **Infrastructure**:
-    *   All services run in isolated containers.
-    *   Edge Gateway (Rust) handles rate limiting.
-    *   Database access is restricted to the internal network.
-
-## Supported Versions
-
-| Service | Version | Supported |
-| :--- | :--- | :--- |
-| Furukawa OS | v1.0 | :white_check_mark: |
+## Reporting Vulnerabilities
+If you discover a security vulnerability, please report it via the contact details on the [About](/about) page.

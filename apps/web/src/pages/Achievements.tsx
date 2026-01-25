@@ -8,6 +8,7 @@ type AchievementItem = {
     year: string | number;
     title: string;
     detail: string;
+    detail_secondary?: string;
     date?: string;
 };
 
@@ -76,6 +77,11 @@ export const Achievements = () => {
                                         <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">
                                             {item.detail}
                                         </p>
+                                        {item.detail_secondary && (
+                                            <p className="text-neutral-500 dark:text-neutral-500 text-xs mt-2 italic">
+                                                {item.detail_secondary}
+                                            </p>
+                                        )}
                                     </div>
                                 ))}
                             </div>

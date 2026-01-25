@@ -1,43 +1,28 @@
-# Architecture
+# Furukawa Archive OS Architecture
 
-## Overview
-**Furukawa Archive OS** is a polyglot microservices system designed to archive and visualize the research, works, and achievements of Kotaro Furukawa.
+## System Overview
+Furukawa Archive OS is a microservice-based portfolio platform designed for high performance, reliability, and engineering transparency.
 
-## Services
+## Component Responsibilities
 
-### 1. Web Frontend (`apps/web`)
-*   **Tech**: React 18, Vite, TypeScrip, Tailwind CSS.
-*   **Role**: PWA rendering, Routing, SEO (OGP), UI/UX.
-*   **Pages**: `/research` (Poster), `/works` (Grid), `/achievements` (Timeline), `/blog`.
+```mermaid
+graph TD
+    User((User)) --> Gateway[Rust Edge Gateway]
+    Gateway --> Web[React PWA]
+    Gateway --> Rails[Rails API]
+    Gateway --> AI[Python AI API]
+    Worker[Go Worker] --> DB[(PostgreSQL)]
+    Rails --> DB
+    Worker --> Protopedia[Protopedia API]
+```
 
-### 2. Core API (`apps/api`)
-*   **Tech**: Ruby on Rails 7.1 (API Mode).
-*   **Role**:
-    *   **DB**: PostgreSQL Source of Truth.
-    *   **Resources**: `Works` (Synced), `Donations` (Stripe), `CookieLog`.
-    *   **Management**: Admin endpoints.
-
-### 3. Edge Gateway (`apps/edge`)
-*   **Tech**: Rust (Axum).
-*   **Role**: Entry point, Rate Limiting, Request Routing (Proxy to Web/API).
-*   **Port**: 8000 (Internal/Public).
-
-### 4. Worker (`apps/worker`)
-*   **Tech**: Go.
-*   **Role**:
-    *   **Protopedia Sync**: Periodically (6h) fetches works from Protopedia API and upserts to Rails DB.
-    *   **Health Check**: Monitors external links.
-
-### 5. AI Service (`apps/ai`)
-*   **Tech**: Python (FastAPI).
-*   **Role**: (v1.0) Placeholder for semantic search and recommendation engine.
+- **Web (React/TS)**: High-fidelity PWA frontend. Optimized for OGP and accessibility.
+- **API (Rails)**: Central data authority. Manages donations, blog metadata, and core resources.
+- **Edge Gateway (Rust/Axum)**: Performance-oriented routing, rate limiting, and security.
+- **Worker (Go)**: Efficient background synchronization. Handles Protopedia periodic updates every 6 hours.
+- **AI (Python)**: Specialized service for future semantic enhancements (meaning-making analysis).
 
 ## Data Flow
-1.  **User Visits**: `Edge (8000)` -> `Web (3000)`.
-2.  **User Views Works**: `Web` -> `Edge` -> `API (8080)` -> `DB`.
-3.  **Background**: `Worker` -> `Protopedia` -> `DB`.
-4.  **Donation**: `Web` -> `Stripe` -> `Webhook` -> `API` -> `DB`.
-
-## Infrastructure
-*   **Docker Compose**: Orchestrates all services + Redis + Postgres.
-*   **Volumes**: `db_data` (Postgres persistence).
+1. **Content**: Managed via Markdown/YAML in Git. Reflected on Netlify/VPS via push hooks.
+2. **Works**: Periodically synced from Protopedia by the Go Worker into PostgreSQL. Served via Rails API with static fallbacks for extreme reliability.
+3. **Donations**: Stripe Checkout flow with webhook confirmation logged in PostgreSQL.

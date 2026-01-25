@@ -1,38 +1,23 @@
-# Runbook
+# Furukawa Archive OS Runbook
 
-## 1. Development (Local)
+## Deployment
+This system is optimized for **Railway** and **Netlify**.
 
-### Quick Start
-```bash
-# Start all services
-docker compose -f infra/docker-compose.yml up --build
-```
-Access the site at `http://localhost:3000` (Web) or `http://localhost:8000` (Gateway).
+### Backend (Railway)
+1. Push to `main` branch.
+2. Railway will pick up changes in `apps/api`, `apps/worker`, and `apps/edge`.
+3. Ensure Environment Variables (`DATABASE_URL`, `STRIPE_SECRET_KEY`, etc.) are set in the Railway dashboard.
 
-### Content Updates
-*   **Achievements**: Edit `content/achievements.yml`.
-*   **About/Research**: Edit `content/pages/*.md`.
-*   **Blog**: Add markdown files to `content/blog/`.
-*   Note: For v1.0, some content is copied to `apps/web/public` during build/setup. Ensure you sync changes.
+### Frontend (Netlify)
+1. Push to `main` branch.
+2. Build command: `npm run build` (in `apps/web`).
+3. Ensure `VITE_API_URL` points to the Railway gateway.
 
-## 2. Protopedia Sync
-The **Worker** service runs automatically every 6 hours.
-To force sync (verify logs):
-```bash
-docker compose logs -f worker
-```
+## Maintenance
+- **Schema Migrations**: Handled automatically on startup in `apps/api/entrypoint.sh`.
+- **Worker Logs**: Monitor `apps/worker` logs for Protopedia sync status.
+- **Backups**: Standard Railway PostgreSQL backups are recommended.
 
-## 3. Database
-### Backup
-```bash
-docker compose exec db pg_dump -U postgres furukawa_os > backup_$(date +%Y%m%d).sql
-```
-### Restore
-```bash
-cat backup.sql | docker compose exec -T db psql -U postgres furukawa_os
-```
-
-## 4. Troubleshooting
-*   **Frontend specific**: `cd apps/web && npm run dev`
-*   **Rails Console**: `docker compose exec api ./bin/rails c`
-*   **Logs**: `docker compose logs -f [service_name]`
+## Troubleshooting
+- **502 Bad Gateway**: Check if the target service (API/AI) is healthy in the Railway dashboard.
+- **Empty Works**: Check worker logs. Verify if the Protopedia API is reachable and if the user ID `hatake` is correct.
