@@ -1,5 +1,7 @@
 import { SEO } from '../components/SEO';
 import { ExternalLink, Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import api from '../api/client';
 
 export const Works = () => {
     const [works, setWorks] = useState<any[]>([]);
