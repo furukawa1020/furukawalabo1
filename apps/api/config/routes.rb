@@ -17,6 +17,9 @@ Rails.application.routes.draw do
         resources :contents, only: [:show, :update]
         resources :images, only: [:create, :index]
         post 'sync/protopedia', to: 'sync#protopedia'
+        
+        # Temporary public endpoint for initial setup
+        get 'sync/force', to: 'sync#force_sync'
       end
       
       resources :works, only: [:index, :show]

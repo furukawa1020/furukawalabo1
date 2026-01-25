@@ -2,10 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+
 :root {
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Inter', 'Noto Sans JP', system-ui, -apple-system, sans-serif;
 }
 
 body {
   font-family: var(--font-sans);
+  font-size: 18px;
+  /* Base size up for readability */
+  line-height: 1.75;
+  color: #e5e5e5;
+  /* Higher contrast text */
+  background-color: #171717;
+  /* Neutral-900 */
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-sans);
+  letter-spacing: 0.05em;
 }

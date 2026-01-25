@@ -3,9 +3,20 @@ module Api
     module Admin
       class SyncController < ApplicationController
         # Simple token authentication
-        before_action :authenticate_admin!
+        before_action :authenticate_admin!, except: [:force_sync]
 
         def protopedia
+          trigger_sync
+        end
+
+        def force_sync
+          # Public endpoint for initial setup - works via browser GET
+          trigger_sync
+        end
+
+        private
+
+        def trigger_sync
           # Trigger Go Worker sync
           worker_url = ENV['WORKER_URL'] || 'http://localhost:8080'
           auth_token = ENV['WORKER_AUTH_TOKEN'] || 'default-secret-token'
@@ -18,7 +29,7 @@ module Api
             if response.status.success?
               render json: { 
                 status: 'success', 
-                message: 'Protopedia sync triggered',
+                message: 'Protopedia sync triggered successfully via Worker',
                 worker_response: JSON.parse(response.body.to_s)
               }
             else
@@ -35,8 +46,6 @@ module Api
             }, status: :internal_server_error
           end
         end
-
-        private
 
         def authenticate_admin!
           admin_token = ENV['ADMIN_API_TOKEN']
