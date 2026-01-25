@@ -32,4 +32,7 @@ Rails.application.routes.draw do
   # Health check
   get '/up', to: proc { [200, {}, ['OK']] }
   get '/api/v1/up', to: proc { [200, {}, ['OK']] }
+
+  # WebSocket endpoint
+  mount ActionCable.server => '/cable'
 end

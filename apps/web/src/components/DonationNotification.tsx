@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { createConsumer } from '@rails/actioncable';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gift, X } from 'lucide-react';
+import { Gift, X, Users } from 'lucide-react';
 
 interface DonationData {
     amount: number;
@@ -12,6 +12,7 @@ interface DonationData {
 
 export const DonationNotification = () => {
     const [donations, setDonations] = useState<DonationData[]>([]);
+    const [visitorCount, setVisitorCount] = useState<number>(0);
 
     useEffect(() => {
         // Connect to ActionCable
@@ -23,13 +24,17 @@ export const DonationNotification = () => {
         const cable = createConsumer(wsUrl);
 
         const subscription = cable.subscriptions.create("DonationsChannel", {
-            received(data: DonationData) {
-                console.log("Donation received!", data);
-                setDonations(prev => [...prev, data]);
-                // Auto dismiss after 8 seconds
-                setTimeout(() => {
-                    setDonations(prev => prev.filter(d => d !== data));
-                }, 8000);
+            received(data: any) {
+                if (data.type === 'visitor_count') {
+                    setVisitorCount(data.count);
+                } else {
+                    console.log("Donation received!", data);
+                    setDonations(prev => [...prev, data]);
+                    // Auto dismiss after 8 seconds
+                    setTimeout(() => {
+                        setDonations(prev => prev.filter(d => d !== data));
+                    }, 8000);
+                }
             }
         });
 
@@ -41,6 +46,16 @@ export const DonationNotification = () => {
 
     return (
         <div className="fixed bottom-6 left-6 z-50 flex flex-col gap-2 pointer-events-none">
+            {/* Online Count Badge */}
+            {visitorCount > 0 && (
+                <div className="pointer-events-auto bg-neutral-900/80 backdrop-blur text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 border border-white/10 w-fit">
+                    <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <span className="font-mono">{visitorCount} watching now</span>
+                </div>
+            )}
             <AnimatePresence>
                 {donations.map((donation, index) => (
                     <motion.div

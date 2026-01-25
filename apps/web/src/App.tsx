@@ -5,7 +5,7 @@ import { Research } from './pages/Research';
 import { Works } from './pages/Works';
 import { Achievements } from './pages/Achievements';
 import { Blog } from './pages/Blog';
-// import { Donate } from './pages/Donate';
+import { Donate } from './pages/Donate';
 import { About } from './pages/About';
 import { Admin } from './pages/Admin';
 import { CookieConsent } from './components/CookieConsent';
@@ -32,7 +32,7 @@ function App() {
         { to: '/works', label: 'Works' },
         { to: '/achievements', label: 'Achievements' },
         { to: '/blog', label: 'Blog' },
-        // { to: '/donate', label: '寄付のお願い', special: true },
+        { to: '/donate', label: 'おやつ代と質問ボックス', special: true },
     ];
 
     return (
@@ -105,7 +105,7 @@ function App() {
                             <Route path="/works" element={<Works />} />
                             <Route path="/achievements" element={<Achievements />} />
                             <Route path="/blog" element={<Blog />} />
-                            {/* <Route path="/donate" element={<Donate />} /> */}
+                            <Route path="/donate" element={<Donate />} />
                         </Routes>
                     </main>
 
