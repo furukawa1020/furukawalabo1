@@ -34,7 +34,7 @@ export const Works = () => {
         const timeout = new Promise<void>((_, reject) => {
             setTimeout(() => {
                 reject(new Error('Timeout'));
-            }, 3000);
+            }, 5000);
         });
 
         // Race them
