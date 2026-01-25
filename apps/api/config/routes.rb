@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       namespace :admin do
         resources :contents, only: [:show, :update]
         resources :images, only: [:create, :index]
+        resources :blogs, param: :slug, only: [:index, :show, :create, :update, :destroy]
         post 'sync/protopedia', to: 'sync#protopedia'
         
         # Temporary public endpoint for initial setup
