@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Accessibility, Type, Sun, Eye, ZapOff, Check, X } from 'lucide-react';
+import { Accessibility, Type, Sun, ZapOff, Check, X } from 'lucide-react';
 
 export const UniversalAccess = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -84,8 +84,8 @@ export const UniversalAccess = () => {
                         <button
                             onClick={() => setSettings(s => ({ ...s, highContrast: !s.highContrast }))}
                             className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${settings.highContrast
-                                    ? 'bg-yellow-400 text-black border-yellow-500 font-bold'
-                                    : 'bg-neutral-100 dark:bg-neutral-800 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600'
+                                ? 'bg-yellow-400 text-black border-yellow-500 font-bold'
+                                : 'bg-neutral-100 dark:bg-neutral-800 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600'
                                 }`}
                         >
                             <div className="flex items-center gap-3">
@@ -98,8 +98,8 @@ export const UniversalAccess = () => {
                         <button
                             onClick={() => setSettings(s => ({ ...s, reduceMotion: !s.reduceMotion }))}
                             className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${settings.reduceMotion
-                                    ? 'bg-cyan-500 text-white border-cyan-500 font-bold'
-                                    : 'bg-neutral-100 dark:bg-neutral-800 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600'
+                                ? 'bg-cyan-500 text-white border-cyan-500 font-bold'
+                                : 'bg-neutral-100 dark:bg-neutral-800 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600'
                                 }`}
                         >
                             <div className="flex items-center gap-3">
@@ -112,8 +112,8 @@ export const UniversalAccess = () => {
                         <button
                             onClick={() => setSettings(s => ({ ...s, readableFont: !s.readableFont }))}
                             className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${settings.readableFont
-                                    ? 'bg-cyan-500 text-white border-cyan-500 font-bold'
-                                    : 'bg-neutral-100 dark:bg-neutral-800 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600'
+                                ? 'bg-cyan-500 text-white border-cyan-500 font-bold'
+                                : 'bg-neutral-100 dark:bg-neutral-800 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600'
                                 }`}
                         >
                             <div className="flex items-center gap-3">
