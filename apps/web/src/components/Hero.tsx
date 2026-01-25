@@ -16,18 +16,25 @@ export const Hero = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
                 >
-                    <h2 className="text-sm md:text-base font-medium tracking-[0.2em] text-cyan-400 mb-6 uppercase">
+                    <h2 className="text-base md:text-lg font-bold tracking-[0.3em] text-cyan-400 mb-8 uppercase drop-shadow-md">
                         Furukawa Archive OS v1.0
                     </h2>
-                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                        LET'S ENJOY<br className="hidden md:block" />
-                        CONSTRAINTS HACK!
+                    <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-10 leading-[1.1] 
+                        bg-gradient-to-br from-white via-cyan-200 to-purple-400 bg-clip-text text-transparent filter drop-shadow-lg">
+                        LET'S ENJOY<br />
+                        CONSTRAINTS<br />
+                        HACK!
                     </h1>
-                    <p className="max-w-2xl mx-auto text-lg md:text-xl mb-12 leading-relaxed">
-                        <span className="text-white font-medium">誰もが「生きててよかった」と思える瞬間をmakeする。</span>
-                        <br />
-                        <span className="text-cyan-300">意味づけの科学</span>と、<span className="text-purple-300">心に響くものづくり</span>。
-                    </p>
+                    <div className="max-w-3xl mx-auto mb-16 space-y-4">
+                        <p className="text-2xl md:text-3xl font-bold text-white leading-relaxed drop-shadow-md">
+                            誰もが<span className="text-cyan-300">「生きててよかった」</span>と思える瞬間をmakeする。
+                        </p>
+                        <p className="text-xl md:text-2xl text-neutral-300 font-medium">
+                            <span className="border-b-2 border-cyan-500/50 pb-1">意味づけの科学</span>
+                            <span className="mx-3 text-neutral-600">×</span>
+                            <span className="border-b-2 border-purple-500/50 pb-1">心に響くものづくり</span>
+                        </p>
+                    </div>
 
                     <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-8">
                         <a
