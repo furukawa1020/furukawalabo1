@@ -7,26 +7,49 @@ import { Loader2 } from 'lucide-react';
 export const Works = () => {
     const [works, setWorks] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
-
-    const fetchWorks = () => {
-        setLoading(true);
-        setError(false);
-        api.get('/works')
-            .then(res => {
-                if (res.data.works) {
-                    setWorks(res.data.works);
-                }
-            })
-            .catch(() => {
-                setError(true);
-            })
-            .finally(() => setLoading(false));
-    };
+    const [showFallback, setShowFallback] = useState(false);
 
     useEffect(() => {
-        fetchWorks();
+        let isMounted = true;
+
+        // 1. Data Fetching
+        const load = new Promise<void>((resolve, reject) => {
+            api.get('/works')
+                .then(res => {
+                    if (isMounted) {
+                        if (res.data.works) setWorks(res.data.works);
+                        resolve();
+                    }
+                })
+                .catch(reject);
+        });
+
+        // 2. Timeout (3 seconds)
+        const timeout = new Promise<void>((_, reject) => {
+            setTimeout(() => {
+                reject(new Error('Timeout'));
+            }, 3000);
+        });
+
+        // Race them
+        Promise.race([load, timeout])
+            .then(() => {
+                if (isMounted) setLoading(false);
+            })
+            .catch(() => {
+                if (isMounted) {
+                    setLoading(false);
+                    setShowFallback(true);
+                }
+            });
+
+        return () => { isMounted = false; };
     }, []);
+
+    // Fallback Slideshow Component
+    if (showFallback) {
+        return <FallbackSlideshow />;
+    }
 
     if (loading) return <div className="min-h-screen bg-neutral-900 flex items-center justify-center"><Loader2 className="animate-spin text-cyan-400 w-12 h-12" /></div>;
 
@@ -44,20 +67,12 @@ export const Works = () => {
                                 40+ Prototypes from Protopedia
                             </p>
                         </div>
-                        {error && (
-                            <button
-                                onClick={fetchWorks}
-                                className="flex items-center gap-2 px-6 py-3 bg-neutral-800 text-pink-400 rounded-full font-bold hover:bg-neutral-700 transition-colors"
-                            >
-                                <RefreshCw size={20} /> Retry Sync
-                            </button>
-                        )}
                     </div>
 
-                    {works.length === 0 && !loading ? (
+                    {works.length === 0 ? (
                         <div className="bg-neutral-800/50 p-12 rounded-3xl border border-neutral-700 text-center">
                             <p className="text-2xl font-bold text-neutral-400 mb-4">No works found.</p>
-                            <p className="text-neutral-500">Syncing data from Protopedia...</p>
+                            <button onClick={() => window.location.reload()} className="text-pink-400 hover:text-pink-300 underline">Refresh</button>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -126,5 +141,61 @@ export const Works = () => {
                 </div>
             </div>
         </>
+    );
+};
+
+const FallbackSlideshow = () => {
+    const images = [
+        '/images/works-fallback-1.png',
+        '/images/works-fallback-2.png'
+    ];
+    const [idx, setIdx] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setIdx(c => (c + 1) % images.length);
+        }, 5000); // Switch every 5 seconds
+        return () => clearInterval(timer);
+    }, []);
+
+    return (
+        <a
+            href="https://protopedia.net/prototyper/hatake"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="fixed inset-0 z-50 bg-black flex items-center justify-center overflow-hidden cursor-pointer"
+        >
+            <div className="absolute inset-0 bg-neutral-900 animate-pulse" /> {/* Loading bg */}
+
+            {images.map((src, i) => (
+                <div
+                    key={src}
+                    className={`absolute inset-0 transition-opacity duration-1000 ${i === idx ? 'opacity-100' : 'opacity-0'}`}
+                >
+                    {/* Ken Burns Effect Container */}
+                    <div className={`w-full h-full relative overflow-hidden`}>
+                        <img
+                            src={src}
+                            alt="Protopedia Works"
+                            className={`
+                                w-full h-full object-contain md:object-cover origin-center
+                                ${i === idx ? 'animate-[kenburns_20s_infinite_alternate]' : ''}
+                            `}
+                        />
+                        {/* Gradient Overlays for integration */}
+                        <div className="absolute inset-x-0 bottom-0 h-96 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                    </div>
+                </div>
+            ))}
+
+            <div className="absolute bottom-12 left-0 right-0 text-center z-10 p-4">
+                <h2 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500 tracking-tighter mb-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+                    View on Protopedia
+                </h2>
+                <p className="text-white/80 font-bold text-lg animate-bounce">
+                    Click to explore 40+ works
+                </p>
+            </div>
+        </a>
     );
 };
