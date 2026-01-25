@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 import { SEO } from '../components/SEO';
 
 export const About = () => {
@@ -10,7 +11,7 @@ export const About = () => {
     const [content, setContent] = useState('');
 
     useEffect(() => {
-        axios.get('/pages/about.md')
+        axios.get('/content/pages/about.md')
             .then(res => setContent(res.data))
             .catch(err => console.error('Failed to load about', err));
     }, []);
@@ -23,7 +24,7 @@ export const About = () => {
                     prose-headings:font-bold prose-h1:text-4xl prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6 
                     prose-p:leading-relaxed prose-li:marker:text-neutral-400
                     prose-a:text-cyan-600 dark:prose-a:text-cyan-400 prose-a:no-underline hover:prose-a:underline">
-                    <ReactMarkdown>{content}</ReactMarkdown>
+                    <ReactMarkdown rehypePlugins={[rehypeRaw]}>{content}</ReactMarkdown>
                 </article>
             </div>
         </>
