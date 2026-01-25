@@ -3,6 +3,7 @@ import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import { SEO } from '../components/SEO';
+import { SocialLinks } from '../components/SocialLinks';
 
 export const About = () => {
     // Currently re-using Home or just redirecting essentially, 
@@ -30,6 +31,10 @@ export const About = () => {
                     prose-a:text-cyan-600 dark:prose-a:text-cyan-400 prose-a:no-underline hover:prose-a:underline">
                     <ReactMarkdown rehypePlugins={[rehypeRaw]}>{content}</ReactMarkdown>
                 </article>
+
+                <div className="mt-12 flex justify-center md:justify-start">
+                    <SocialLinks />
+                </div>
             </div>
         </>
     );

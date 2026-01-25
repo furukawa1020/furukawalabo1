@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { SocialLinks } from './SocialLinks';
 
 export const Hero = () => {
     return (
@@ -27,7 +28,7 @@ export const Hero = () => {
                         意味づけの科学と、心に響くものづくり。
                     </p>
 
-                    <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
+                    <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-8">
                         <a
                             href="/research"
                             className="px-8 py-4 bg-white text-neutral-900 font-bold rounded-full hover:bg-neutral-200 transition-colors w-full md:w-auto"
@@ -41,6 +42,8 @@ export const Hero = () => {
                             View Works
                         </a>
                     </div>
+
+                    <SocialLinks variant="large" />
                 </motion.div>
             </div>
 

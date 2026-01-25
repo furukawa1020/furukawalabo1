@@ -10,14 +10,6 @@
 
 ---
 
-## 連絡先
-- **Email**: [f.kotaro.0530@gmail.com](mailto:f.kotaro.0530@gmail.com)
-- **X (Twitter)**: [@HATAKE55555](https://x.com/HATAKE55555)
-- **GitHub**: [furukawa1020](https://github.com/furukawa1020)
-- **Protopedia**: [hatake](https://protopedia.net/prototyper/hatake)
-
----
-
 ### メッセージ
 理論・実証（メタレビュー／公開データ解析）と資金獲得・社会実装（臨床/現場導入）を両輪に、10年スケールで「意味づけの科学」の構築を目指しています。
 「普通」から少しズレた人も、生きやすい社会へ。
