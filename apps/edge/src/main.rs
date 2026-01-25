@@ -20,6 +20,7 @@ async fn main() {
         .route("/health", any(health_check))
         .route("/api/*path", any(proxy_api)) // Forward to Rails
         .route("/ai/*path", any(proxy_ai))   // Forward to AI
+        .fallback(any(proxy_api)) // Forward everything else to Rails API
         .layer(CorsLayer::new()
             .allow_origin(Any)
             .allow_methods(Any)
