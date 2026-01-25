@@ -26,7 +26,7 @@ export const Achievements = () => {
     const [data, setData] = useState<AchievementsData | null>(null);
 
     useEffect(() => {
-        axios.get('/achievements.yml')
+        axios.get(`/achievements.yml?v=${new Date().getTime()}`)
             .then(res => {
                 const parsed = yaml.load(res.data) as AchievementsData;
                 setData(parsed);

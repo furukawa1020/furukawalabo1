@@ -15,8 +15,8 @@ export const Works = () => {
         // 1. Data Fetching
         const load = new Promise<void>((resolve, reject) => {
             Promise.all([
-                api.get('/works').catch(() => ({ data: { works: [] } })),
-                axios.get('/content/works.json').catch(() => ({ data: [] }))
+                api.get('/works'), // logical API doesn't cache usually
+                axios.get(`/content/works.json?v=${new Date().getTime()}`).catch(() => ({ data: [] }))
             ])
                 .then(([apiRes, localRes]) => {
                     if (isMounted) {
