@@ -1,8 +1,8 @@
 module Api
   module V1
     module Admin
-      class BlogsController < ApplicationController
-        skip_before_action :verify_authenticity_token, raise: false
+      class BlogsController < BaseController
+
 
         # GET /api/v1/admin/blogs
         def index

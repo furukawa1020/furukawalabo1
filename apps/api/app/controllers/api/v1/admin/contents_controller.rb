@@ -1,10 +1,10 @@
 module Api
   module V1
     module Admin
-      class ContentsController < ApplicationController
+      class ContentsController < BaseController
         # Skip auth for v1 demo / local usage convenience. 
         # In production, add Basic Auth or Token check.
-        skip_before_action :verify_authenticity_token, raise: false
+
 
         def show
           # Security: Allowlist specific files to prevent arbitrary file access
