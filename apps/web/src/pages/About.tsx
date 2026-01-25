@@ -67,7 +67,7 @@ export const About = () => {
                                     <h3 className="text-xl font-bold mb-6 flex items-center gap-3 text-purple-400">
                                         <span className="p-2 bg-purple-900/30 rounded-lg">Media</span>
                                     </h3>
-                                    <MediaLinks className="grid-cols-1" />
+                                    <MediaLinks className="!grid-cols-1" />
                                 </div>
                             </div>
                         </div>
