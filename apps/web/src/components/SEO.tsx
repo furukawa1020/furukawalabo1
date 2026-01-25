@@ -31,7 +31,8 @@ export const SEO = ({
                 {JSON.stringify({
                     "@context": "https://schema.org",
                     "@type": "Person",
-                    "name": "Kotaro Furukawa (HATAKE)",
+                    "name": "Kotaro Furukawa",
+                    "alternateName": ["古川耕太郎", "HATAKE", "Furukawa Kotaro", "古川 耕太郎"],
                     "url": "https://furukawa.netlify.app",
                     "sameAs": [
                         "https://twitter.com/HATAKE55555",
@@ -43,7 +44,7 @@ export const SEO = ({
                         "@type": "Organization",
                         "name": "Kanazawa University"
                     },
-                    "description": "Anyone can hack 'the moment they feel glad to be alive'. Exploring the variability of subjective meaning in physiological responses."
+                    "description": "古川耕太郎 (Kotaro Furukawa) のポートフォリオサイト。金沢大学でHCI（ヒューマンコンピュータインタラクション）、生理反応、主観的意味づけの研究を行っています。ProtopediaやGitHubでの活動実績、未踏、技育博などの受賞歴を公開しています。"
                 })}
             </script>
         </Helmet>

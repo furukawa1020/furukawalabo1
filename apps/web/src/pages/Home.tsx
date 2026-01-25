@@ -11,6 +11,10 @@ export const Home = () => {
             <SEO />
             {/* Hero Section */}
             <section className="relative h-screen flex items-center justify-center overflow-hidden">
+                <h1 className="sr-only">
+                    古川耕太郎 (Kotaro Furukawa) - HCI Researcher & Prototyper Portofolio.
+                    HATAKE / 金沢大学 / 未踏 / 技育博 / 感情コンピューティング / 生理反応 / インタラクション研究
+                </h1>
                 <div className="absolute inset-0 bg-grid-slate-200/50 dark:bg-grid-slate-800/50 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
                 <div className="container mx-auto px-6 relative z-10 text-center">
                     <h2 className="text-xl md:text-2xl font-bold tracking-[0.3em] text-cyan-400 mb-6 uppercase drop-shadow-md">
