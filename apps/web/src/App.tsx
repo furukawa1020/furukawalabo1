@@ -14,6 +14,7 @@ import { ThemeToggle } from './components/ThemeToggle';
 import { Menu, X } from 'lucide-react';
 import { SpotlightOverlay } from './components/Spotlight';
 import { UniversalAccess } from './components/UniversalAccess';
+import { HyperText } from './components/HyperText';
 
 function App() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -55,7 +56,7 @@ function App() {
                                                 : "hover:text-black dark:hover:text-white transition-colors"
                                             }
                                         >
-                                            {link.label}
+                                            <HyperText>{link.label}</HyperText>
                                         </Link>
                                     ))}
                                 </nav>
@@ -87,7 +88,7 @@ function App() {
                                             : "px-6 py-3 text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors font-medium"
                                         }
                                     >
-                                        {link.label}
+                                        <HyperText>{link.label}</HyperText>
                                     </Link>
                                 ))}
                             </nav>
