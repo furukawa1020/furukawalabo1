@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       namespace :admin do
         resources :contents, only: [:show, :update]
         resources :images, only: [:create, :index]
+        post 'sync/protopedia', to: 'sync#protopedia'
       end
       
       resources :works, only: [:index, :show]

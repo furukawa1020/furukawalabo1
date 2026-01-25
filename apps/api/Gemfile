@@ -8,6 +8,7 @@ gem "pg", "~> 1.1"
 gem "rack-cors"
 gem "puma"
 gem "bootsnap", require: false
+gem "http"
 gem "stripe", "~> 10.0"
 gem "front_matter_parser", "~> 1.0"
 gem "redcarpet", "~> 3.6"

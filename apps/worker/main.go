@@ -30,33 +30,82 @@ type WorkItem struct {
 }
 
 func main() {
-	fmt.Println("Worker started...")
-
-	connStr := os.Getenv("DATABASE_URL")
-	if connStr == "" {
-		connStr = "postgres://postgres:password@db:5432/furukawa_archive_production?sslmode=disable"
+	// Database connection
+	dbURL := os.Getenv("DATABASE_URL")
+	if dbURL == "" {
+		log.Fatal("DATABASE_URL not set")
 	}
 
-	db, err := sql.Open("postgres", connStr)
+	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed to connect to database:", err)
 	}
 	defer db.Close()
 
-	// Wait for DB
-	for i := 0; i < 15; i++ {
-		if err := db.Ping(); err == nil {
-			break
-		}
-		fmt.Println("Waiting for DB...", err)
-		time.Sleep(2 * time.Second)
+	// Test connection
+	if err := db.Ping(); err != nil {
+		log.Fatal("Database ping failed:", err)
 	}
 
+	fmt.Println("✅ Connected to database")
+
+	// Run initial sync
+	syncProtopedia(db)
+
+	// Start HTTP server for manual triggers (runs in background)
+	go startHTTPServer(db)
+
+	// Start periodic sync (every 6 hours)
 	ticker := time.NewTicker(6 * time.Hour)
-	go syncProtopedia(db) // Initial run
+	defer ticker.Stop()
 
 	for range ticker.C {
-		go syncProtopedia(db)
+		syncProtopedia(db)
+	}
+}
+
+func startHTTPServer(db *sql.DB) {
+	http.HandleFunc("/sync", func(w http.ResponseWriter, r *http.Request) {
+		// Simple token auth
+		authToken := os.Getenv("WORKER_AUTH_TOKEN")
+		if authToken == "" {
+			authToken = "default-secret-token" // Fallback for local dev
+		}
+
+		if r.Header.Get("Authorization") != "Bearer "+authToken {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		fmt.Println("🔄 Manual sync triggered via HTTP")
+		go syncProtopedia(db) // Run in background to avoid timeout
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusAccepted)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "accepted",
+			"message": "Sync started in background",
+		})
+	})
+
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	})
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	fmt.Printf("✅ HTTP server listening on port %s\n", port)
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
+		log.Fatal("HTTP server failed:", err)
 	}
 }
 
