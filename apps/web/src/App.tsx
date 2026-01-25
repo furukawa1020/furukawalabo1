@@ -22,7 +22,7 @@ function App() {
         { to: '/works', label: 'Works' },
         { to: '/achievements', label: 'Achievements' },
         { to: '/blog', label: 'Blog' },
-        { to: '/donate', label: '寄付のお願い', special: true },
+        // { to: '/donate', label: '寄付のお願い', special: true },
     ];
 
     return (
@@ -93,7 +93,7 @@ function App() {
                             <Route path="/works" element={<Works />} />
                             <Route path="/achievements" element={<Achievements />} />
                             <Route path="/blog" element={<Blog />} />
-                            <Route path="/donate" element={<Donate />} />
+                            {/* <Route path="/donate" element={<Donate />} /> */}
                         </Routes>
                     </main>
 
