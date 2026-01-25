@@ -1,0 +1,84 @@
+services:
+  gateway:
+    build:
+      context: ./apps/gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - web
+      - api
+    networks:
+      - furukawa-net
+
+  web:
+    build:
+      context: ./apps/web
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8080
+    networks:
+      - furukawa-net
+
+  api:
+    build:
+      context: ./apps/api
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./apps/api:/app
+      - ./content:/content
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DATABASE_URL=postgres://postgres:password@db:5432/furukawa_archive_production
+      - REDIS_URL=redis://redis:6379/1
+    networks:
+      - furukawa-net
+
+  worker:
+    build:
+      context: ./apps/worker
+    depends_on:
+      - api
+      - db
+    networks:
+      - furukawa-net
+
+  ai:
+    build:
+      context: ./apps/ai
+    ports:
+      - "8000:8000"
+    networks:
+      - furukawa-net
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: furukawa_archive_production
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    networks:
+      - furukawa-net
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis-data:/data
+    networks:
+      - furukawa-net
+
+networks:
+  furukawa-net:
+    driver: bridge
+
+volumes:
+  pg-data:
+  redis-data:

@@ -1,0 +1,82 @@
+services:
+  # Web Frontend (Vite)
+  web:
+    build:
+      context: ../apps/web
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    volumes:
+      - ../apps/web/public:/app/public
+      - ../apps/web/src:/app/src
+    environment:
+      - VITE_API_URL=http://localhost:8080/api/v1
+    depends_on:
+      - api
+
+  # Rails API
+  api:
+    build:
+      context: ../apps/api
+      dockerfile: Dockerfile
+    ports:
+      - "8080:3000"
+    environment:
+      - DATABASE_URL=postgres://postgres:password@db:5432/furukawa_os
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-sk_test_placeholder}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-whsec_placeholder}
+      - FRONTEND_URL=http://localhost:3000
+    volumes:
+      - ../content:/rails/content
+    depends_on:
+      - db
+      - redis
+
+  # Edge Gateway (Rust)
+  edge:
+    build:
+      context: ../apps/edge
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - api
+      - ai
+
+  # Worker (Go)
+  worker:
+    build:
+      context: ../apps/worker
+      dockerfile: Dockerfile
+    depends_on:
+      - api
+      - db
+
+  # AI Service (Python)
+  ai:
+    build:
+      context: ../apps/ai
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+
+  # Database
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=furukawa_os
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  # Cache
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  db_data:

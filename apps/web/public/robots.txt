@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://furukawa-archive-os.railway.app/sitemap.xml
