@@ -11,20 +11,29 @@ sections:
         title: インタラクション2026
         detail: インタラクティブ発表（プレミアム）採択：「ストレスを“測る”から“感じる”へ― 膨張型インターフェースによる主観的体験の観察法」
   - name: 受賞（大学以降）
+    gallery:
+      - /images/awards/award-gold.jpg
+      - /images/awards/award-1.jpg
+      - /images/awards/award-2.jpg
+      - /images/awards/award-3.jpg
+      - /images/awards/award-4.jpg
     items:
       - year: 2025
-        title: 技育博2025（サポーターズ）
-        detail: スポンサー賞（ゆめみ賞）：「お寿司deゲーミングピアノ！」
-        detail_secondary: 企業賞（株式会社ゆめみ賞）：「めんふぐ」
+        title: 技育博2025 vol.5（サポーターズ）
+        detail: スポンサー賞（株式会社ゆめみ賞）：「お寿司deゲーミングピアノ！」
+      - year: 2025
+        title: 技育博2025 vol.2（サポーターズ）
+        detail: 企業賞（株式会社ゆめみ賞）：「めんふぐ」
       - year: 2025
         title: ヒーローズリーグ2025
         detail: MAID賞：「FrogEcho 〜カエルの合唱!!!〜」
-        detail_secondary: xorium賞：「めんふぐ」
+      - year: 2025
+        title: ヒーローズリーグ2025
+        detail: xorium賞：「めんふぐ」
       - year: 2025
         title: 学生アイデアファクトリー2025
         detail: Springer Nature Gold賞（ポスター賞）
         detail_secondary: ファイナリスト（8人）選出
-        image: /images/award-gold.jpg
   - name: 起業・チーム活動
     items:
       - year: 2025
