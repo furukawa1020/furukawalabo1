@@ -1,9 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SEO } from '../components/SEO';
-import { Heart, ExternalLink, Check } from 'lucide-react';
+import { Heart, ExternalLink, Check, AlertCircle, Clock } from 'lucide-react';
 
 export const Donate = () => {
     const [selectedAmount, setSelectedAmount] = useState(1000);
+
+    // QR Code Expiration Management
+    const QR_EXPIRATION_DATE = new Date('2026-02-08T17:36:00+09:00');
+    const [daysUntilExpiration, setDaysUntilExpiration] = useState(0);
+    const [isExpired, setIsExpired] = useState(false);
+    const [isExpiringSoon, setIsExpiringSoon] = useState(false);
+
+    useEffect(() => {
+        const checkExpiration = () => {
+            const now = new Date();
+            const diffMs = QR_EXPIRATION_DATE.getTime() - now.getTime();
+            const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+            setDaysUntilExpiration(diffDays);
+            setIsExpired(diffDays < 0);
+            setIsExpiringSoon(diffDays >= 0 && diffDays <= 7);
+        };
+
+        checkExpiration();
+        // Check every hour
+        const interval = setInterval(checkExpiration, 1000 * 60 * 60);
+        return () => clearInterval(interval);
+    }, []);
 
     const amounts = [
         { value: 500, label: 'Coffee', emoji: '☕', color: 'bg-amber-900/30 border-amber-700 hover:border-amber-500' },
@@ -18,6 +41,29 @@ export const Donate = () => {
             <SEO title="寄付のお願い" description="活動ご支援のお願い" />
             <div className="min-h-screen bg-neutral-900 text-white pt-32 pb-24">
                 <div className="container mx-auto px-6 max-w-4xl">
+                    {/* QR Code Expiration Warning */}
+                    {isExpired && (
+                        <div className="mb-8 p-6 bg-red-900/50 border-2 border-red-500 rounded-2xl flex items-start gap-4 animate-pulse">
+                            <AlertCircle size={32} className="text-red-400 flex-shrink-0 mt-1" />
+                            <div>
+                                <h3 className="font-bold text-xl mb-2 text-red-300">⚠️ QRコードの有効期限切れ</h3>
+                                <p className="text-red-200">PayPayのQRコードの有効期限が切れています。新しいQRコードへの更新をお願いします。</p>
+                            </div>
+                        </div>
+                    )}
+                    {isExpiringSoon && !isExpired && (
+                        <div className="mb-8 p-6 bg-yellow-900/50 border-2 border-yellow-500 rounded-2xl flex items-start gap-4">
+                            <Clock size={32} className="text-yellow-400 flex-shrink-0 mt-1" />
+                            <div>
+                                <h3 className="font-bold text-xl mb-2 text-yellow-300">🔔 有効期限が近づいています</h3>
+                                <p className="text-yellow-200">
+                                    PayPayのQRコードの有効期限まであと <span className="font-bold text-2xl">{daysUntilExpiration}日</span> です。
+                                    新しいQRコードの準備をお願いします。
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Header */}
                     <div className="text-center mb-16">
                         <div className="flex justify-center mb-6">
@@ -58,10 +104,10 @@ export const Donate = () => {
                                 <button
                                     key={amount.value}
                                     onClick={() => setSelectedAmount(amount.value)}
-                                    className={`relative p-6 rounded-2xl border-2 transition-all duration-200 ${amount.color} ${selectedAmount === amount.value
+                                    className={`relative p - 6 rounded - 2xl border - 2 transition - all duration - 200 ${amount.color} ${selectedAmount === amount.value
                                             ? 'scale-105 shadow-xl ring-2 ring-white/20'
                                             : 'hover:scale-105'
-                                        }`}
+                                        } `}
                                 >
                                     {selectedAmount === amount.value && (
                                         <div className="absolute -top-2 -right-2 bg-cyan-500 rounded-full p-1">
@@ -79,7 +125,7 @@ export const Donate = () => {
                         </p>
                     </div>
 
-                    {/* PayPay Button */}
+                    {/* PayPay Section with QR Code */}
                     <div className="bg-neutral-800/80 p-8 md:p-12 rounded-3xl border border-neutral-700">
                         <div className="text-center mb-8">
                             <h3 className="text-3xl font-bold mb-2">
@@ -90,6 +136,21 @@ export const Donate = () => {
                             </p>
                         </div>
 
+                        {/* QR Code Image */}
+                        <div className="mb-8 flex justify-center">
+                            <div className="bg-white p-6 rounded-3xl shadow-2xl">
+                                <img
+                                    src="/images/paypay-qr.jpg"
+                                    alt="PayPay QR Code"
+                                    className="w-64 h-64 md:w-80 md:h-80 object-contain"
+                                />
+                                <p className="text-center text-xs text-neutral-600 mt-4 font-medium">
+                                    有効期限: 2026年2月8日まで
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* PayPay Link Button (fallback) */}
                         <a
                             href="https://qr.paypay.ne.jp/p2p01_P2xTNoMO89rAPgqM"
                             target="_blank"
@@ -100,9 +161,9 @@ export const Donate = () => {
                                 <div className="flex items-center justify-center gap-4">
                                     <div className="text-5xl font-black">P</div>
                                     <div className="text-left">
-                                        <div className="text-sm font-normal opacity-90">タップして</div>
+                                        <div className="text-sm font-normal opacity-90">QRが読めない場合</div>
                                         <div className="flex items-center gap-2">
-                                            PayPay で送金
+                                            リンクから送金
                                             <ExternalLink size={20} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                                         </div>
                                     </div>
@@ -112,7 +173,7 @@ export const Donate = () => {
                         </a>
 
                         <p className="text-center text-xs text-neutral-500 mt-6 leading-relaxed">
-                            タップすると PayPay アプリが起動します（アプリ未インストールの場合はブラウザで送金画面が開きます）
+                            QRコードをスマホで読み取るか、ボタンをタップしてPayPayアプリで送金できます
                         </p>
                     </div>
 
