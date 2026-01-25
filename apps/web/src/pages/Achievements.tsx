@@ -16,6 +16,7 @@ type AchievementItem = {
 type AchievementSection = {
     name: string;
     items: AchievementItem[];
+    gallery?: string[];
 };
 
 type AchievementsData = {
