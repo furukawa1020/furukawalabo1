@@ -22,8 +22,8 @@ export const Home = () => {
                         CONSTRAINTS<br />
                         HACK!
                     </h1>
-                    <p className="text-xl md:text-3xl text-neutral-300 font-bold mb-12 max-w-3xl mx-auto leading-relaxed drop-shadow-lg">
-                        誰もが<span className="text-cyan-300 inline-block mx-2">「生きててよかった」</span>と思える瞬間をmakeする。
+                    <p className="text-xl md:text-3xl text-neutral-300 dark:text-neutral-300 font-bold mb-12 max-w-3xl mx-auto leading-relaxed drop-shadow-lg">
+                        誰もが「生きててよかった」と思える瞬間を<span className="inline-block text-cyan-600 dark:text-cyan-400 font-black">hackする！！</span>
                     </p>
                     <div className="flex flex-col md:flex-row gap-4 justify-center">
                         <Link to="/research" className="group px-8 py-4 bg-neutral-900 dark:bg-white text-white dark:text-black rounded-full font-bold transition-all hover:scale-105 flex items-center justify-center gap-2">
