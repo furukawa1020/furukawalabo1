@@ -20,6 +20,10 @@ module Api
           # Fallback: Direct sync in Rails to avoid Worker connection issues
           require 'open-uri'
           require 'nokogiri'
+          
+          # Clean slate: Remove ALL existing works (including mocks) before syncing
+          Work.delete_all
+          Rails.logger.info "Cleared all existing works from DB."
 
           work_ids = [
             "6345", "6347", "6348", "6349", "6549", "6554", "6555", "6613", "6692", "6694",
