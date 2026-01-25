@@ -41,7 +41,7 @@ function App() {
                     <UniversalAccess />
                     <header className="fixed top-0 left-0 right-0 z-40 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border-b border-neutral-200 dark:border-white/10 transition-colors duration-300">
                         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-                            <Link to="/" className="font-bold text-lg tracking-wider font-mono" onClick={() => setMobileMenuOpen(false)}>FUR.ARCHIVE</Link>
+                            <Link to="/" className="font-bold text-lg tracking-wider font-mono glitch relative hover:text-cyan-500 transition-colors" data-text="FUR.ARCHIVE" onClick={() => setMobileMenuOpen(false)}>FUR.ARCHIVE</Link>
 
                             <div className="flex items-center gap-4">
                                 {/* Desktop Navigation */}
