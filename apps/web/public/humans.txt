@@ -1,0 +1,26 @@
+
+ /* TEAM */
+   Chef: Hatake
+   Site: Furukawa Archive OS
+   Location: Kanazawa, Japan
+   Twitter: @HATAKE55555
+
+ /* THANKS */
+   Protopedia
+   Kanazawa University
+   Netlify & Railway
+
+ /* SITE */
+   Last update: 2026/01/25
+   Standards: HTML5, CSS3, React, Vite
+   Components: Custom UI, Glitch Effects, Universal Access
+   Software: Furukawa Archive OS v1.0
+
+ /* MESSAGE */
+   "Let's Enjoy Constraints Hack!"
+   
+   If you are reading this, you are looking for the truth behind the pixels.
+   We are building the science of meaning-making.
+   Join us in creating a future where everyone can say "I'm glad I'm alive."
+
+   (っ◔◡◔)っ ♥ BUILT WITH PASSION ♥
