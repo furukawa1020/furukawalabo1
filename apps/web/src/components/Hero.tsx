@@ -15,24 +15,23 @@ export const Hero = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
-                >
-                    <h2 className="text-base md:text-lg font-bold tracking-[0.3em] text-cyan-400 mb-8 uppercase drop-shadow-md">
+                    <h2 className="text-lg md:text-xl font-bold tracking-[0.3em] text-cyan-400 mb-8 uppercase drop-shadow-md">
                         Furukawa Archive OS v1.0
                     </h2>
-                    <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-10 leading-[1.1] 
-                        bg-gradient-to-br from-white via-cyan-200 to-purple-400 bg-clip-text text-transparent filter drop-shadow-lg">
+                    <h1 className="text-7xl md:text-9xl font-black tracking-tighter mb-10 leading-[1] 
+                        bg-gradient-to-br from-white via-cyan-300 to-purple-400 bg-clip-text text-transparent filter drop-shadow-2xl">
                         LET'S ENJOY<br />
                         CONSTRAINTS<br />
                         HACK!
                     </h1>
-                    <div className="max-w-3xl mx-auto mb-16 space-y-4">
-                        <p className="text-2xl md:text-3xl font-bold text-white leading-relaxed drop-shadow-md">
-                            誰もが<span className="text-cyan-300">「生きててよかった」</span>と思える瞬間をmakeする。
+                    <div className="max-w-4xl mx-auto mb-16 space-y-6">
+                        <p className="text-3xl md:text-4xl font-bold text-white leading-tight drop-shadow-lg">
+                            誰もが<span className="text-cyan-300 inline-block transform hover:scale-105 transition-transform">「生きててよかった」</span><br className="md:hidden" />と思える瞬間をmakeする。
                         </p>
-                        <p className="text-xl md:text-2xl text-neutral-300 font-medium">
-                            <span className="border-b-2 border-cyan-500/50 pb-1">意味づけの科学</span>
-                            <span className="mx-3 text-neutral-600">×</span>
-                            <span className="border-b-2 border-purple-500/50 pb-1">心に響くものづくり</span>
+                        <p className="text-2xl md:text-3xl text-neutral-200 font-bold bg-neutral-900/50 inline-block px-6 py-3 rounded-full backdrop-blur-sm border border-neutral-700/50">
+                            <span className="text-cyan-400">意味づけの科学</span>
+                            <span className="mx-4 text-neutral-500">×</span>
+                            <span className="text-purple-400">心に響くものづくり</span>
                         </p>
                     </div>
 
@@ -60,6 +59,6 @@ export const Hero = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                 </svg>
             </div>
-        </section>
+        </section >
     );
 };
