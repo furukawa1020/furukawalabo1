@@ -4,9 +4,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -61,54 +63,103 @@ func main() {
 func syncProtopedia(db *sql.DB) {
 	fmt.Println("Starting Protopedia sync...", time.Now())
 
-	// Protopedia user: hatake (古川耕太郎)
-	// Profile: https://protopedia.net/prototyper/hatake
-	// Note: Official API endpoint might require specific structure,
-	// assuming JSON response for v1 based on common patterns.
-	url := "https://protopedia.net/api/prototyper/hatake/works"
+	// All 41 work URLs (古川耕太郎's Protopedia works)
+	workIDs := []string{
+		"6345", "6347", "6348", "6349", "6549", "6554", "6555", "6613", "6692", "6694",
+		"7255", "7408", "7495", "7496", "7527", "7528", "7529", "7538", "7539", "7553",
+		"7571", "7600", "7617", "7648", "7672", "7694", "7833", "7834", "7842", "7844",
+		"7852", "7866", "7889", "7895", "7908", "7916", "7952", "7984", "7995", "8059",
+		"8097",
+	}
 
+	successCount := 0
+	for i, id := range workIDs {
+		url := "https://protopedia.net/prototype/" + id
+		fmt.Printf("Fetching work %d/%d: %s\n", i+1, len(workIDs), url)
+
+		work, err := fetchWorkFromURL(url, id)
+		if err != nil {
+			fmt.Printf("  ❌ Failed to fetch %s: %v\n", id, err)
+			continue
+		}
+
+		// Save to database
+		tagsJson, _ := json.Marshal(work.Tags)
+		_, err = db.Exec(`
+			INSERT INTO works (title, summary, url, thumbnail_url, like_count, external_id, published_at, tags, created_at, updated_at)
+			VALUES ($1, $2, $3, $4, $5, $6, NOW(), $7, NOW(), NOW())
+			ON CONFLICT (external_id) 
+			DO UPDATE SET 
+				title = EXCLUDED.title,
+				summary = EXCLUDED.summary,
+				like_count = EXCLUDED.like_count,
+				thumbnail_url = EXCLUDED.thumbnail_url,
+				tags = EXCLUDED.tags,
+				updated_at = NOW()
+		`, work.Title, work.Description, url, work.ThumbnailURL, work.LikeCount, id, tagsJson)
+
+		if err != nil {
+			fmt.Printf("  ❌ Error saving work %s: %v\n", id, err)
+		} else {
+			fmt.Printf("  ✅ Saved: %s\n", work.Title)
+			successCount++
+		}
+
+		// Rate limiting: wait 500ms between requests to avoid overloading Protopedia
+		time.Sleep(500 * time.Millisecond)
+	}
+
+	fmt.Printf("Sync finished. Successfully synced %d/%d works.\n", successCount, len(workIDs))
+}
+
+func fetchWorkFromURL(url, id string) (*WorkItem, error) {
 	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Println("Failed to fetch from Protopedia:", err)
-		seedFallbackData(db)
-		return
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		fmt.Println("Protopedia API returned non-200:", resp.Status)
-		seedFallbackData(db)
-		return
+		return nil, fmt.Errorf("HTTP %d", resp.StatusCode)
 	}
 
-	var data ProtopediaResponse
-	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
-		fmt.Println("Failed to decode JSON:", err)
-		return
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
 	}
 
-	for _, item := range data.Works {
-		// Marshal tags to JSON for JSONB column
-		tagsJson, _ := json.Marshal(item.Tags)
+	html := string(body)
 
-		_, err := db.Exec(`
-			INSERT INTO works (title, summary, url, thumbnail_url, like_count, external_id, published_at, tags, created_at, updated_at)
-			VALUES ($1, $2, $3, $4, $5, $6, NOW(), $7, NOW(), NOW())
-			ON CONFLICT (external_id) 
-            DO UPDATE SET 
-                title = EXCLUDED.title,
-                summary = EXCLUDED.summary,
-                like_count = EXCLUDED.like_count,
-                thumbnail_url = EXCLUDED.thumbnail_url,
-                tags = EXCLUDED.tags,
-                updated_at = NOW()
-		`, item.Title, item.Description, "https://protopedia.net/work/"+item.ID, item.ThumbnailURL, item.LikeCount, item.ID, tagsJson)
-
-		if err != nil {
-			fmt.Println("Error upserting work:", err)
-		}
+	// Simple HTML parsing (extract title, description, thumbnail)
+	// Note: This is basic extraction. For production, consider using a proper HTML parser.
+	work := &WorkItem{
+		ID:           id,
+		Title:        extractBetween(html, "<title>", "</title>"),
+		Description:  extractBetween(html, `<meta name="description" content="`, `"`),
+		ThumbnailURL: extractBetween(html, `<meta property="og:image" content="`, `"`),
+		LikeCount:    0, // Will need more sophisticated parsing for like count
+		Tags:         []string{"Protopedia"},
 	}
-	fmt.Println("Sync finished.")
+
+	// Clean up title (remove " | プロトタイプ共有サイト Protopedia" suffix)
+	work.Title = strings.Split(work.Title, " | ")[0]
+
+	return work, nil
+}
+
+func extractBetween(text, start, end string) string {
+	startIdx := strings.Index(text, start)
+	if startIdx == -1 {
+		return ""
+	}
+	startIdx += len(start)
+
+	endIdx := strings.Index(text[startIdx:], end)
+	if endIdx == -1 {
+		return ""
+	}
+
+	return text[startIdx : startIdx+endIdx]
 }
 
 func seedFallbackData(db *sql.DB) {
@@ -119,7 +170,7 @@ func seedFallbackData(db *sql.DB) {
 		return
 	}
 
-	fmt.Println("Database empty or API failed. Seeding real project data as fallback...")
+	fmt.Println("Database empty. Seeding real project data as fallback...")
 
 	// Real project data from achievements.yml
 	mockWorks := []WorkItem{
