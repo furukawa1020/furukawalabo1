@@ -164,34 +164,47 @@ const FallbackSlideshow = () => {
             rel="noopener noreferrer"
             className="fixed inset-0 z-50 bg-black flex items-center justify-center overflow-hidden cursor-pointer"
         >
-            <div className="absolute inset-0 bg-neutral-900 animate-pulse" /> {/* Loading bg */}
-
+            {/* Blurred Background for Ambiance */}
             {images.map((src, i) => (
                 <div
-                    key={src}
-                    className={`absolute inset-0 transition-opacity duration-1000 ${i === idx ? 'opacity-100' : 'opacity-0'}`}
+                    key={`bg-${src}`}
+                    className={`absolute inset-0 transition-opacity duration-1000 ${i === idx ? 'opacity-30' : 'opacity-0'}`}
                 >
-                    {/* Ken Burns Effect Container */}
-                    <div className={`w-full h-full relative overflow-hidden`}>
+                    <img
+                        src={src}
+                        className="w-full h-full object-cover blur-3xl scale-110"
+                        alt="Background"
+                    />
+                </div>
+            ))}
+
+            {/* Main Image Container */}
+            <div className="relative w-full max-w-2xl h-full overflow-hidden shadow-2xl border-x border-white/10 bg-black/50 backdrop-blur-sm">
+                {images.map((src, i) => (
+                    <div
+                        key={src}
+                        className={`absolute inset-0 transition-opacity duration-1000 ${i === idx ? 'opacity-100' : 'opacity-0'}`}
+                    >
                         <img
                             src={src}
                             alt="Protopedia Works"
                             className={`
-                                w-full h-full object-contain md:object-cover origin-center
-                                ${i === idx ? 'animate-[kenburns_20s_infinite_alternate]' : ''}
+                                w-full absolute top-0 left-0 object-cover
+                                ${i === idx ? 'animate-[scroll-vertical_20s_linear_infinite]' : ''}
                             `}
+                            style={{ imageRendering: '-webkit-optimize-contrast' }} // Hint for browser
                         />
-                        {/* Gradient Overlays for integration */}
-                        <div className="absolute inset-x-0 bottom-0 h-96 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                        {/* Gradient tint for text readability */}
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80" />
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
 
-            <div className="absolute bottom-12 left-0 right-0 text-center z-10 p-4">
-                <h2 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500 tracking-tighter mb-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+            <div className="absolute bottom-12 left-0 right-0 text-center z-10 p-4 drop-shadow-xl">
+                <h2 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500 tracking-tighter mb-4">
                     View on Protopedia
                 </h2>
-                <p className="text-white/80 font-bold text-lg animate-bounce">
+                <p className="text-white font-bold text-lg animate-bounce">
                     Click to explore 40+ works
                 </p>
             </div>
