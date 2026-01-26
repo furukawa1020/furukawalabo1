@@ -4,9 +4,6 @@
 
 **「1日で構築された、AIネイティブ・フルスタックポートフォリオ」**
 
-古川耕太郎の研究・作品・実績・思想・寄付導線を統合したPWAプラットフォーム。
-HCI研究者としての「技術力」と「実装力」を一目で伝えるために設計されています。
-
 [https://furukawalab.com](https://furukawalab.com)
 =======
 <img width="2379" height="1186" alt="image" src="https://github.com/user-attachments/assets/b46d0423-c7a4-4738-91f7-677a61ca3acb" />
