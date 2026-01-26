@@ -54,7 +54,7 @@ export const Home = () => {
                         <HighlightCard
                             icon={<Trophy className="text-yellow-500" />}
                             title="技育博2025"
-                            desc="株式会社ゆめみ企業賞 受賞"
+                            desc="株式会社ゆめみ企業賞 / スポンサー賞 受賞"
                         />
                         <HighlightCard
                             icon={<Code className="text-purple-500" />}
