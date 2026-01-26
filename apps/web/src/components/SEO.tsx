@@ -32,7 +32,7 @@ export const SEO = ({
                     "@context": "https://schema.org",
                     "@type": "Person",
                     "name": "Kotaro Furukawa",
-                    "alternateName": ["古川耕太郎", "hatake", "furukawa", "furukawa1020", "ko1020", "古川 耕太郎"],
+                    "alternateName": ["古川耕太郎", "はたけ/Furukawa", "hatake", "furukawa", "furukawa1020", "ko1020", "古川 耕太郎"],
                     "url": "https://furukawalab.com/",
                     "sameAs": [
                         "https://twitter.com/HATAKE55555",
