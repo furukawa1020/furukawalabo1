@@ -1,5 +1,11 @@
 [
     {
+        "slug": "sns-sharing",
+        "title": "承認欲求のためにSNSシェア機能を実装した話",
+        "date": "2026-01-26",
+        "summary": "承認欲求と小銭稼ぎのために、サイト全体のSNSシェア機能を実装しました。技術的な話はあまりありません。"
+    },
+    {
         "slug": "welcome-to-new-site",
         "title": "Furukawa Lab 2.0 へようこそ",
         "date": "2026-01-26",
