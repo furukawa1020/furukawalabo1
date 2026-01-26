@@ -24,12 +24,6 @@
         "summary": "ポートフォリオサイトをリニューアルしました。Admin機能、ブログ機能、そしておやつ代機能が追加されました。"
     },
     {
-        "slug": "ai-pair-programming",
-        "title": "AIエージェントとペアプログラミングで爆速開発した話",
-        "date": "2026-01-25",
-        "summary": "Google DeepMindの「Agentic Mode」搭載AIエージェントとガッツリ手を組んで開発しました。AIは「道具」ではなく「相棒」です。"
-    },
-    {
         "slug": "2026-01-25-hello",
         "title": "Furukawa Archive OS、起動！",
         "date": "2026-01-25",
