@@ -32,18 +32,15 @@ export const SEO = ({
                     "@context": "https://schema.org",
                     "@type": "Person",
                     "name": "Kotaro Furukawa",
-                    "alternateName": ["古川耕太郎", "HATAKE", "Furukawa Kotaro", "古川 耕太郎"],
-                    "url": "https://furukawa.netlify.app",
+                    "alternateName": ["古川耕太郎", "hatake", "furukawa", "furukawa1020", "ko1020", "古川 耕太郎"],
+                    "url": "https://furukawalab.com/",
                     "sameAs": [
                         "https://twitter.com/HATAKE55555",
                         "https://github.com/furukawa1020",
-                        "https://protopedia.net/prototyper/hatake"
+                        "https://protopedia.net/prototyper/hatake",
+                        "https://www.instagram.com/ko1020/"
                     ],
-                    "worksFor": {
-                        "@type": "Organization",
-                        "name": "Kanazawa University"
-                    },
-                    "description": "古川耕太郎 (Kotaro Furukawa) のポートフォリオサイト。金沢大学でHCI（ヒューマンコンピュータインタラクション）、生理反応、主観的意味づけの研究を行っています。ProtopediaやGitHubでの活動実績、未踏、技育博などの受賞歴を公開しています。"
+                    "description": "古川耕太郎 (Kotaro Furukawa) のポートフォリオサイト。研究・開発・デザイン・執筆など、様々な領域での活動とアウトプットをアーカイブしています。"
                 })}
             </script>
         </Helmet>
