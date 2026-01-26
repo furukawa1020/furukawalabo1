@@ -1,9 +1,4 @@
 # Furukawa Archive OS
-<<<<<<< HEAD
-![Status](https://img.shields.io/badge/development-1%20day-blueviolet) ![Stack](https://img.shields.io/badge/stack-Full--Stack-blue)
-
-**「1日で構築された、AIネイティブ・フルスタックポートフォリオ」**
-
 [https://furukawalab.com](https://furukawalab.com)
 =======
 <img width="2379" height="1186" alt="image" src="https://github.com/user-attachments/assets/b46d0423-c7a4-4738-91f7-677a61ca3acb" />
