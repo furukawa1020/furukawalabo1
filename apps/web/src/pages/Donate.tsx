@@ -194,6 +194,7 @@ export const Donate = () => {
                         </a>
                     </div>
                 </div>
-            </>
-            );
+            </div>
+        </>
+    );
 };
