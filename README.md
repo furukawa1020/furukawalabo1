@@ -1,4 +1,5 @@
 # Furukawa Archive OS
+<img width="2379" height="1186" alt="image" src="https://github.com/user-attachments/assets/b46d0423-c7a4-4738-91f7-677a61ca3acb" />
 
 古川の研究・作品・実績・思想・おやつ(決済・質問箱)
 を統合したPWAプラットフォーム。なんやかんやたくさんいろいろ変なものを作ってきたつもりでしたが
