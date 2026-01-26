@@ -6,9 +6,27 @@
         "summary": "承認欲求と小銭稼ぎのために、サイト全体のSNSシェア機能を実装しました。技術的な話はあまりありません。"
     },
     {
+        "slug": "2026-01-26-railway-deployment-hell",
+        "title": "Railwayでのデプロイ、めちゃくちゃ沼った話",
+        "date": "2026-01-26",
+        "summary": "502エラーの海から這い上がるまでの記録。Rust、Port、CORS、すべてが罠だった。"
+    },
+    {
+        "slug": "2026-01-26-why-overengineering",
+        "title": "なぜポートフォリオサイトをフルスタックで作ったのか",
+        "date": "2026-01-26",
+        "summary": "Next.jsで作れば10分で終わるものを、あえてマイクロサービスで構築した理由。"
+    },
+    {
         "slug": "welcome-to-new-site",
         "title": "Furukawa Lab 2.0 へようこそ",
         "date": "2026-01-26",
         "summary": "ポートフォリオサイトをリニューアルしました。Admin機能、ブログ機能、そしておやつ代機能が追加されました。"
+    },
+    {
+        "slug": "2026-01-25-hello",
+        "title": "Furukawa Archive OS、起動！",
+        "date": "2026-01-25",
+        "summary": "ポートフォリオ兼、実験場兼、脳内アーカイブ。ついにローンチしました！"
     }
 ]
