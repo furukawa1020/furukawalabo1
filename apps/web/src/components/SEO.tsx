@@ -8,8 +8,8 @@ type SEOProps = {
 };
 
 export const SEO = ({
-    title = "Furukawa Archive OS",
-    description = "Interactive Research Portfolio & Digital Archive. Exploring the variability of subjective meaning in physiological responses.",
+    title = "Furukawa Archive OS | Kotaro Furukawa (古川耕太郎)",
+    description = "古川耕太郎 (Kotaro Furukawa) のポートフォリオ。HCI研究者・プロトタイパーとして、金沢大学での研究や未踏・技育博での実績、制作物を公開しています。",
     image = "https://furukawa-archive-os.railway.app/images/research_plan.png",
     type = "website"
 }: SEOProps) => {
