@@ -53,7 +53,7 @@ export const Home = () => {
                         />
                         <HighlightCard
                             icon={<Trophy className="text-yellow-500" />}
-                            title="Gikihaku 2025"
+                            title="技育博2025"
                             desc="Yumemi Sponsor Award & Corporate Award"
                         />
                         <HighlightCard
