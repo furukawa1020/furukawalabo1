@@ -9,7 +9,7 @@ type SEOProps = {
 
 export const SEO = ({
     title = "Furukawa Archive OS | Kotaro Furukawa (古川耕太郎)",
-    description = "古川耕太郎 (Kotaro Furukawa) のポートフォリオ。HCI研究者・プロトタイパーとして、金沢大学での研究や未踏・技育博での実績、制作物を公開しています。",
+    description = "古川耕太郎 (Kotaro Furukawa) のポートフォリオサイト。研究・開発・デザイン・執筆など、様々な領域での活動とアウトプットをアーカイブしています。",
     image = "https://furukawa-archive-os.railway.app/images/research_plan.png",
     type = "website"
 }: SEOProps) => {
@@ -25,7 +25,7 @@ export const SEO = ({
             <meta property="og:type" content={type} />
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:creator" content="@HATAKE55555" />
-            <meta name="keywords" content="古川耕太郎, Kotaro Furukawa, HATAKE, HCI, 未踏, 技育博, 研究, ポートフォリオ, 金沢大学, 生理反応, 主観的意味づけ, 感情コンピューティング, インタラクション" />
+            <meta name="keywords" content="古川耕太郎, Kotaro Furukawa, hatake, furukawa, furukawa1020, ko1020, ポートフォリオ, アーカイブ, 作品集" />
 
             <script type="application/ld+json">
                 {JSON.stringify({
@@ -39,7 +39,6 @@ export const SEO = ({
                         "https://github.com/furukawa1020",
                         "https://protopedia.net/prototyper/hatake"
                     ],
-                    "jobTitle": "HCI Researcher & Prototyper",
                     "worksFor": {
                         "@type": "Organization",
                         "name": "Kanazawa University"
