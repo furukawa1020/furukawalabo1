@@ -10,7 +10,7 @@ type SEOProps = {
 export const SEO = ({
     title = "Furukawa Archive OS | Kotaro Furukawa (古川耕太郎)",
     description = "古川耕太郎 (Kotaro Furukawa) のポートフォリオサイト。研究・開発・デザイン・執筆など、様々な領域での活動とアウトプットをアーカイブしています。",
-    image = "https://furukawa-archive-os.railway.app/images/research_plan.png",
+    image = "https://furukawalab.com/images/og-main.png",
     type = "website"
 }: SEOProps) => {
     const siteTitle = title === "Furukawa Archive OS" ? title : `${title} | Furukawa Archive OS`;

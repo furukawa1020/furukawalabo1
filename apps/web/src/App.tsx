@@ -113,6 +113,7 @@ function App() {
                             <Route path="/works" element={<Works />} />
                             <Route path="/achievements" element={<Achievements />} />
                             <Route path="/blog" element={<Blog />} />
+                            <Route path="/blog/:slug" element={<Blog />} />
                             <Route path="/donate" element={<Donate />} />
                         </Routes>
                     </main>

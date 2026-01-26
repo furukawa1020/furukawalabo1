@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { SEO } from '../components/SEO';
-import { CreditCard, Loader2, AlertCircle } from 'lucide-react';
+import { CreditCard, Loader2, AlertCircle, Share2 } from 'lucide-react';
 import api from '../api/client';
 
 export const Donate = () => {
@@ -153,7 +153,47 @@ export const Donate = () => {
                         </p>
                     </div>
                 </div>
-            </div>
-        </>
-    );
+
+                {/* Social Sharing Actions */}
+                <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    {/* Ask on X */}
+                    <div className="bg-neutral-800/30 p-8 rounded-3xl border border-neutral-700/50 text-center">
+                        <h3 className="text-xl font-bold mb-4">質問だけしたい場合は...</h3>
+                        <p className="text-neutral-400 mb-6 text-sm">
+                            おやつ代なしでも大丈夫！Xで質問してくれれば、リプライで回答します。<br />
+                            (おやつ付きの方が優先回答されるかも...？)
+                        </p>
+                        <a
+                            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent("@HATAKE55555 \n" + (question || "質問があります！") + "\n\n#FurukawaLab")}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-full font-bold hover:bg-neutral-800 transition-colors"
+                        >
+                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                            </svg>
+                            Xで質問する
+                        </a>
+                    </div>
+
+                    {/* Share Donation */}
+                    <div className="bg-neutral-800/30 p-8 rounded-3xl border border-neutral-700/50 text-center">
+                        <h3 className="text-xl font-bold mb-4">応援をシェア！</h3>
+                        <p className="text-neutral-400 mb-6 text-sm">
+                            「おやつ代」を送ったことをシェアして、<br />
+                            古川ラボの活動を広めてください！
+                        </p>
+                        <a
+                            href="https://twitter.com/intent/tweet?text=Furukawa%20Lab%E3%81%AB%E3%80%8C%E3%81%8A%E3%82%84%E3%81%A4%E4%BB%A3%E3%80%8D%E3%82%92%E9%80%81%E3%82%8A%E3%81%BE%E3%81%97%E3%81%9F%EF%BC%81%20%F0%9F%8D%AA%20%23Oyatsu%20%23FurukawaLab&url=https%3A%2F%2Ffurukawalab.com%2Fdonate"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-amber-600 text-white rounded-full font-bold hover:bg-amber-700 transition-colors"
+                        >
+                            <Share2 size={20} />
+                            応援をシェアする
+                        </a>
+                    </div>
+                </div>
+            </>
+            );
 };
