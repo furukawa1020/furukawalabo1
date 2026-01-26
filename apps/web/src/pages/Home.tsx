@@ -49,22 +49,22 @@ export const Home = () => {
                         <HighlightCard
                             icon={<Star className="text-cyan-500" />}
                             title="Interaction 2026"
-                            desc="Interactive Presentation (Premium) Accepted"
+                            desc="インタラクティブ発表（プレミアム）採択"
                         />
                         <HighlightCard
                             icon={<Trophy className="text-yellow-500" />}
                             title="技育博2025"
-                            desc="Yumemi Sponsor Award & Corporate Award"
+                            desc="株式会社ゆめみ企業賞 受賞"
                         />
                         <HighlightCard
                             icon={<Code className="text-purple-500" />}
                             title="GitHub Activity"
-                            desc="225+ Repos / 2600+ Contributions in 1 year"
+                            desc="年間225+リポジトリ / 2600+コントリビューション"
                         />
                         <HighlightCard
                             icon={<Activity className="text-green-500" />}
                             title="40+ Prototypes"
-                            desc="Published on Protopedia with 72+ likes"
+                            desc="Protopediaにて40作品以上公開 / 72+いいね"
                         />
                     </div>
                 </div>
