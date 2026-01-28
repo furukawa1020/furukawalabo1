@@ -13,17 +13,30 @@ module Api
       end
 
       def index
-        # For now, maybe just return answered questions publicly?
-        # Or if this is for admin, we might need auth later.
-        # Let's return answered questions for public view if needed.
-        questions = Question.answered.order(created_at: :desc).limit(50)
+        if params[:status] == 'pending'
+          questions = Question.pending.order(created_at: :desc).limit(50)
+        elsif params[:status] == 'all'
+          questions = Question.order(created_at: :desc).limit(50)
+        else
+          questions = Question.answered.order(created_at: :desc).limit(50)
+        end
         render json: questions
+      end
+
+      def update
+        question = Question.find(params[:id])
+        if question.update(question_params)
+          question.update(status: 'answered') if question.answer.present?
+          render json: { status: 'success', question: question }
+        else
+          render json: { status: 'error', errors: question.errors.full_messages }, status: :unprocessable_entity
+        end
       end
 
       private
 
       def question_params
-        params.require(:question).permit(:content, :twitter_handle)
+        params.require(:question).permit(:content, :twitter_handle, :answer, :status)
       end
     end
   end

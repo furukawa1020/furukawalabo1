@@ -34,51 +34,19 @@ export const Admin = () => {
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
 
-    const [credentials, setCredentials] = useState({ username: '', password: '' });
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-    useEffect(() => {
-        // Check if we have credentials in session storage
-        const stored = sessionStorage.getItem('admin_auth');
-        if (stored) {
-            const { username, password } = JSON.parse(stored);
-            setCredentials({ username, password });
-            setIsAuthenticated(true);
-        }
-    }, []);
-
-    const handleLogin = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Basic validation or just set it and let API fail if wrong
-        if (credentials.username && credentials.password) {
-            const auth = btoa(`${credentials.username}:${credentials.password}`);
-            // Configure global or local api client header
-            api.defaults.headers.common['Authorization'] = `Basic ${auth}`;
-            sessionStorage.setItem('admin_auth', JSON.stringify(credentials));
-            setIsAuthenticated(true);
-        }
-    };
-
-    const logout = () => {
-        sessionStorage.removeItem('admin_auth');
-        delete api.defaults.headers.common['Authorization'];
-        setIsAuthenticated(false);
-        setCredentials({ username: '', password: '' });
-    };
+    const [questions, setQuestions] = useState<any[]>([]);
+    const [selectedQuestion, setSelectedQuestion] = useState<any>(null);
+    const [answer, setAnswer] = useState('');
 
     useEffect(() => {
         if (!isAuthenticated) return;
-
-        // Apply auth header if rehydrating (e.g. refresh)
-        if (credentials.username && credentials.password) {
-            const auth = btoa(`${credentials.username}:${credentials.password}`);
-            api.defaults.headers.common['Authorization'] = `Basic ${auth}`;
-        }
 
         if (selectedFile === 'images') {
             refreshImages();
         } else if (selectedFile === 'blogs') {
             refreshBlogs();
+        } else if (selectedFile === 'inbox') {
+            refreshQuestions();
         } else {
             setLoading(true);
             api.get(`/admin/contents/${selectedFile}`)
@@ -146,6 +114,14 @@ export const Admin = () => {
             .finally(() => setLoading(false));
     };
 
+    const refreshQuestions = () => {
+        setLoading(true);
+        api.get('/questions?status=pending')
+            .then(res => setQuestions(res.data))
+            .catch(err => console.error(err))
+            .finally(() => setLoading(false));
+    };
+
     const handleSave = async () => {
         setSaving(true);
         try {
@@ -204,6 +180,28 @@ export const Admin = () => {
             refreshBlogs();
         } catch (e) {
             alert('Delete failed');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleAnswerSubmit = async () => {
+        if (!selectedQuestion || !answer.trim()) return;
+        setSaving(true);
+        try {
+            await api.put(`/questions/${selectedQuestion.id}`, {
+                question: {
+                    answer: answer,
+                    status: 'answered'
+                }
+            });
+            alert('Answer sent!');
+            setSelectedQuestion(null);
+            setAnswer('');
+            refreshQuestions();
+        } catch (error) {
+            console.error(error);
+            alert('Failed to send answer');
         } finally {
             setSaving(false);
         }
@@ -274,6 +272,7 @@ export const Admin = () => {
                                 onClick={() => {
                                     setSelectedFile(f.id);
                                     setIsEditingBlog(false);
+                                    setSelectedQuestion(null);
                                 }}
                                 className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${selectedFile === f.id
                                     ? 'bg-neutral-900 text-white dark:bg-white dark:text-black'
@@ -283,6 +282,15 @@ export const Admin = () => {
                                 {f.name}
                             </button>
                         ))}
+                        <button
+                            onClick={() => setSelectedFile('inbox')}
+                            className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${selectedFile === 'inbox'
+                                ? 'bg-neutral-900 text-white dark:bg-white dark:text-black'
+                                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
+                                }`}
+                        >
+                            Inbox
+                        </button>
                     </div>
                 </div>
 
@@ -449,6 +457,79 @@ export const Admin = () => {
                                 </div>
                             )}
                         </div>
+                    ) : selectedFile === 'inbox' ? (
+                        <div className="p-6 h-full flex gap-6 text-white overflow-hidden">
+                            {/* Question List */}
+                            <div className="w-1/3 border-r border-neutral-800 pr-6 overflow-y-auto">
+                                <h3 className="font-bold mb-4 sticky top-0 bg-neutral-900 py-2">Inbox ({questions.length})</h3>
+                                <div className="space-y-3">
+                                    {questions.map(q => (
+                                        <button
+                                            key={q.id}
+                                            onClick={() => {
+                                                setSelectedQuestion(q);
+                                                setAnswer(q.answer || '');
+                                            }}
+                                            className={`w-full text-left p-4 rounded-xl border transition-all ${selectedQuestion?.id === q.id
+                                                ? 'bg-cyan-900/20 border-cyan-500/50'
+                                                : 'bg-neutral-800 border-neutral-700 hover:border-neutral-600'
+                                                }`}
+                                        >
+                                            <p className="font-bold text-sm line-clamp-2 mb-2">{q.content}</p>
+                                            <div className="flex justify-between text-xs text-neutral-500">
+                                                <span>{new Date(q.created_at).toLocaleDateString()}</span>
+                                                <span className={q.status === 'answered' ? 'text-green-500' : 'text-yellow-500'}>
+                                                    {q.status}
+                                                </span>
+                                            </div>
+                                        </button>
+                                    ))}
+                                    {questions.length === 0 && (
+                                        <p className="text-sm text-neutral-500">No pending questions.</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Answer Area */}
+                            <div className="flex-grow flex flex-col h-full overflow-hidden">
+                                {selectedQuestion ? (
+                                    <>
+                                        <div className="mb-6 flex-shrink-0">
+                                            <h4 className="text-xs text-neutral-500 mb-2">Selected Question</h4>
+                                            <div className="bg-neutral-800 p-4 rounded-xl border border-neutral-700 text-lg">
+                                                {selectedQuestion.content}
+                                            </div>
+                                            {selectedQuestion.ip_address && (
+                                                <p className="text-xs text-neutral-600 mt-2 font-mono">IP: {selectedQuestion.ip_address}</p>
+                                            )}
+                                        </div>
+                                        <div className="flex-grow flex flex-col min-h-0">
+                                            <h4 className="text-xs text-neutral-500 mb-2">Your Answer</h4>
+                                            <textarea
+                                                value={answer}
+                                                onChange={(e) => setAnswer(e.target.value)}
+                                                placeholder="Write your answer here..."
+                                                className="w-full flex-grow bg-neutral-800 border border-neutral-700 rounded-xl p-4 text-white resize-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none"
+                                            />
+                                        </div>
+                                        <div className="mt-4 flex justify-end flex-shrink-0">
+                                            <button
+                                                onClick={handleAnswerSubmit}
+                                                disabled={saving || !answer.trim()}
+                                                className="px-6 py-3 bg-cyan-600 text-white rounded-xl font-bold hover:bg-cyan-500 transition-colors flex items-center gap-2 disabled:opacity-50"
+                                            >
+                                                {saving ? <Loader2 className="animate-spin" size={18} /> : <Send size={18} />}
+                                                Send Answer
+                                            </button>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="h-full flex items-center justify-center text-neutral-600">
+                                        Select a question to answer
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     ) : (
                         <textarea
                             value={content}
@@ -459,7 +540,7 @@ export const Admin = () => {
                     )}
                 </div>
 
-                {selectedFile !== 'images' && selectedFile !== 'blogs' && (
+                {selectedFile !== 'images' && selectedFile !== 'blogs' && selectedFile !== 'inbox' && (
                     <div className="mt-6 flex justify-end">
                         <button
                             onClick={handleSave}

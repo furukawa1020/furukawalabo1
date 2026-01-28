@@ -26,7 +26,7 @@ Rails.application.routes.draw do
       resources :works, only: [:index, :show]
       resources :blogs, param: :slug, only: [:index, :show]
       resources :donations, only: [:create, :index]
-      resources :questions, only: [:create, :index]
+      resources :questions, only: [:create, :index, :update]
       post 'webhook/bmc', to: 'donations#webhook'
     end
   end
