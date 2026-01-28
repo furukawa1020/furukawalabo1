@@ -9,14 +9,15 @@ export const Donate = () => {
     const [isSending, setIsSending] = useState(false);
 
     // 金額設定（表示用）
+    // 金額設定（表示用）
     const amounts = [
-        { value: 50, label: 'Mini', emoji: '🍬', color: 'bg-neutral-800 border-neutral-600 hover:border-neutral-400' },
-        { value: 100, label: 'Snack', emoji: '🍘', color: 'bg-stone-900/40 border-stone-700 hover:border-stone-500' },
-        { value: 500, label: 'Coffee', emoji: '☕', color: 'bg-amber-900/30 border-amber-700 hover:border-amber-500' },
-        { value: 1000, label: 'Lunch', emoji: '🍱', color: 'bg-green-900/30 border-green-700 hover:border-green-500' },
-        { value: 3000, label: 'Book', emoji: '📚', color: 'bg-blue-900/30 border-blue-700 hover:border-blue-500' },
-        { value: 5000, label: 'Support', emoji: '💪', color: 'bg-purple-900/30 border-purple-700 hover:border-purple-500' },
-        { value: 10000, label: 'Sponsor', emoji: '⭐', color: 'bg-pink-900/30 border-pink-700 hover:border-pink-500' },
+        { value: 1, label: 'Mini', emoji: '🍬', color: 'bg-neutral-800 border-neutral-600 hover:border-neutral-400' },
+        { value: 3, label: 'Snack', emoji: '🍘', color: 'bg-stone-900/40 border-stone-700 hover:border-stone-500' },
+        { value: 5, label: 'Coffee', emoji: '☕', color: 'bg-amber-900/30 border-amber-700 hover:border-amber-500' },
+        { value: 10, label: 'Lunch', emoji: '🍱', color: 'bg-green-900/30 border-green-700 hover:border-green-500' },
+        { value: 30, label: 'Book', emoji: '📚', color: 'bg-blue-900/30 border-blue-700 hover:border-blue-500' },
+        { value: 50, label: 'Support', emoji: '💪', color: 'bg-purple-900/30 border-purple-700 hover:border-purple-500' },
+        { value: 100, label: 'Sponsor', emoji: '⭐', color: 'bg-pink-900/30 border-pink-700 hover:border-pink-500' },
     ];
 
     const handleAskQuestion = async () => {
