@@ -47,8 +47,8 @@ export const Donate = () => {
                                 rel="noopener noreferrer"
                                 className="group relative w-full max-w-md overflow-hidden bg-[#FFDD00] hover:bg-[#FFDD00]/90 text-black font-black text-2xl py-6 px-8 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-yellow-500/30 active:scale-[0.98] flex items-center justify-center gap-3"
                             >
-                                <span className="text-3xl">☕</span>
-                                <span>Buy Me a Coffee で応援</span>
+                                <span className="text-3xl">🍪</span>
+                                <span>おやつと質問箱</span>
                             </a>
 
                             <div className="flex items-center gap-2 text-neutral-500 text-sm">
