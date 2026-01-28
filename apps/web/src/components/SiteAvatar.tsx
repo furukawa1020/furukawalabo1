@@ -81,23 +81,23 @@ const AvatarModel = () => {
                 sceneRef.current.rotation.y = Math.PI + (Math.sign(dist) * Math.PI / 4);
 
                 // Bobbing (fake walk cycle)
-                sceneRef.current.position.y = -2 + Math.abs(Math.sin(state.clock.elapsedTime * 10)) * 0.05;
+                sceneRef.current.position.y = -0.8 + Math.abs(Math.sin(state.clock.elapsedTime * 10)) * 0.05;
             } else {
                 setAction('idle');
                 sceneRef.current.rotation.y = Math.PI; // Face front
             }
         } else if (sceneRef.current) {
-            sceneRef.current.position.y = -2; // Reset height
+            sceneRef.current.position.y = -0.8; // Reset height
         }
     });
 
-    return vrm ? <primitive object={vrm.scene} ref={sceneRef} position={[0, -2, 0]} /> : null;
+    return vrm ? <primitive object={vrm.scene} ref={sceneRef} position={[0, -0.8, 0]} /> : null;
 };
 
 export const SiteAvatar = () => {
     return (
-        <div className="fixed bottom-0 left-0 right-0 h-[400px] pointer-events-none z-30" style={{ pointerEvents: 'none' }}>
-            <Canvas camera={{ position: [0, 0, 3], fov: 30 }} gl={{ alpha: true }}>
+        <div className="fixed bottom-0 left-0 right-0 h-[200px] pointer-events-none z-30" style={{ pointerEvents: 'none' }}>
+            <Canvas camera={{ position: [0, 0.8, 6.5], fov: 30 }} gl={{ alpha: true }}>
                 <ambientLight intensity={1.0} />
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
                 <pointLight position={[-10, -10, -10]} />
