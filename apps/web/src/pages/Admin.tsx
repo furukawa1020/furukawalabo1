@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../api/client';
 import { SEO } from '../components/SEO';
-import { Save, Loader2, Check, Plus, Trash2, Edit } from 'lucide-react';
+import { Save, Loader2, Check, Plus, Trash2, Edit, Send } from 'lucide-react';
 
 const FILES = [
     { id: 'achievements', name: 'Achievements (YAML)' },
@@ -34,9 +34,41 @@ export const Admin = () => {
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
 
+    // Question Box State
     const [questions, setQuestions] = useState<any[]>([]);
     const [selectedQuestion, setSelectedQuestion] = useState<any>(null);
     const [answer, setAnswer] = useState('');
+
+    // Auth State
+    const [credentials, setCredentials] = useState({ username: '', password: '' });
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        // Check if we have credentials in session storage
+        const stored = sessionStorage.getItem('admin_auth');
+        if (stored) {
+            const { username, password } = JSON.parse(stored);
+            setCredentials({ username, password });
+            setIsAuthenticated(true);
+        }
+    }, []);
+
+    const handleLogin = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (credentials.username && credentials.password) {
+            const auth = btoa(`${credentials.username}:${credentials.password}`);
+            api.defaults.headers.common['Authorization'] = `Basic ${auth}`;
+            sessionStorage.setItem('admin_auth', JSON.stringify(credentials));
+            setIsAuthenticated(true);
+        }
+    };
+
+    const logout = () => {
+        sessionStorage.removeItem('admin_auth');
+        delete api.defaults.headers.common['Authorization'];
+        setIsAuthenticated(false);
+        setCredentials({ username: '', password: '' });
+    };
 
     useEffect(() => {
         if (!isAuthenticated) return;
