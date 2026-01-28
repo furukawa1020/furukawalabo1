@@ -11,12 +11,12 @@ SECRET = "a618fdc3d44de958f8af2dd7d7f7c4fdad49e91803b19e7d0354e847ebb634d2af0ef3
 
 # Payload representing a fake donation
 payload = {
-  support_id: "TEST_#{Time.now.to_i}",
-  supporter_name: "Test User",
-  support_coffee_price: "5.00", 
+  support_id: "SAKURA_1.5_#{Time.now.to_i}", # Unique ID
+  supporter_name: "とくめー",
+  support_coffee_price: "1.50", 
   support_coffees: 1,
-  support_note: "One coffee please!",
-  support_email: "test@example.com"
+  support_note: "応援！（1.5ドル）",
+  support_email: "sakura@example.com"
 } # Note: BMC sends flat JSON (not nested) or URL encoded form params usually? 
 # In logic we saw payload = params.permit!, so it handles both JSON or Form matchers.
 # BMC docs say JSON.
