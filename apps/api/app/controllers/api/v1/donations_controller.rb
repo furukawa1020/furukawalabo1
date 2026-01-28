@@ -58,7 +58,6 @@ module Api
         donation = Donation.create!(
           transaction_id: transaction_id,
           amount: amount,
-          currency: 'JPY',
           status: 'succeeded',
           donor_name: donor_name,
           message: message
