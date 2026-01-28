@@ -10,7 +10,7 @@ interface Message {
 export const SiteAgent = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
-        { role: 'bot', content: 'こんにちは！古川ラボのAIエージェントです。研究内容や記事について何でも聞いてください！(例: 「RTX5060のAIについて教えて」)' }
+        { role: 'bot', content: 'こんにちは！このサイトのAIエージェントです。このサイトのことならなんでもおまかせ！(例: 「RTX5060のAIについて教えて」)' }
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -111,8 +111,8 @@ export const SiteAgent = () => {
                                     {msg.role === 'bot' ? <Bot size={16} /> : <User size={16} />}
                                 </div>
                                 <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed max-w-[80%] ${msg.role === 'bot'
-                                        ? 'bg-neutral-800 text-neutral-200 rounded-tl-none'
-                                        : 'bg-cyan-900/40 text-cyan-100 border border-cyan-800/50 rounded-tr-none'
+                                    ? 'bg-neutral-800 text-neutral-200 rounded-tl-none'
+                                    : 'bg-cyan-900/40 text-cyan-100 border border-cyan-800/50 rounded-tr-none'
                                     }`}>
                                     {msg.content}
                                 </div>
