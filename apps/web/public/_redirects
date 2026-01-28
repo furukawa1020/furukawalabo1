@@ -1,1 +1,6 @@
+# Serve static files directly
+/content/*  200
+/assets/*   200
+
+# SPA fallback for all other routes
 /*    /index.html   200
