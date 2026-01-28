@@ -29,8 +29,9 @@ export const Legal = () => {
                     <section className="mb-8">
                         <h2 className="text-2xl font-bold mb-4">お問い合わせ先</h2>
                         <p>
-                            X (Twitter): <a href="https://x.com/HATAKE55555" target="_blank" rel="noopener noreferrer" className="text-cyan-600 dark:text-cyan-400 hover:underline">@HATAKE55555</a><br />
-                            メールでのお問い合わせは、X (Twitter) のダイレクトメッセージにてお願いいたします。
+                            メールアドレス: f.kotaro.0530@gmail.com<br />
+                            電話番号: 090-1747-5106<br />
+                            X (Twitter): <a href="https://x.com/HATAKE55555" target="_blank" rel="noopener noreferrer" className="text-cyan-600 dark:text-cyan-400 hover:underline">@HATAKE55555</a>
                         </p>
                     </section>
 
