@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { Share2, Gift, Send, CreditCard } from 'lucide-react';
+import { useState } from 'react';
+import { Share2, Gift, Send } from 'lucide-react';
 import { SEO } from '../components/SEO';
-import { DonationNotification } from '../components/DonationNotification';
 import DonationHistory from '../components/DonationHistory';
 import axios from 'axios';
 
@@ -44,12 +43,11 @@ export const Donate = () => {
     };
 
     return (
-        <Layout>
+        <>
             <SEO
                 title="Donate & Ask"
                 description="古川ラボの研究活動を支援する・質問を送る"
             />
-            <DonationNotification />
 
             <div className="pt-32 pb-20 px-4 min-h-screen">
                 <div className="max-w-6xl mx-auto space-y-12">
@@ -174,6 +172,6 @@ export const Donate = () => {
                     </div>
                 </div>
             </div>
-        </Layout>
+        </>
     );
 };
