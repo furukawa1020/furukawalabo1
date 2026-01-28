@@ -52,7 +52,7 @@ export const Legal = () => {
 
                     <section className="mb-8">
                         <h2 className="text-2xl font-bold mb-4">支払方法</h2>
-                        <p>クレジットカード決済（Stripe経由）</p>
+                        <p>Buy Me a Coffee</p>
                     </section>
 
                     <section className="mb-8">
@@ -74,11 +74,8 @@ export const Legal = () => {
                     <section className="mb-8 p-6 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
                         <h2 className="text-2xl font-bold mb-4">プライバシーと決済の安全性</h2>
                         <p>
-                            決済はStripe社の安全な決済システムを通じて行われます。<br />
+                            決済はBuy Me a Coffeeのプラットフォームを通じて行われます。<br />
                             クレジットカード情報が当サイトに保存されることはありません。<br />
-                            <br />
-                            当サイトでは、Cookie同意管理システムを採用しており、
-                            ユーザーの皆様のプライバシーを尊重しています。
                         </p>
                     </section>
 
