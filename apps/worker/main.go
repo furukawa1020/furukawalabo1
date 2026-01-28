@@ -132,13 +132,13 @@ func startHTTPServer(db *sql.DB) {
 func syncProtopedia(db *sql.DB) {
 	fmt.Println("Starting Protopedia sync...", time.Now())
 
-	// All 41 work URLs (古川耕太郎's Protopedia works)
+	// All 43 work URLs (古川耕太郎's Protopedia works)
 	workIDs := []string{
 		"6345", "6347", "6348", "6349", "6549", "6554", "6555", "6613", "6692", "6694",
 		"7255", "7408", "7495", "7496", "7527", "7528", "7529", "7538", "7539", "7553",
 		"7571", "7600", "7617", "7648", "7672", "7694", "7833", "7834", "7842", "7844",
 		"7852", "7866", "7889", "7895", "7908", "7916", "7952", "7984", "7995", "8059",
-		"8097",
+		"8097", "8147", "8150",
 	}
 
 	successCount := 0
