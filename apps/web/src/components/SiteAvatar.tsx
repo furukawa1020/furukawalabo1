@@ -37,9 +37,15 @@ const AvatarModel = () => {
 
         // Basic "AI" Behavior Loop
         if (Math.random() < 0.005) {
-            // Pick a random action occasionally
-            const actions: ('walk' | 'idle' | 'wave' | 'peace')[] = ['walk', 'idle', 'idle', 'wave', 'peace']; // weighted
+            // Pick a random action occasionally behavior
+            // If currently walking, don't interrupt too abruptly unless it's a stop
+
+            // Bias towards idle
+            const actions: ('walk' | 'idle' | 'wave' | 'peace')[] = ['walk', 'idle', 'idle', 'idle', 'wave', 'peace'];
             const next = actions[Math.floor(Math.random() * actions.length)];
+
+            // If we are already interacting (chat open?), maybe we should stay idle?
+            // For now, just randomness.
             setAction(next);
 
             if (next === 'walk') {
@@ -55,6 +61,9 @@ const AvatarModel = () => {
         const leftLowerArm = vrm.humanoid.getRawBoneNode('leftLowerArm' as any);
         const rightUpperLeg = vrm.humanoid.getRawBoneNode('rightUpperLeg' as any);
         const leftUpperLeg = vrm.humanoid.getRawBoneNode('leftUpperLeg' as any);
+        const rightLowerLeg = vrm.humanoid.getRawBoneNode('rightLowerLeg' as any);
+        const leftLowerLeg = vrm.humanoid.getRawBoneNode('leftLowerLeg' as any);
+        const spine = vrm.humanoid.getRawBoneNode('spine' as any);
 
         if (rightUpperArm && rightLowerArm && leftUpperArm && leftLowerArm) {
             const t = state.clock.elapsedTime;
@@ -72,30 +81,49 @@ const AvatarModel = () => {
                 rightUpperArm.rotation.z = 2.0;
                 leftUpperArm.rotation.z = -1.2;
             } else if (action === 'walk') {
-                // Walking Animation (Strolling)
-                // Arms swing opposite to legs
-                const speed = 8; // Slower, more relaxed
-                rightUpperArm.rotation.z = 1.2 + Math.sin(t * speed) * 0.08;
-                leftUpperArm.rotation.z = -1.2 + Math.sin(t * speed) * 0.08;
+                // Walking Animation (Natural Stroll)
+                const walkSpeed = 5; // Relaxed stroll speed
+                const stepCycle = t * walkSpeed;
 
-                // Legs move (X rotation for forward/back)
-                if (rightUpperLeg && leftUpperLeg) {
-                    rightUpperLeg.rotation.x = Math.sin(t * speed) * 0.3; // Smaller steps
-                    leftUpperLeg.rotation.x = Math.sin(t * speed + Math.PI) * 0.3;
+                // Arms: Swing opposite to legs, small amplitude
+                rightUpperArm.rotation.z = 1.2 + Math.sin(stepCycle) * 0.15;
+                rightUpperArm.rotation.x = -Math.sin(stepCycle) * 0.1;
+                leftUpperArm.rotation.z = -1.2 + Math.sin(stepCycle) * 0.15;
+                leftUpperArm.rotation.x = Math.sin(stepCycle) * 0.1;
+
+                // Legs & Knees
+                if (rightUpperLeg && leftUpperLeg && rightLowerLeg && leftLowerLeg) {
+                    const rHip = Math.sin(stepCycle) * 0.5;
+                    const lHip = Math.sin(stepCycle + Math.PI) * 0.5;
+
+                    rightUpperLeg.rotation.x = rHip;
+                    leftUpperLeg.rotation.x = lHip;
+
+                    // Knee Bend (Simple approximation: Bend on backward swing or lift)
+                    // Let's bend when lifting (hip forward/up)
+                    rightLowerLeg.rotation.x = -Math.max(0, -Math.cos(stepCycle) * 1.5);
+                    leftLowerLeg.rotation.x = -Math.max(0, -Math.cos(stepCycle + Math.PI) * 1.5);
                 }
+
+                // Spine
+                if (spine) spine.rotation.y = Math.sin(stepCycle) * 0.05;
+
             } else {
                 // Idle breathing
                 rightUpperArm.rotation.z = 1.2 + Math.sin(t) * 0.05;
                 leftUpperArm.rotation.z = -1.2 - Math.sin(t) * 0.05;
 
                 // Reset legs
-                if (rightUpperLeg && leftUpperLeg) {
+                if (rightUpperLeg && leftUpperLeg && rightLowerLeg && leftLowerLeg) {
                     rightUpperLeg.rotation.x = 0;
                     leftUpperLeg.rotation.x = 0;
+                    rightLowerLeg.rotation.x = 0;
+                    leftLowerLeg.rotation.x = 0;
                 }
 
                 rightLowerArm.rotation.z = 0;
                 leftLowerArm.rotation.z = 0;
+                if (spine) spine.rotation.y = 0;
             }
         }
 
@@ -103,7 +131,7 @@ const AvatarModel = () => {
         if (action === 'walk' && sceneRef.current) {
             const currentX = sceneRef.current.position.x;
             const dist = targetX - currentX;
-            const speed = 0.5 * delta; // Slower movement speed
+            const speed = 0.5 * delta;
 
             if (Math.abs(dist) > 0.1) {
                 sceneRef.current.position.x += Math.sign(dist) * speed;
@@ -112,19 +140,29 @@ const AvatarModel = () => {
                 const turn = dist > 0 ? -Math.PI / 2 : Math.PI / 2;
                 sceneRef.current.rotation.y = turn;
 
-                // Bobbing (fake walk cycle)
-                sceneRef.current.position.y = -1.0 + Math.abs(Math.sin(state.clock.elapsedTime * 8)) * 0.03;
+                // Bobbing (Synced)
+                const walkCycle = state.clock.elapsedTime * 5;
+                const bobble = Math.abs(Math.cos(walkCycle)) * 0.05;
+                sceneRef.current.position.y = -1.0 + bobble;
             } else {
                 setAction('idle');
-                sceneRef.current.rotation.y = 0; // Face front (camera)
+                sceneRef.current.rotation.y = 0; // Face front
             }
         } else if (sceneRef.current) {
-            sceneRef.current.position.y = -1.0; // Reset height
+            if (action === 'idle') {
+                sceneRef.current.rotation.y = 0; // Ensure facing front if idle
+                sceneRef.current.position.y = -1.0;
+            }
         }
     });
 
     const openChat = () => {
         window.dispatchEvent(new Event('open-site-agent'));
+        // Stop the avatar and face front
+        setAction('idle');
+        if (sceneRef.current) {
+            sceneRef.current.rotation.y = 0;
+        }
     };
 
     return vrm ? (
