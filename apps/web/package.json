@@ -25,8 +25,8 @@
     "react-router-dom": "^6.22.3",
     "rehype-raw": "^7.0.0",
     "tailwind-merge": "^2.2.1",
-    "three": "^0.160.0",
-    "@types/three": "^0.160.0",
+    "three": "^0.164.0",
+    "@types/three": "^0.164.0",
     "@react-three/fiber": "^8.15.16",
     "@react-three/drei": "^9.102.6",
     "@pixiv/three-vrm": "^2.1.0"
