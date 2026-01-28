@@ -16,9 +16,7 @@ export const SiteAgent = () => {
     const [isLoading, setIsLoading] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
 
-    // AI API Client (Directly to Edge Gateway /ai route)
-    // Assumes VITE_API_URL points to gateway root, e.g. http://localhost:8080
-    // But existing client adds /api/v1. We construct base URL manually.
+    // AI API Client
     const getAiBaseUrl = () => {
         // If specific AI URL is set, use it (remove trailing slash)
         if (import.meta.env.VITE_AI_API_URL) {
@@ -27,7 +25,7 @@ export const SiteAgent = () => {
 
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
         // Fallback logic for Edge Gateway or Monorepo proxy
-        return apiUrl.replace(/\/api\/v1\/?$/, '').replace(/\/$/, '') + '/ai'; // This pointed to /ai route which might proxy to /chat.
+        return apiUrl.replace(/\/api\/v1\/?$/, '').replace(/\/$/, '') + '/ai';
     };
 
     const scrollToBottom = () => {
@@ -40,6 +38,13 @@ export const SiteAgent = () => {
         scrollToBottom();
     }, [messages, isOpen]);
 
+    // Listen for custom event from Avatar
+    useEffect(() => {
+        const handleOpenEvent = () => setIsOpen(true);
+        window.addEventListener('open-site-agent', handleOpenEvent);
+        return () => window.removeEventListener('open-site-agent', handleOpenEvent);
+    }, []);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!input.trim() || isLoading) return;
@@ -50,13 +55,7 @@ export const SiteAgent = () => {
         setIsLoading(true);
 
         try {
-            // Prepare history for API
-            // Note: Simplistic history. Ideally should be [[user, bot], ...] 
-            // We'll let the Python side handle flat list or we format it here.
-            // Python expects specific format. Let's send last 6 messages paired.
-
-            // Reformat history for the specific Python implementation we wrote
-            // Python expects: [[user, bot], [user, bot]]
+            // Reformat history for the specific Python implementation
             const formattedHistory: string[][] = [];
             for (let i = 1; i < messages.length; i += 2) {
                 if (messages[i] && messages[i].role === 'user' && messages[i + 1] && messages[i + 1].role === 'bot') {
@@ -156,15 +155,6 @@ export const SiteAgent = () => {
                     </form>
                 </div>
             )}
-
-            {/* Toggle Button */}
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="group relative h-14 w-14 rounded-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg hover:shadow-cyan-500/25 transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center pointer-events-auto"
-            >
-                <div className="absolute inset-0 rounded-full bg-white/20 animate-ping opacity-0 group-hover:opacity-100 duration-1000" />
-                {isOpen ? <X size={24} /> : <MessageCircle size={28} />}
-            </button>
         </div>
     );
 };

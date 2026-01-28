@@ -1,4 +1,5 @@
 import { Canvas, useFrame } from '@react-three/fiber';
+import { Html } from '@react-three/drei';
 // @ts-ignore
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { VRM, VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
@@ -20,13 +21,8 @@ const AvatarModel = () => {
             const vrm = gltf.userData.vrm as VRM;
             VRMUtils.removeUnnecessaryVertices(gltf.scene);
             VRMUtils.deepDispose(gltf.scene); // Proper cleanup hook if needed, but here just setup
-            // combineSkeletons is deprecated/removed in newer versions or handled differently.
-            // Usually scene rotation is enough.
-            // Usually scene rotation is enough.
-            vrm.scene.rotation.y = 0; // Face camera (VRM +Z is front, Camera looks -Z... wait. VRM faces +Z. Camera at +Z looking -Z. So VRM +Z faces Camera.)
-            // Actually standard VRM models face +Z relative to their local coords? No, usually +Z is forward in standard, but in Three.js +Z is out of screen.
-            // If model faces +Z, and camera is at +Z, model is looking AT camera.
-            // Previous code had Math.PI, which turned it around.
+
+            vrm.scene.rotation.y = 0; // Face camera
             setVrm(vrm);
         }, undefined, (error: any) => {
             console.error('Failed to load VRM:', error);
@@ -57,13 +53,11 @@ const AvatarModel = () => {
         const rightLowerArm = vrm.humanoid.getRawBoneNode('rightLowerArm' as any);
         const leftUpperArm = vrm.humanoid.getRawBoneNode('leftUpperArm' as any);
         const leftLowerArm = vrm.humanoid.getRawBoneNode('leftLowerArm' as any);
+        const rightUpperLeg = vrm.humanoid.getRawBoneNode('rightUpperLeg' as any);
+        const leftUpperLeg = vrm.humanoid.getRawBoneNode('leftUpperLeg' as any);
 
         if (rightUpperArm && rightLowerArm && leftUpperArm && leftLowerArm) {
             const t = state.clock.elapsedTime;
-
-            // Default: Arms down (A-pose / Idle)
-            // VRM T-pose: Arms are at Z=0? 
-            // To put arms down: Rotate Z approx -1.2 (Right) and +1.2 (Left)
 
             if (action === 'wave') {
                 // Wave Right Hand
@@ -73,17 +67,32 @@ const AvatarModel = () => {
                 // Left arm idle
                 leftUpperArm.rotation.z = -1.2;
                 leftLowerArm.rotation.z = 0;
-
             } else if (action === 'peace') {
                 // Peace Pose
                 rightUpperArm.rotation.z = 2.0;
                 leftUpperArm.rotation.z = -1.2;
+            } else if (action === 'walk') {
+                // Walking Animation (Strolling)
+                // Arms swing opposite to legs
+                const speed = 8; // Slower, more relaxed
+                rightUpperArm.rotation.z = 1.2 + Math.sin(t * speed) * 0.08;
+                leftUpperArm.rotation.z = -1.2 + Math.sin(t * speed) * 0.08;
 
+                // Legs move (X rotation for forward/back)
+                if (rightUpperLeg && leftUpperLeg) {
+                    rightUpperLeg.rotation.x = Math.sin(t * speed) * 0.3; // Smaller steps
+                    leftUpperLeg.rotation.x = Math.sin(t * speed + Math.PI) * 0.3;
+                }
             } else {
-                // Idle / Walk
-                // Swing arms slightly
-                rightUpperArm.rotation.z = 1.2 + Math.sin(t * 2) * 0.05; // ~70 degrees down
-                leftUpperArm.rotation.z = -1.2 - Math.sin(t * 2) * 0.05; // ~70 degrees down
+                // Idle breathing
+                rightUpperArm.rotation.z = 1.2 + Math.sin(t) * 0.05;
+                leftUpperArm.rotation.z = -1.2 - Math.sin(t) * 0.05;
+
+                // Reset legs
+                if (rightUpperLeg && leftUpperLeg) {
+                    rightUpperLeg.rotation.x = 0;
+                    leftUpperLeg.rotation.x = 0;
+                }
 
                 rightLowerArm.rotation.z = 0;
                 leftLowerArm.rotation.z = 0;
@@ -94,21 +103,17 @@ const AvatarModel = () => {
         if (action === 'walk' && sceneRef.current) {
             const currentX = sceneRef.current.position.x;
             const dist = targetX - currentX;
-            const speed = 1.0 * delta;
+            const speed = 0.5 * delta; // Slower movement speed
 
             if (Math.abs(dist) > 0.1) {
                 sceneRef.current.position.x += Math.sign(dist) * speed;
-                // Face direction: 
-                // TargetX > CurrentX (Positive) -> Move Right -> Turn Right (Face -X?) 
-                // Default Face +Z. Turn 90deg (PI/2) to Face +X (Right) or -X (Left)?
-                // ThreeJS Right is +X. Left is -X.
-                // If standard model faces +Z. Rotation Y -PI/2 faces +X?
-                // Let's just try turning towards movement.
+
+                // Face direction
                 const turn = dist > 0 ? -Math.PI / 2 : Math.PI / 2;
                 sceneRef.current.rotation.y = turn;
 
                 // Bobbing (fake walk cycle)
-                sceneRef.current.position.y = -1.0 + Math.abs(Math.sin(state.clock.elapsedTime * 10)) * 0.05;
+                sceneRef.current.position.y = -1.0 + Math.abs(Math.sin(state.clock.elapsedTime * 8)) * 0.03;
             } else {
                 setAction('idle');
                 sceneRef.current.rotation.y = 0; // Face front (camera)
@@ -118,7 +123,24 @@ const AvatarModel = () => {
         }
     });
 
-    return vrm ? <primitive object={vrm.scene} ref={sceneRef} position={[0, -1.0, 0]} /> : null;
+    const openChat = () => {
+        window.dispatchEvent(new Event('open-site-agent'));
+    };
+
+    return vrm ? (
+        <group ref={sceneRef} position={[0, -1.0, 0]}>
+            <primitive object={vrm.scene} />
+            {/* Hitbox for click interaction */}
+            <Html position={[0, 1.0, 0]} center wrapperClass="pointer-events-auto">
+                <div
+                    onClick={openChat}
+                    className="w-24 h-48 cursor-pointer"
+                    style={{ transform: 'translate(-50%, -50%)' }}
+                    title="Click to chat"
+                />
+            </Html>
+        </group>
+    ) : null;
 };
 
 export const SiteAvatar = () => {
