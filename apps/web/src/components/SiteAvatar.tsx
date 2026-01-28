@@ -10,7 +10,7 @@ const AvatarModel = () => {
     const [vrm, setVrm] = useState<VRM | null>(null);
     const sceneRef = useRef<THREE.Group>(null);
     const [action, setAction] = useState<'walk' | 'idle' | 'wave' | 'peace'>('idle');
-    const [targetX, setTargetX] = useState(0);
+    const [targetX, setTargetX] = useState(-3); // Start at left
 
     // Load VRM
     useEffect(() => {
@@ -22,7 +22,7 @@ const AvatarModel = () => {
             VRMUtils.removeUnnecessaryVertices(gltf.scene);
             VRMUtils.deepDispose(gltf.scene);
 
-            vrm.scene.rotation.y = 0; // Face camera
+            vrm.scene.rotation.y = 0;
             setVrm(vrm);
         }, undefined, (error: any) => {
             console.error('Failed to load VRM:', error);
@@ -36,13 +36,21 @@ const AvatarModel = () => {
         vrm.update(delta);
 
         // Basic "AI" Behavior Loop
-        if (Math.random() < 0.005) {
-            const actions: ('walk' | 'idle' | 'wave' | 'peace')[] = ['walk', 'idle', 'idle', 'idle', 'wave', 'peace'];
+        // Decisions fewer times per second
+        if (Math.random() < 0.01) {
+            const actions: ('walk' | 'idle' | 'wave' | 'peace')[] = ['walk', 'walk', 'idle', 'wave'];
             const next = actions[Math.floor(Math.random() * actions.length)];
-            setAction(next);
 
-            if (next === 'walk') {
-                setTargetX((Math.random() - 0.5) * 5); // Target X (-2.5 to 2.5)
+            // If already walking, maybe minimal change.
+            if (action !== 'walk' && next === 'walk') {
+                setAction('walk');
+                // Pick a random spot, bias towards left side (-4 to 0)
+                setTargetX((Math.random() * 6) - 5);
+            } else if (action === 'walk' && Math.abs(targetX - (sceneRef.current?.position.x || 0)) < 0.5) {
+                // Reached destination
+                setAction('idle');
+            } else if (action !== 'walk') {
+                setAction(next);
             }
         }
 
@@ -69,65 +77,33 @@ const AvatarModel = () => {
                 rightUpperArm.rotation.z = 2.0;
                 leftUpperArm.rotation.z = -1.2;
             } else if (action === 'walk') {
-                // Walking Animation (Correction for "Backwards/Kakukaku")
-
-                // 1. Sync Speed: Movement is 0.5/sec.
-                // Stride approx 0.5m. 2 steps/sec?
-                // walkSpeed=8 was too fast for 0.5 move. 
-                // Let's keep walkSpeed=6 for animation cycle.
-                const walkSpeed = 6;
+                // Walking Animation
+                // Fix: Sync leg speed with movement speed.
+                // 1.05m/s movement (moveSpeed) <-> WalkCycle 5.5
+                const walkSpeed = 5.5;
                 const cycle = t * walkSpeed;
 
-                // 2. Arms: Swing opposite to legs. 
-                // Increase X swing to make it distinct.
-                const armAmp = 0.4;
-                rightUpperArm.rotation.z = 1.2; // A-pose stable
+                const armAmp = 0.3;
+                rightUpperArm.rotation.z = 1.2;
                 leftUpperArm.rotation.z = -1.2;
-                rightUpperArm.rotation.x = Math.sin(cycle) * armAmp; // Opposite to Right Leg? No, Left Leg forward = Right Arm forward.
-                leftUpperArm.rotation.x = Math.sin(cycle + Math.PI) * armAmp;
+                rightUpperArm.rotation.x = Math.sin(cycle + Math.PI) * armAmp;
+                leftUpperArm.rotation.x = Math.sin(cycle) * armAmp;
 
-                // 3. Legs: 
-                // FIX MOONWALK: Invert the hip rotation.
-                // Standard: +X rot is Leg Forward.
-                // If we want Left Leg Forward (Swing) -> Left Leg Back (Stance).
-                // Cycle 0..PI: sin > 0.
-
-                // Let's try: Right Leg starts Back (Stance), Left Forward.
-                const legAmp = 0.6;
-                const rHip = Math.sin(cycle + Math.PI) * legAmp; // Inverted phase to fix moonwalk?
-                const lHip = Math.sin(cycle) * legAmp;
-
+                // Legs
+                const legAmp = 0.7; // Bigger steps
                 if (rightUpperLeg && leftUpperLeg) {
-                    rightUpperLeg.rotation.x = rHip;
-                    leftUpperLeg.rotation.x = lHip;
+                    rightUpperLeg.rotation.x = Math.sin(cycle + Math.PI) * legAmp;
+                    leftUpperLeg.rotation.x = Math.sin(cycle) * legAmp;
                 }
 
-                // 4. Knees (Smoother)
-                // Bend when hip is moving forward (Swing phase).
-                // Standard bend is -X rotation.
-                // Use a shaped sine wave: only bend when sin(cycle) is positive (Leg forward).
-                // Smooth blend: 0.5 * (sin - 1) is always negative, peaks at 0.
+                // Knees - Only bend on Swing (forward)
                 if (rightLowerLeg && leftLowerLeg) {
-                    // Right Leg Swing: cycle+PI is positive? approx.
-                    // Let's use simple logic: max(0, -sin) but smoothed?
-                    // Or just always slight bend + swing bend?
-                    // Try: -0.1 - max(0, sin(cycle)) * 0.8
-
-                    // Improved smooth knee:
-                    // Bend right knee when right leg swings forward (rHip > 0 approx)
-                    // Phase matched to hip.
-                    const rKnee = -Math.max(0, Math.sin(cycle + Math.PI) * 1.0);
-                    const lKnee = -Math.max(0, Math.sin(cycle) * 1.0);
-
-                    // Smooth out the sharp corner of Max with a power curve or just let it be.
-                    // "Kakukaku" might be the frame rate or sharp stop.
-                    // Let's filter it: (sin > 0 ? sin : 0)^1.5
-
-                    rightLowerLeg.rotation.x = rKnee;
-                    leftLowerLeg.rotation.x = lKnee;
+                    // Right Knee bends when Right Leg swings forward (cycle+PI is positive)
+                    rightLowerLeg.rotation.x = -Math.max(0, Math.sin(cycle + Math.PI) * 1.2);
+                    leftLowerLeg.rotation.x = -Math.max(0, Math.sin(cycle) * 1.2);
                 }
 
-                if (spine) spine.rotation.y = Math.sin(cycle) * 0.1; // More spine twist
+                if (spine) spine.rotation.y = Math.sin(cycle) * 0.08;
 
             } else {
                 // Idle
@@ -146,29 +122,28 @@ const AvatarModel = () => {
             }
         }
 
-        // Walking Movement Loop
+        // Walking Movement Logic
         if (action === 'walk' && sceneRef.current) {
             const currentX = sceneRef.current.position.x;
             const dist = targetX - currentX;
-            const speed = 0.5 * delta;
+            // Increased speed to match leg animation (Fixing moonwalk)
+            // Was 0.5, Now 1.2
+            const moveSpeed = 1.2 * delta;
 
             if (Math.abs(dist) > 0.1) {
-                sceneRef.current.position.x += Math.sign(dist) * speed;
+                sceneRef.current.position.x += Math.sign(dist) * moveSpeed;
 
-                // Turn
                 const turn = dist > 0 ? -Math.PI / 2 : Math.PI / 2;
                 sceneRef.current.rotation.y = turn;
 
-                // Bounce
-                const walkCycle = state.clock.elapsedTime * 6; // Match walkSpeed
-                // Smooth bounce: abs(cos) is sharp at 0. Use (cos+1)? 
-                // No, standard walk is bouncy.
-                sceneRef.current.position.y = -1.0 + Math.abs(Math.cos(walkCycle)) * 0.03;
+                const walkCycle = state.clock.elapsedTime * 5.5;
+                sceneRef.current.position.y = -1.0 + Math.abs(Math.cos(walkCycle)) * 0.04;
             } else {
                 setAction('idle');
                 sceneRef.current.rotation.y = 0;
             }
         } else if (sceneRef.current) {
+            // Ensure idle position is correct
             if (action === 'idle') {
                 sceneRef.current.rotation.y = 0;
                 sceneRef.current.position.y = -1.0;
@@ -179,13 +154,12 @@ const AvatarModel = () => {
     const openChat = () => {
         window.dispatchEvent(new Event('open-site-agent'));
         setAction('idle');
-        if (sceneRef.current) {
-            sceneRef.current.rotation.y = 0;
-        }
+        if (sceneRef.current) sceneRef.current.rotation.y = 0;
     };
 
+    // Initial Position set here
     return vrm ? (
-        <group ref={sceneRef} position={[0, -1.0, 0]}>
+        <group ref={sceneRef} position={[-3, -1.0, 0]}>
             <primitive object={vrm.scene} />
             <Html position={[0, 1.0, 0]} center wrapperClass="pointer-events-auto">
                 <div
@@ -202,7 +176,9 @@ const AvatarModel = () => {
 export const SiteAvatar = () => {
     return (
         <div className="fixed bottom-0 left-0 right-0 h-[200px] pointer-events-none z-30" style={{ pointerEvents: 'none' }}>
-            <Canvas camera={{ position: [0, 0.8, 6.5], fov: 30 }} gl={{ alpha: true }}>
+            {/* FOV changed to 20 for less perspective distortion (makes limbs look thicker) */}
+            {/* Position moved back to 8.5 to keep scale similar with lower FOV */}
+            <Canvas camera={{ position: [0, 0.8, 8.5], fov: 20 }} gl={{ alpha: true }}>
                 <ambientLight intensity={1.0} />
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
                 <pointLight position={[-10, -10, -10]} />
