@@ -84,7 +84,14 @@ module Api
 
       def verify_signature
         # Use the secret provided by the user (normally store in ENV)
-        secret = ENV['BMC_WEBHOOK_SECRET'] || 'a618fdc3d44de958f8af2dd7d7f7c4fdad49e91803b19e7d0354e847ebb634d2af0ef325ec023a46'
+        secret = ENV['BMC_WEBHOOK_SECRET']
+
+        if secret.blank?
+          Rails.logger.error "BMC Webhook: BMC_WEBHOOK_SECRET is not set"
+          render json: { error: 'Server configuration error' }, status: 500
+          return
+        end
+
         signature = request.headers['X-Signature-Sha256']
 
         if signature.blank?
