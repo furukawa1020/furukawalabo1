@@ -1,0 +1,82 @@
+sections:
+  - name: 学会・学外発表
+    items:
+      - year: 2025
+        title: 第15回 日本ジオパーク全国大会（十勝岳大会）
+        detail: ポスター発表「白山手取川ジオパーク資源を活用した観光商品開発の試み」（2025年9月）
+        url: https://txsc.w3.kanazawa-u.ac.jp/news/362/
+      - year: 2026
+        title: インタラクション2026
+        detail: インタラクティブ発表（プレミアム）採択「ストレスを"測る”から“感じる”へ:膨張型インターフェースによる主観的体験の観察法」
+        detail_secondary: ※査読付き・評価上位枠（約10〜15％）
+
+  - name: 受賞歴（大学以降）
+    items:
+      - year: 2025
+        title: 技育博2025（株式会社サポーターズ主催）
+        detail: スポンサー賞（ゆめみ賞）「お寿司deゲーミングピアノ！」
+        detail_secondary: 企業賞（ゆめみ賞）「めんふぐ」
+      - year: 2025
+        title: ヒーローズリーグ2025
+        detail: MAID賞「FrogEcho 〜カエルの合唱!!!〜」
+        detail_secondary: xorium賞「めんふぐ」
+      - year: 2025
+        title: 学生アイデアファクトリー2025
+        detail: Springer Nature Gold賞（ポスター賞）
+        detail_secondary: ファイナリスト（8名）選出
+
+  - name: 起業・チーム活動
+    items:
+      - year: 2025
+        title: Bloomlandlabo（起業準備中）
+        detail: 金沢大学教員と共同で起業準備を進行中
+        detail_secondary: 技術設計・実装・外部検証を主に担当
+
+  - name: コミュニティ・運営経験
+    items:
+      - year: 2023
+        title: 地域創造カフェ（学内コミュニティ）
+        detail: 初代代表 / 人が集まり、試し、続けるための「場の設計」
+      - year: 2023
+        title: しらみね大学村（サテライトサークル）
+        detail: システム部 / 地域フィールドワーク企画・運営
+
+  - name: ロボカップジュニア（長期的制作経験）
+    items:
+      - year: 2018-2023
+        title: サッカー・ライトウェイト部門
+        detail: 2018年 郡上ノード優勝 / 2019年 大垣オープン準優勝 / 2021・2023年 岐阜ブロック3位
+        detail_secondary: 日本大会2021出場、全国大会4年連続出場（最高11位・同順位ベスト8）
+
+  - name: 企業実務経験
+    items:
+      - year: 2024
+        title: 大同工業株式会社
+        detail: ハードウェア実務、標準化活動、実装・評価プロセス
+        detail_secondary: TPSに基づく改善、品質工学的視点での設計経験
+
+  - name: メディア・公開実績
+    items:
+      - year: 2025-12
+        title: 金沢大学公式サイト インタビュー掲載
+        url: https://innov.w3.kanazawa-u.ac.jp/articles/articles-3769/
+      - year: 2025
+        title: 学生アイデアファクトリー2025 イベントレポート
+        url: https://coki.jp/sustainable/event/62164/
+      - year: 2025
+        title: 日本ジオパーク全国大会 発表報告
+        url: https://txsc.w3.kanazawa-u.ac.jp/news/362/
+
+  - name: 公開アウトプット量（現在進行形）
+    items:
+      - year: 2025-2026
+        title: GitHub
+        detail: 約225リポジトリ / 約2600コントリビュート
+        url: https://github.com/furukawa1020
+      - year: 2025-2026
+        title: Protopedia
+        detail: 40作品以上公開（プロトタイプを「思考の痕跡」として公開）
+        url: https://protopedia.net/user/hatake
+      - year: 2026
+        title: 制作進行中
+        detail: RTX5060を用いたローカル学習AI等、2026年度すでに9作制作進行中
