@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Share2, Gift, Send } from 'lucide-react';
-import Layout from '../components/Layout';
+import { Share2, Gift, Send, CreditCard } from 'lucide-react';
 import { SEO } from '../components/SEO';
-import DonationNotification from '../components/DonationNotification';
+import { DonationNotification } from '../components/DonationNotification';
 import DonationHistory from '../components/DonationHistory';
 import axios from 'axios';
 
