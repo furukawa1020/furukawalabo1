@@ -4,7 +4,10 @@ RUN apt-get update -qq && apt-get install -y build-essential libpq-dev git curl
 
 WORKDIR /app
 
-COPY Gemfile ./
+# Copy Gemfile AND Gemfile.lock
+COPY Gemfile Gemfile.lock ./
+
+# Install dependencies
 RUN bundle install
 
 COPY . .
