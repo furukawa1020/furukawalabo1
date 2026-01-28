@@ -133,7 +133,7 @@ const AvatarModel = () => {
             if (Math.abs(dist) > 0.1) {
                 sceneRef.current.position.x += Math.sign(dist) * moveSpeed;
 
-                const turn = dist > 0 ? -Math.PI / 2 : Math.PI / 2;
+                const turn = dist > 0 ? Math.PI / 2 : -Math.PI / 2;
                 sceneRef.current.rotation.y = turn;
 
                 const walkCycle = state.clock.elapsedTime * 5.5;
