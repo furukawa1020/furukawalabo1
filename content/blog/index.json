@@ -1,5 +1,11 @@
 [
     {
+        "slug": "railway-api-crash-fix",
+        "title": "RailwayでAPIがクラッシュして絶望した話",
+        "date": "2026-01-28",
+        "summary": "Dockerfileの1行忘れとキャッシュ地獄で、APIが永遠にクラッシュし続けた闇の記録。"
+    },
+    {
         "slug": "sns-sharing",
         "title": "承認欲求のためにSNSシェア機能を実装した話",
         "date": "2026-01-26",
