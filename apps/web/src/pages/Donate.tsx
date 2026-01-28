@@ -106,7 +106,7 @@ export const Donate = () => {
                                     >
                                         <div className="text-2xl mb-2">{amount.emoji}</div>
                                         <div className="font-bold text-sm mb-1">{amount.label}</div>
-                                        <div className="text-neutral-500 text-xs">¥{amount.value}</div>
+                                        <div className="text-neutral-500 text-xs">${amount.value}</div>
                                     </div>
                                 ))}
                             </div>

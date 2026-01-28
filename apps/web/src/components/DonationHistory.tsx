@@ -51,7 +51,7 @@ const DonationHistory: React.FC = () => {
                     <div>
                         <div className="flex items-center gap-2 mb-1">
                             <span className="font-bold text-white">{donation.donor_name || "Anonymous"}</span>
-                            <span className="text-yellow-500 font-bold text-sm">¥{donation.amount.toLocaleString()}</span>
+                            <span className="text-yellow-500 font-bold text-sm">${donation.amount.toLocaleString()}</span>
                         </div>
                         {donation.message && (
                             <p className="text-neutral-400 text-sm">{donation.message}</p>
@@ -80,7 +80,7 @@ const DonationHistory: React.FC = () => {
             <div className="grid grid-cols-2 gap-4 mb-8">
                 <div className="bg-neutral-800 p-4 rounded-2xl text-center">
                     <div className="text-neutral-400 text-sm mb-1">累計おやつ代</div>
-                    <div className="text-2xl font-black text-yellow-500">¥{stats.total_amount.toLocaleString()}</div>
+                    <div className="text-2xl font-black text-yellow-500">${stats.total_amount.toLocaleString()}</div>
                 </div>
                 <div className="bg-neutral-800 p-4 rounded-2xl text-center">
                     <div className="text-neutral-400 text-sm mb-1">支援回数</div>
@@ -92,8 +92,8 @@ const DonationHistory: React.FC = () => {
                 <button
                     onClick={() => setActiveTab('recent')}
                     className={`flex-1 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === 'recent'
-                            ? 'bg-neutral-700 text-white shadow-sm'
-                            : 'text-neutral-400 hover:text-white'
+                        ? 'bg-neutral-700 text-white shadow-sm'
+                        : 'text-neutral-400 hover:text-white'
                         }`}
                 >
                     最近のおやつ
@@ -101,8 +101,8 @@ const DonationHistory: React.FC = () => {
                 <button
                     onClick={() => setActiveTab('top')}
                     className={`flex-1 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === 'top'
-                            ? 'bg-neutral-700 text-white shadow-sm'
-                            : 'text-neutral-400 hover:text-white'
+                        ? 'bg-neutral-700 text-white shadow-sm'
+                        : 'text-neutral-400 hover:text-white'
                         }`}
                 >
                     ランキング

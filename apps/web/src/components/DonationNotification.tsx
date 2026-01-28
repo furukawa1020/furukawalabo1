@@ -74,7 +74,7 @@ export const DonationNotification = () => {
                                 {donation.donor_name || 'Anonymous'} sent some snacks!
                             </p>
                             <p className="text-cyan-600 dark:text-cyan-400 font-bold text-lg">
-                                ¥{donation.amount.toLocaleString()}
+                                ${donation.amount.toLocaleString()}
                             </p>
                             {donation.message && (
                                 <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 line-clamp-2">
