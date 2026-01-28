@@ -8,6 +8,7 @@ import { Blog } from './pages/Blog';
 import { Donate } from './pages/Donate';
 import { About } from './pages/About';
 import { Admin } from './pages/Admin';
+import { Legal } from './pages/Legal';
 import { CookieConsent } from './components/CookieConsent';
 import { ThemeProvider } from './components/ThemeContext';
 import { ThemeToggle } from './components/ThemeToggle';
@@ -115,11 +116,15 @@ function App() {
                             <Route path="/blog" element={<Blog />} />
                             <Route path="/blog/:slug" element={<Blog />} />
                             <Route path="/donate" element={<Donate />} />
+                            <Route path="/legal" element={<Legal />} />
                         </Routes>
                     </main>
 
                     <footer className="py-12 border-t border-neutral-200 dark:border-neutral-800 mt-24 text-center text-neutral-500 dark:text-neutral-600 text-sm transition-colors duration-300">
                         <p>&copy; 2026 Furukawa Archive OS. All rights reserved.</p>
+                        <div className="mt-4">
+                            <Link to="/legal" className="hover:text-cyan-500 transition-colors">特定商取引法に基づく表記</Link>
+                        </div>
                     </footer>
 
                     <CookieConsent />
