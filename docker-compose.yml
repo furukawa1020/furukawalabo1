@@ -51,9 +51,15 @@ services:
 
   ai:
     build:
-      context: ./apps/ai
+      context: . # Use root context to copy content in Dockerfile if needed, but for compose we use volumes
+      dockerfile: ./apps/ai/Dockerfile
     ports:
       - "8000:8000"
+    volumes:
+      - ./apps/ai:/app
+      - ./content:/content
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     networks:
       - furukawa-net
 

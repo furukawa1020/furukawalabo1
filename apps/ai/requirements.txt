@@ -1,2 +1,10 @@
-fastapi==0.110.0
-uvicorn==0.29.0
+fastapi
+uvicorn
+langchain
+langchain-community
+langchain-huggingface
+huggingface-hub
+sentence-transformers
+chromadb
+python-multipart
+requests

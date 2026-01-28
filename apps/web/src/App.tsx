@@ -17,6 +17,7 @@ import { SpotlightOverlay } from './components/Spotlight';
 import { UniversalAccess } from './components/UniversalAccess';
 import { HyperText } from './components/HyperText';
 import { DonationNotification } from './components/DonationNotification';
+import { SiteAgent } from './components/SiteAgent';
 
 function App() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -129,6 +130,8 @@ function App() {
 
                     <CookieConsent />
                     <DonationNotification />
+                    <SiteAgent />
+                    <SiteAvatar />
                 </div>
             </Router>
         </ThemeProvider>
