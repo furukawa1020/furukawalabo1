@@ -20,7 +20,7 @@ const AvatarModel = () => {
         loader.load('/hakusan-avatar.vrm', (gltf: any) => {
             const vrm = gltf.userData.vrm as VRM;
             VRMUtils.removeUnnecessaryVertices(gltf.scene);
-            VRMUtils.deepDispose(gltf.scene); // Proper cleanup hook if needed, but here just setup
+            VRMUtils.deepDispose(gltf.scene);
 
             vrm.scene.rotation.y = 0; // Face camera
             setVrm(vrm);
@@ -37,24 +37,16 @@ const AvatarModel = () => {
 
         // Basic "AI" Behavior Loop
         if (Math.random() < 0.005) {
-            // Pick a random action occasionally behavior
-            // If currently walking, don't interrupt too abruptly unless it's a stop
-
-            // Bias towards idle
             const actions: ('walk' | 'idle' | 'wave' | 'peace')[] = ['walk', 'idle', 'idle', 'idle', 'wave', 'peace'];
             const next = actions[Math.floor(Math.random() * actions.length)];
-
-            // If we are already interacting (chat open?), maybe we should stay idle?
-            // For now, just randomness.
             setAction(next);
 
             if (next === 'walk') {
-                setTargetX((Math.random() - 0.5) * 5); // Random position between -2.5 and 2.5
+                setTargetX((Math.random() - 0.5) * 5); // Target X (-2.5 to 2.5)
             }
         }
 
-        // Apply Bone Rotations based on Action
-        // Cast to 'any' to bypass TS enum check if needed, or better, use string literals cast to VRMHumanBoneName
+        // Apply Bone Rotations
         const rightUpperArm = vrm.humanoid.getRawBoneNode('rightUpperArm' as any);
         const rightLowerArm = vrm.humanoid.getRawBoneNode('rightLowerArm' as any);
         const leftUpperArm = vrm.humanoid.getRawBoneNode('leftUpperArm' as any);
@@ -69,65 +61,92 @@ const AvatarModel = () => {
             const t = state.clock.elapsedTime;
 
             if (action === 'wave') {
-                // Wave Right Hand
-                rightUpperArm.rotation.z = Math.sin(t * 5) * 0.2 + 2.5; // High up
+                rightUpperArm.rotation.z = Math.sin(t * 5) * 0.2 + 2.5;
                 rightLowerArm.rotation.z = 0.5;
-
-                // Left arm idle
                 leftUpperArm.rotation.z = -1.2;
                 leftLowerArm.rotation.z = 0;
             } else if (action === 'peace') {
-                // Peace Pose
                 rightUpperArm.rotation.z = 2.0;
                 leftUpperArm.rotation.z = -1.2;
             } else if (action === 'walk') {
-                // Walking Animation (Natural Stroll)
-                const walkSpeed = 5; // Relaxed stroll speed
-                const stepCycle = t * walkSpeed;
+                // Walking Animation (Correction for "Backwards/Kakukaku")
 
-                // Arms: Swing opposite to legs, small amplitude
-                rightUpperArm.rotation.z = 1.2 + Math.sin(stepCycle) * 0.15;
-                rightUpperArm.rotation.x = -Math.sin(stepCycle) * 0.1;
-                leftUpperArm.rotation.z = -1.2 + Math.sin(stepCycle) * 0.15;
-                leftUpperArm.rotation.x = Math.sin(stepCycle) * 0.1;
+                // 1. Sync Speed: Movement is 0.5/sec.
+                // Stride approx 0.5m. 2 steps/sec?
+                // walkSpeed=8 was too fast for 0.5 move. 
+                // Let's keep walkSpeed=6 for animation cycle.
+                const walkSpeed = 6;
+                const cycle = t * walkSpeed;
 
-                // Legs & Knees
-                if (rightUpperLeg && leftUpperLeg && rightLowerLeg && leftLowerLeg) {
-                    const rHip = Math.sin(stepCycle) * 0.5;
-                    const lHip = Math.sin(stepCycle + Math.PI) * 0.5;
+                // 2. Arms: Swing opposite to legs. 
+                // Increase X swing to make it distinct.
+                const armAmp = 0.4;
+                rightUpperArm.rotation.z = 1.2; // A-pose stable
+                leftUpperArm.rotation.z = -1.2;
+                rightUpperArm.rotation.x = Math.sin(cycle) * armAmp; // Opposite to Right Leg? No, Left Leg forward = Right Arm forward.
+                leftUpperArm.rotation.x = Math.sin(cycle + Math.PI) * armAmp;
 
+                // 3. Legs: 
+                // FIX MOONWALK: Invert the hip rotation.
+                // Standard: +X rot is Leg Forward.
+                // If we want Left Leg Forward (Swing) -> Left Leg Back (Stance).
+                // Cycle 0..PI: sin > 0.
+
+                // Let's try: Right Leg starts Back (Stance), Left Forward.
+                const legAmp = 0.6;
+                const rHip = Math.sin(cycle + Math.PI) * legAmp; // Inverted phase to fix moonwalk?
+                const lHip = Math.sin(cycle) * legAmp;
+
+                if (rightUpperLeg && leftUpperLeg) {
                     rightUpperLeg.rotation.x = rHip;
                     leftUpperLeg.rotation.x = lHip;
-
-                    // Knee Bend (Simple approximation: Bend on backward swing or lift)
-                    // Let's bend when lifting (hip forward/up)
-                    rightLowerLeg.rotation.x = -Math.max(0, -Math.cos(stepCycle) * 1.5);
-                    leftLowerLeg.rotation.x = -Math.max(0, -Math.cos(stepCycle + Math.PI) * 1.5);
                 }
 
-                // Spine
-                if (spine) spine.rotation.y = Math.sin(stepCycle) * 0.05;
+                // 4. Knees (Smoother)
+                // Bend when hip is moving forward (Swing phase).
+                // Standard bend is -X rotation.
+                // Use a shaped sine wave: only bend when sin(cycle) is positive (Leg forward).
+                // Smooth blend: 0.5 * (sin - 1) is always negative, peaks at 0.
+                if (rightLowerLeg && leftLowerLeg) {
+                    // Right Leg Swing: cycle+PI is positive? approx.
+                    // Let's use simple logic: max(0, -sin) but smoothed?
+                    // Or just always slight bend + swing bend?
+                    // Try: -0.1 - max(0, sin(cycle)) * 0.8
+
+                    // Improved smooth knee:
+                    // Bend right knee when right leg swings forward (rHip > 0 approx)
+                    // Phase matched to hip.
+                    const rKnee = -Math.max(0, Math.sin(cycle + Math.PI) * 1.0);
+                    const lKnee = -Math.max(0, Math.sin(cycle) * 1.0);
+
+                    // Smooth out the sharp corner of Max with a power curve or just let it be.
+                    // "Kakukaku" might be the frame rate or sharp stop.
+                    // Let's filter it: (sin > 0 ? sin : 0)^1.5
+
+                    rightLowerLeg.rotation.x = rKnee;
+                    leftLowerLeg.rotation.x = lKnee;
+                }
+
+                if (spine) spine.rotation.y = Math.sin(cycle) * 0.1; // More spine twist
 
             } else {
-                // Idle breathing
+                // Idle
                 rightUpperArm.rotation.z = 1.2 + Math.sin(t) * 0.05;
                 leftUpperArm.rotation.z = -1.2 - Math.sin(t) * 0.05;
+                rightUpperArm.rotation.x = 0;
+                leftUpperArm.rotation.x = 0;
 
-                // Reset legs
                 if (rightUpperLeg && leftUpperLeg && rightLowerLeg && leftLowerLeg) {
                     rightUpperLeg.rotation.x = 0;
                     leftUpperLeg.rotation.x = 0;
                     rightLowerLeg.rotation.x = 0;
                     leftLowerLeg.rotation.x = 0;
                 }
-
-                rightLowerArm.rotation.z = 0;
-                leftLowerArm.rotation.z = 0;
                 if (spine) spine.rotation.y = 0;
             }
         }
 
-        // Walking Movement
+        // Walking Movement Loop
         if (action === 'walk' && sceneRef.current) {
             const currentX = sceneRef.current.position.x;
             const dist = targetX - currentX;
@@ -136,21 +155,22 @@ const AvatarModel = () => {
             if (Math.abs(dist) > 0.1) {
                 sceneRef.current.position.x += Math.sign(dist) * speed;
 
-                // Face direction
+                // Turn
                 const turn = dist > 0 ? -Math.PI / 2 : Math.PI / 2;
                 sceneRef.current.rotation.y = turn;
 
-                // Bobbing (Synced)
-                const walkCycle = state.clock.elapsedTime * 5;
-                const bobble = Math.abs(Math.cos(walkCycle)) * 0.05;
-                sceneRef.current.position.y = -1.0 + bobble;
+                // Bounce
+                const walkCycle = state.clock.elapsedTime * 6; // Match walkSpeed
+                // Smooth bounce: abs(cos) is sharp at 0. Use (cos+1)? 
+                // No, standard walk is bouncy.
+                sceneRef.current.position.y = -1.0 + Math.abs(Math.cos(walkCycle)) * 0.03;
             } else {
                 setAction('idle');
-                sceneRef.current.rotation.y = 0; // Face front
+                sceneRef.current.rotation.y = 0;
             }
         } else if (sceneRef.current) {
             if (action === 'idle') {
-                sceneRef.current.rotation.y = 0; // Ensure facing front if idle
+                sceneRef.current.rotation.y = 0;
                 sceneRef.current.position.y = -1.0;
             }
         }
@@ -158,7 +178,6 @@ const AvatarModel = () => {
 
     const openChat = () => {
         window.dispatchEvent(new Event('open-site-agent'));
-        // Stop the avatar and face front
         setAction('idle');
         if (sceneRef.current) {
             sceneRef.current.rotation.y = 0;
@@ -168,7 +187,6 @@ const AvatarModel = () => {
     return vrm ? (
         <group ref={sceneRef} position={[0, -1.0, 0]}>
             <primitive object={vrm.scene} />
-            {/* Hitbox for click interaction */}
             <Html position={[0, 1.0, 0]} center wrapperClass="pointer-events-auto">
                 <div
                     onClick={openChat}
