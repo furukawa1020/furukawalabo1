@@ -43,11 +43,11 @@ export const UniversalAccess = () => {
     const toggleOpen = () => setIsOpen(!isOpen);
 
     return (
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
+        <div className="fixed bottom-6 left-6 z-50 flex flex-col items-start gap-4">
             {/* Panel */}
             <div className={`
                 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border border-neutral-200 dark:border-neutral-800 
-                rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 origin-bottom-right
+                rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 origin-bottom-left
                 ${isOpen ? 'scale-100 opacity-100 mb-4 w-72' : 'scale-90 opacity-0 w-0 h-0 pointer-events-none'}
             `}>
                 <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-neutral-100/50 dark:bg-neutral-800/50">
