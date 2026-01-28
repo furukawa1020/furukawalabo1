@@ -108,17 +108,17 @@ const AvatarModel = () => {
                 sceneRef.current.rotation.y = turn;
 
                 // Bobbing (fake walk cycle)
-                sceneRef.current.position.y = -0.8 + Math.abs(Math.sin(state.clock.elapsedTime * 10)) * 0.05;
+                sceneRef.current.position.y = -1.0 + Math.abs(Math.sin(state.clock.elapsedTime * 10)) * 0.05;
             } else {
                 setAction('idle');
                 sceneRef.current.rotation.y = 0; // Face front (camera)
             }
         } else if (sceneRef.current) {
-            sceneRef.current.position.y = -0.8; // Reset height
+            sceneRef.current.position.y = -1.0; // Reset height
         }
     });
 
-    return vrm ? <primitive object={vrm.scene} ref={sceneRef} position={[0, -0.8, 0]} /> : null;
+    return vrm ? <primitive object={vrm.scene} ref={sceneRef} position={[0, -1.0, 0]} /> : null;
 };
 
 export const SiteAvatar = () => {
