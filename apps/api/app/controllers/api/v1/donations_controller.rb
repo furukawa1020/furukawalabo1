@@ -1,6 +1,9 @@
 module Api
   module V1
     class DonationsController < ApplicationController
+      # Ensure CSRF check is skipped for webhooks (even if API mode, good practice)
+      skip_before_action :verify_authenticity_token, only: [:webhook], raise: false
+
       def index
         recent_donations = Donation.where(status: 'succeeded')
                                    .order(created_at: :desc)
@@ -26,6 +29,9 @@ module Api
       end
 
       def webhook
+        # Log the raw parameters for debugging
+        Rails.logger.info "BMC Webhook Params: #{params.inspect}"
+
         # Buy Me a Coffee Webhook Payload
         # {
         #   "support_id": "123",
@@ -36,20 +42,30 @@ module Api
         #   ...
         # }
         
-        # Verify secret if available (Skipping for now as BMC secret management differs)
-        # Using simple payload processing
+        transaction_id = params[:support_id]
         
-        payload = params.permit!
+        # Guard clause for test webhook or missing id
+        if transaction_id.blank?
+          Rails.logger.warn "BMC Webhook: Missing support_id"
+          render json: { status: 'error', message: 'Missing support_id' }, status: 400
+          return
+        end
 
-        transaction_id = payload[:support_id]
-        donor_name = payload[:supporter_name] || "Anonymous"
-        unit_price = payload[:support_coffee_price].to_f
-        quantity = payload[:support_coffees].to_i
+        donor_name = params[:supporter_name] || "Anonymous"
+        unit_price = params[:support_coffee_price].to_f
+        quantity = params[:support_coffees].to_i
+        
+        # Calculate amount. 
+        # CAUTION: BMC sends unit_price in the currency set in dashboard.
+        # If USD "5.00", this becomes 5. If JPY "500", this becomes 500.
+        # Minimal handling: If amount is excessively small (< 100) and we suspect JPY, 
+        # it might be USD. But for now, trust the value.
         amount = (unit_price * quantity).to_i
-        message = payload[:support_note]
+        message = params[:support_note]
 
         # Check if transaction already exists
         if Donation.exists?(transaction_id: transaction_id)
+          Rails.logger.info "BMC Webhook: Transaction #{transaction_id} already exists. Skipping."
           render json: { status: 'skipped', message: 'Transaction already processed' }
           return
         end
@@ -57,13 +73,13 @@ module Api
         donation = Donation.create!(
           transaction_id: transaction_id,
           amount: amount,
-          currency: 'JPY', # Assuming BMC is set to JPY or converting? BMC usually is USD. 
-                           # If BMC is USD, amount might be small number (e.g. 5).
-                           # We might need to handle currency. For now store as is.
+          currency: 'JPY', # TODO: Detect currency from payload if available
           status: 'succeeded',
           donor_name: donor_name,
           message: message
         )
+        
+        Rails.logger.info "BMC Webhook: Created Donation #{donation.id} for #{amount}"
 
         # Broadcast to ActionCable
         ActionCable.server.broadcast('donations_channel', {
@@ -75,7 +91,8 @@ module Api
 
         render json: { status: 'success' }
       rescue => e
-        logger.error "Webhook failed: #{e.message}"
+        Rails.logger.error "BMC Webhook Failed: #{e.message}"
+        Rails.logger.error e.backtrace.join("\n")
         render json: { error: e.message }, status: 500
       end
     end
