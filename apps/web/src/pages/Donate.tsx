@@ -86,7 +86,7 @@ export const Donate = () => {
                                 (おやつ付きの方が優先回答されるかも...？)
                             </p>
                             <a
-                                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent("@HATAKE55555 \n" + (question || "質問があります！") + "\n\n#FurukawaLab")}`}
+                                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent("@HATAKE55555 \n質問があります！\n\n#FurukawaLab")}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-full font-bold hover:bg-neutral-800 transition-colors"
@@ -112,11 +112,12 @@ export const Donate = () => {
                                 className="inline-flex items-center gap-2 px-6 py-3 bg-amber-600 text-white rounded-full font-bold hover:bg-amber-700 transition-colors"
                             >
                                 <Share2 size={20} />
-                                応援をシェアする
+                                <span className="font-bold">応援をシェアする</span>
                             </a>
                         </div>
                     </div>
                 </div>
-            </>
-            );
+            </div>
+        </>
+    );
 };
