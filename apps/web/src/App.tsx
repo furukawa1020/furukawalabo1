@@ -18,6 +18,7 @@ import { UniversalAccess } from './components/UniversalAccess';
 import { HyperText } from './components/HyperText';
 import { DonationNotification } from './components/DonationNotification';
 import { SiteAgent } from './components/SiteAgent';
+import { SiteAvatar } from './components/SiteAvatar';
 
 function App() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

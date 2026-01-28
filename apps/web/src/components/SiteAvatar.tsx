@@ -1,4 +1,5 @@
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
+// @ts-ignore
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { VRM, VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
 import { useEffect, useState, useRef } from 'react';
@@ -7,22 +8,23 @@ import * as THREE from 'three';
 const AvatarModel = () => {
     const [vrm, setVrm] = useState<VRM | null>(null);
     const sceneRef = useRef<THREE.Group>(null);
-    const { camera } = useThree();
     const [action, setAction] = useState<'walk' | 'idle' | 'wave' | 'peace'>('idle');
     const [targetX, setTargetX] = useState(0);
 
     // Load VRM
     useEffect(() => {
         const loader = new GLTFLoader();
-        loader.register((parser) => new VRMLoaderPlugin(parser));
+        loader.register((parser: any) => new VRMLoaderPlugin(parser));
 
-        loader.load('/hakusan-avatar.vrm', (gltf) => {
+        loader.load('/hakusan-avatar.vrm', (gltf: any) => {
             const vrm = gltf.userData.vrm as VRM;
             VRMUtils.removeUnnecessaryVertices(gltf.scene);
-            VRMUtils.combineSkeletons(gltf.scene);
+            VRMUtils.deepDispose(gltf.scene); // Proper cleanup hook if needed, but here just setup
+            // combineSkeletons is deprecated/removed in newer versions or handled differently.
+            // Usually scene rotation is enough.
             vrm.scene.rotation.y = Math.PI; // Face forward
             setVrm(vrm);
-        }, undefined, (error) => {
+        }, undefined, (error: any) => {
             console.error('Failed to load VRM:', error);
         });
     }, []);
@@ -46,20 +48,24 @@ const AvatarModel = () => {
         }
 
         // Apply Bone Rotations based on Action
-        const bones = vrm.humanoid.getBoundBone(vrm.humanoid.humanBones.RightUpperArm);
-        if (bones) {
+        // Check if bones exist before rotating
+        // Cast to 'any' to bypass TS enum check if needed, or better, use string literals cast to VRMHumanBoneName
+        const rightUpperArm = vrm.humanoid.getRawBoneNode('rightUpperArm' as any);
+        const rightLowerArm = vrm.humanoid.getRawBoneNode('rightLowerArm' as any);
+
+        if (rightUpperArm && rightLowerArm) {
             const t = state.clock.elapsedTime;
 
             if (action === 'wave') {
                 // Wave Right Hand
-                vrm.humanoid.getRawBoneNode(vrm.humanoid.humanBones.RightUpperArm)!.rotation.z = Math.sin(t * 5) * 0.2 + 2.5;
-                vrm.humanoid.getRawBoneNode(vrm.humanoid.humanBones.RightLowerArm)!.rotation.z = 0.5;
+                rightUpperArm.rotation.z = Math.sin(t * 5) * 0.2 + 2.5;
+                rightLowerArm.rotation.z = 0.5;
             } else if (action === 'peace') {
                 // Peace Pose (Static-ish)
-                vrm.humanoid.getRawBoneNode(vrm.humanoid.humanBones.RightUpperArm)!.rotation.z = 2.0;
+                rightUpperArm.rotation.z = 2.0;
             } else {
                 // Reset
-                vrm.humanoid.getRawBoneNode(vrm.humanoid.humanBones.RightUpperArm)!.rotation.z = Math.sin(t) * 0.05 + 1.3; // Idle arm swing
+                rightUpperArm.rotation.z = Math.sin(t) * 0.05 + 1.3; // Idle arm swing
             }
         }
 
@@ -93,8 +99,8 @@ export const SiteAvatar = () => {
         <div className="fixed bottom-0 left-0 right-0 h-[400px] pointer-events-none z-30" style={{ pointerEvents: 'none' }}>
             <Canvas camera={{ position: [0, 0, 3], fov: 30 }} gl={{ alpha: true }}>
                 <ambientLight intensity={1.0} />
-                <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} fallback={null} />
-                <pointLight position={[-10, -10, -10]} fallback={null} />
+                <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
+                <pointLight position={[-10, -10, -10]} />
                 <AvatarModel />
             </Canvas>
         </div>

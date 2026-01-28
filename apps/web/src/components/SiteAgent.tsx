@@ -46,7 +46,6 @@ export const SiteAgent = () => {
 
         try {
             // Prepare history for API
-            const history = messages.map(m => m.content);
             // Note: Simplistic history. Ideally should be [[user, bot], ...] 
             // We'll let the Python side handle flat list or we format it here.
             // Python expects specific format. Let's send last 6 messages paired.
