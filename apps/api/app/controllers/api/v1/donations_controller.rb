@@ -1,8 +1,10 @@
 module Api
   module V1
     class DonationsController < ApplicationController
-      # Ensure CSRF check is skipped for webhooks (even if API mode, good practice)
       skip_before_action :verify_authenticity_token, only: [:webhook], raise: false
+      
+      # Verify BMC Signature ensures the request is actually from Buy Me a Coffee
+      before_action :verify_signature, only: [:webhook]
 
       def index
         recent_donations = Donation.where(status: 'succeeded')
@@ -29,22 +31,10 @@ module Api
       end
 
       def webhook
-        # Log the raw parameters for debugging
         Rails.logger.info "BMC Webhook Params: #{params.inspect}"
 
-        # Buy Me a Coffee Webhook Payload
-        # {
-        #   "support_id": "123",
-        #   "supporter_name": "John Doe",
-        #   "support_coffee_price": "5.00",
-        #   "support_coffees": 3,
-        #   "support_note": "Great work!",
-        #   ...
-        # }
-        
         transaction_id = params[:support_id]
         
-        # Guard clause for test webhook or missing id
         if transaction_id.blank?
           Rails.logger.warn "BMC Webhook: Missing support_id"
           render json: { status: 'error', message: 'Missing support_id' }, status: 400
@@ -55,15 +45,10 @@ module Api
         unit_price = params[:support_coffee_price].to_f
         quantity = params[:support_coffees].to_i
         
-        # Calculate amount. 
-        # CAUTION: BMC sends unit_price in the currency set in dashboard.
-        # If USD "5.00", this becomes 5. If JPY "500", this becomes 500.
-        # Minimal handling: If amount is excessively small (< 100) and we suspect JPY, 
-        # it might be USD. But for now, trust the value.
+        # Calculate amount.
         amount = (unit_price * quantity).to_i
         message = params[:support_note]
 
-        # Check if transaction already exists
         if Donation.exists?(transaction_id: transaction_id)
           Rails.logger.info "BMC Webhook: Transaction #{transaction_id} already exists. Skipping."
           render json: { status: 'skipped', message: 'Transaction already processed' }
@@ -73,7 +58,7 @@ module Api
         donation = Donation.create!(
           transaction_id: transaction_id,
           amount: amount,
-          currency: 'JPY', # TODO: Detect currency from payload if available
+          currency: 'JPY',
           status: 'succeeded',
           donor_name: donor_name,
           message: message
@@ -81,7 +66,6 @@ module Api
         
         Rails.logger.info "BMC Webhook: Created Donation #{donation.id} for #{amount}"
 
-        # Broadcast to ActionCable
         ActionCable.server.broadcast('donations_channel', {
           amount: donation.amount,
           donor_name: donation.donor_name,
@@ -94,6 +78,35 @@ module Api
         Rails.logger.error "BMC Webhook Failed: #{e.message}"
         Rails.logger.error e.backtrace.join("\n")
         render json: { error: e.message }, status: 500
+      end
+
+      private
+
+      def verify_signature
+        # Use the secret provided by the user (normally store in ENV)
+        secret = ENV['BMC_WEBHOOK_SECRET'] || 'a618fdc3d44de958f8af2dd7d7f7c4fdad49e91803b19e7d0354e847ebb634d2af0ef325ec023a46'
+        signature = request.headers['X-Signature-Sha256']
+
+        if signature.blank?
+          Rails.logger.warn "BMC Webhook: Missing Signature"
+          render json: { error: 'Missing signature' }, status: 401
+          return
+        end
+
+        # BMC documentation implies HMAC SHA256 of the raw body
+        # However, Rails params might be parsed already.
+        # Let's verify using the raw body.
+        request.body.rewind
+        payload_body = request.body.read
+        
+        computed_signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'), secret, payload_body)
+
+        if signature != computed_signature
+          Rails.logger.warn "BMC Webhook: Invalid Signature. Got #{signature}, expected #{computed_signature}"
+          # For debugging, we might want to log the mismatch but NOT block if we are unsure.
+          # But since the user specifically asked about using the secret, let's enforce it.
+          render json: { error: 'Invalid signature' }, status: 401
+        end
       end
     end
   end
