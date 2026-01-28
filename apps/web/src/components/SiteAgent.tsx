@@ -20,9 +20,14 @@ export const SiteAgent = () => {
     // Assumes VITE_API_URL points to gateway root, e.g. http://localhost:8080
     // But existing client adds /api/v1. We construct base URL manually.
     const getAiBaseUrl = () => {
+        // If specific AI URL is set, use it (remove trailing slash)
+        if (import.meta.env.VITE_AI_API_URL) {
+            return import.meta.env.VITE_AI_API_URL.replace(/\/$/, '');
+        }
+
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-        // Remove /api/v1 if present just in case user pointed it to API directly (though edge should be root)
-        return apiUrl.replace(/\/api\/v1\/?$/, '').replace(/\/$/, '') + '/ai';
+        // Fallback logic for Edge Gateway or Monorepo proxy
+        return apiUrl.replace(/\/api\/v1\/?$/, '').replace(/\/$/, '') + '/ai'; // This pointed to /ai route which might proxy to /chat.
     };
 
     const scrollToBottom = () => {
