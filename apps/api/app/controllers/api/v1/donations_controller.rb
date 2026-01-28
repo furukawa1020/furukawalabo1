@@ -1,6 +1,30 @@
 module Api
   module V1
     class DonationsController < ApplicationController
+      def index
+        recent_donations = Donation.where(status: 'succeeded')
+                                   .order(created_at: :desc)
+                                   .limit(10)
+                                   .select(:id, :amount, :donor_name, :message, :created_at)
+
+        top_donations = Donation.where(status: 'succeeded')
+                                .order(amount: :desc)
+                                .limit(5)
+                                .select(:id, :amount, :donor_name, :message, :created_at)
+
+        total_amount = Donation.where(status: 'succeeded').sum(:amount)
+        total_count = Donation.where(status: 'succeeded').count
+
+        render json: {
+          recent: recent_donations,
+          top: top_donations,
+          stats: {
+            total_amount: total_amount,
+            total_count: total_count
+          }
+        }
+      end
+
       def webhook
         # Buy Me a Coffee Webhook Payload
         # {
