@@ -3,6 +3,7 @@ uvicorn
 langchain
 langchain-community
 langchain-huggingface
+langchain-text-splitters
 huggingface-hub
 chromadb
 python-multipart
