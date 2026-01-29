@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from contextlib import asynccontextmanager
 
 from langchain_community.document_loaders import TextLoader
-from langchain_community.vectorstores import Chroma
+from langchain_community.vectorstores import FAISS
 from langchain_community.llms import HuggingFaceEndpoint
 from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 from langchain_text_splitters import CharacterTextSplitter
@@ -51,7 +51,11 @@ async def lifespan(app: FastAPI):
                     api_key=HUGGINGFACEHUB_API_TOKEN,
                     model_name="sentence-transformers/all-MiniLM-L6-v2"
                 )
-                vectorstore = Chroma.from_documents(texts, embeddings)
+                try:
+                    vectorstore = FAISS.from_documents(texts, embeddings)
+                    print("✅ Vector store created successfully!")
+                except Exception as e:
+                    print(f"❌ Failed to create vector store: {e}")
                 
                 print("Initializing HuggingFace LLM...")
                 # Use Mistral-7B or similar via Inference API
