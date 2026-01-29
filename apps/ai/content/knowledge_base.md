@@ -18,13 +18,41 @@
     - Philosophy: "Hack the moment everyone feels glad to be alive."
     - Mission: To visualize the invisible (stress, emotions) and design new forms of communication.
 
-# Detailed Research Interests
-- **Physiological Reaction & Subjective Meaning (生理反応と主観的意味づけ)**:
-    - **Concept**: Making internal physiological states (heart rate, stress) visible to the self and others to alter subjective interpretation.
-    - **Fugu Interface (フグ型インターフェース)**:
-        - A biofeedback device that inflates based on stress levels.
-        - Application: Caregiving, Childcare, Difficult Communication scenarios.
-        - Goal: To create a world where "stress" is not just negative, but a signal for mutual understanding.
+# Detailed Research Interests (Official Statement)
+## Title: Variability of Subjective Meaning in Physiological Reactions
+**Theme**: "To what extent can science handle the diversity of meaning?"
+
+### Abstract
+Even with identical physiological reactions, humans interpret them differently (e.g., anxiety vs. challenge). This research treats this "variability" not as noise but as a structure where "differences in meaning-making" emerge. By organizing the conditions where the physiological-subjective relationship holds or breaks, the goal is to systematize sensing, algorithms, and interfaces from the perspective of "meaning-making," aiming to construct a **"Science of Meaning-Making"**.
+
+### Keywords
+HCI, Physiological Reaction, Meaning-making, Cognitive Appraisal, Stress, Externalization Interface, Variability, Behavior Change.
+
+### Background & Problem
+- **Cortisol/HRV limits**: Often used as stress markers, but the same reaction can mean different things to different people.
+- **Limitation of Self-Report**: Questionnaires miss the process of "reappraisal" or individual differences in meaning.
+- **Reductionism Risk**: Reducing physiological reactions to a single label reinforces "Stress = Bad," leading to social losses (absenteeism, presenteeism).
+
+### Research Approach
+1.  **Meta-Review**: Organize conditions where "Physio-Subjective correspondence" holds or breaks.
+2.  **Public Data (WESAD)**: Verify the "mismatch" or alignment using datasets.
+3.  **Externalization Interface**: Make the difference in meaning-making observable via biofeedback devices (e.g., Fugu Interface).
+
+### Hypotheses (H1-H3)
+-   **H1 (Theory)**: The physio-subjective relationship is NOT 1-to-1; it depends on context and individual differences.
+-   **H2 (Data)**: Subjective labels do not uniquely correspond to physiological patterns (Invariance is broken).
+-   **H3 (Interface)**: Externalization makes meaning-differences more observable than questionnaires alone.
+
+### Verification Plan
+-   **Phase A**: Meta-Review (Condition organization).
+-   **Phase B**: WESAD Analysis (Quantitative verification of invariance breaking).
+-   **Phase C**: Externalization Interface (Observation & Comparison Experiments).
+
+### Vision & Message
+-   Treat the "Meaning" of experience—hard to capture with numbers—via haptics/visuals.
+-   Design devices not just for "healing" but as "triggers for self-understanding."
+-   Create a society where those slightly "off-center" from "normal" can live easily.
+-   **"Increase the moments where people feel glad to be alive."**
 
 # Full Works List (Prototypes & Projects)
 - **RoboCup Junior (Soccer Lightweight)** (2018-2023):
