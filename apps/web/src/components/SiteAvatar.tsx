@@ -10,9 +10,24 @@ const AvatarModel = () => {
     const [vrm, setVrm] = useState<VRM | null>(null);
     const sceneRef = useRef<THREE.Group>(null);
     const [action, setAction] = useState<'walk' | 'idle' | 'wave' | 'peace'>('idle');
-    // Bounds: -5.0 (Far Left) to -3.0 (Left-Center)
-    const [targetX, setTargetX] = useState(-4.5);
+
+    // Responsive Logic: Center (0.0) on Mobile, Left (-4.5) on Desktop
+    const getBaseX = () => (window.innerWidth < 768 ? 0.0 : -4.5);
+    const [baseX, setBaseX] = useState(getBaseX());
+    const [targetX, setTargetX] = useState(getBaseX());
+
     const tailBonesRef = useRef<THREE.Object3D[]>([]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            const newBase = getBaseX();
+            setBaseX(newBase);
+            // If idle, snap to new base. If walking, we might want to respect it but let's just reset for simplicity.
+            if (action === 'idle') setTargetX(newBase);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [action]);
 
     useEffect(() => {
         const loader = new GLTFLoader();
@@ -51,8 +66,10 @@ const AvatarModel = () => {
 
             if (action !== 'walk' && next === 'walk') {
                 setAction('walk');
-                // Walk Range (More Left)
-                setTargetX((Math.random() * 2.0) - 5.0);
+                // Walk Range: strict around base
+                // Mobile: -1.0 to 1.0. Desktop: -5.0 to -3.0.
+                const range = 1.0;
+                setTargetX(baseX + (Math.random() * range * 2 - range));
             } else if (action === 'walk' && Math.abs(targetX - (sceneRef.current?.position.x || 0)) < 0.2) {
                 setAction('idle');
             } else if (action !== 'walk') {
@@ -175,6 +192,12 @@ const AvatarModel = () => {
             }
         } else if (sceneRef.current) {
             if (action === 'idle') {
+                // Smoothly return to BaseX if drifted
+                const distToBase = baseX - sceneRef.current.position.x;
+                if (Math.abs(distToBase) > 0.05) {
+                    sceneRef.current.position.x += distToBase * delta * 2.0; // Lerp back
+                }
+
                 sceneRef.current.rotation.y = 0;
                 sceneRef.current.position.y = -1.1; // Base -1.1
             }
@@ -188,7 +211,7 @@ const AvatarModel = () => {
     };
 
     return vrm ? (
-        <group ref={sceneRef} position={[-4.5, -1.1, 0]} scale={[1.1, 1.1, 1.1]}>
+        <group ref={sceneRef} position={[baseX, -1.1, 0]} scale={[1.1, 1.1, 1.1]}>
             <primitive object={vrm.scene} />
             <Html position={[0, 1.0, 0]} center wrapperClass="pointer-events-auto">
                 <div

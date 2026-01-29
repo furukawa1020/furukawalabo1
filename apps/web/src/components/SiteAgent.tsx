@@ -115,7 +115,7 @@ export const SiteAgent = () => {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-none">
+        <div className="fixed bottom-6 z-50 flex flex-col pointer-events-none left-0 right-0 items-center md:left-auto md:right-6 md:items-end">
             {/* Chat Window */}
             {isOpen && (
                 <div className="mb-4 w-[350px] max-w-[calc(100vw-48px)] h-[500px] max-h-[70vh] bg-neutral-900 border border-neutral-700/50 rounded-2xl shadow-2xl flex flex-col overflow-hidden pointer-events-auto animate-in slide-in-from-bottom-10 fade-in duration-200">
@@ -128,7 +128,7 @@ export const SiteAgent = () => {
                                 <h3 className="font-bold text-sm text-neutral-100">Lab AI Agent</h3>
                                 <div className="flex items-center gap-1.5">
                                     <span className={`w-2 h-2 rounded-full animate-pulse ${status === 'online' ? 'bg-green-500' :
-                                            status === 'checking' ? 'bg-yellow-500' : 'bg-red-500'
+                                        status === 'checking' ? 'bg-yellow-500' : 'bg-red-500'
                                         }`} />
                                     <span className="text-xs text-neutral-400">
                                         {status === 'online' ? 'Online' : status === 'checking' ? 'Connecting...' : 'Offline'}
