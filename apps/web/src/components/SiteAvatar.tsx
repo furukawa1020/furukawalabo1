@@ -13,6 +13,7 @@ const AvatarModel = () => {
     // Inside AvatarModel
     // Bounds for new camera: -3.5 (Left) to -1.5 (Center-ish)
     const [targetX, setTargetX] = useState(-3.0);
+    const tailRef = useRef<THREE.Object3D | null>(null);
 
     useEffect(() => {
         const loader = new GLTFLoader();
@@ -23,6 +24,15 @@ const AvatarModel = () => {
             VRMUtils.removeUnnecessaryVertices(gltf.scene);
             VRMUtils.deepDispose(gltf.scene);
             vrm.scene.rotation.y = 0;
+
+            // Find Tail Bone automatically
+            vrm.scene.traverse((obj) => {
+                if (obj.name.toLowerCase().includes('tail') && !tailRef.current) {
+                    console.log("Found Tail:", obj.name);
+                    tailRef.current = obj;
+                }
+            });
+
             setVrm(vrm);
         }, undefined, (error: any) => {
             console.error('Failed to load VRM:', error);
@@ -59,6 +69,19 @@ const AvatarModel = () => {
         const rightHand = vrm.humanoid.getRawBoneNode('rightHand' as any);
         const leftHand = vrm.humanoid.getRawBoneNode('leftHand' as any);
         const spine = vrm.humanoid.getRawBoneNode('spine' as any);
+
+        // Tail Animation
+        if (tailRef.current) {
+            const t = state.clock.elapsedTime;
+            const droop = -0.5; // Gravity
+            if (action === 'walk') {
+                tailRef.current.rotation.x = droop + Math.sin(t * 5.5) * 0.1;
+                tailRef.current.rotation.y = Math.cos(t * 5.5) * 0.2; // Wag
+            } else {
+                tailRef.current.rotation.x = droop + Math.sin(t) * 0.05; // Idle breathe
+                tailRef.current.rotation.y = 0;
+            }
+        }
 
         if (rightUpperArm && rightLowerArm && leftUpperArm && leftLowerArm) {
             const t = state.clock.elapsedTime;
