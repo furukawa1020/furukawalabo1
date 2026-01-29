@@ -57,6 +57,12 @@ const AvatarModel = () => {
 
     useFrame((state, delta) => {
         if (!vrm) return;
+
+        // Make the avatar look at the camera
+        if (vrm.lookAt) {
+            vrm.lookAt.lookAt(state.camera.position);
+        }
+
         vrm.update(delta);
 
         // Random Action Logic
@@ -156,6 +162,30 @@ const AvatarModel = () => {
 
                 if (spine) spine.rotation.y = Math.sin(cycle) * 0.08;
 
+                if (spine) spine.rotation.y = Math.sin(cycle) * 0.08;
+            } else {
+                // Idle Pose (FIX: Arms DOWN, not T-Pose)
+                // 1.3 rad is approx 75 degrees down
+                const breath = Math.sin(t * 2) * 0.05;
+                rightUpperArm.rotation.z = 1.3 + breath;
+                leftUpperArm.rotation.z = -1.3 - breath;
+                rightUpperArm.rotation.x = 0;
+                leftUpperArm.rotation.x = 0;
+
+                // Reset Arms
+                if (rightLowerArm && leftLowerArm) {
+                    rightLowerArm.rotation.z = 0;
+                    leftLowerArm.rotation.z = 0;
+                    rightLowerArm.rotation.y = 0;
+                    leftLowerArm.rotation.y = 0;
+                }
+
+                if (rightUpperLeg && leftUpperLeg && rightLowerLeg && leftLowerLeg) {
+                    rightUpperLeg.rotation.x = 0;
+                    leftUpperLeg.rotation.x = 0;
+                    rightLowerLeg.rotation.x = 0;
+                    leftLowerLeg.rotation.x = 0;
+                }
                 if (spine) spine.rotation.y = 0;
             }
         }
