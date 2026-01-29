@@ -22,31 +22,43 @@ vectorstore = None
 qa_chain = None
 llm = None
 
+class LocalFallbackAgent:
+    def invoke(self, input_text: str) -> str:
+        # Basic offline logic to keep the user happy
+        lower_input = str(input_text).lower()
+        if "hello" in lower_input or "dwa" in lower_input or "こんにちは" in lower_input:
+            return "こんにちは！現在AIサーバーが混み合っているため、バックアップモードで応答しています。ご用件は何でしょうか？🐶"
+        elif "who are you" in lower_input or "誰" in lower_input:
+            return "私はこのサイトの案内人です！現在は回線トラブルのため、簡易モードで動作中です。"
+        else:
+            return "申し訳ありません。現在、外部AIサービスへの接続が不安定です。しばらく経ってからもう一度お試しください。（このメッセージはオフラインのバックアップエージェントから送信されています）🐶⚠️"
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global vectorstore, qa_chain, llm
     
     # Initialize LLM (Must succeed for anything to work)
+    # If key is missing or init fails, we use the LocalFallbackAgent
+    
     if not HUGGINGFACEHUB_API_TOKEN:
-        print("WARNING: HUGGINGFACEHUB_API_TOKEN is not set. AI Features will fail.")
-        yield
-        return
-
-    # 1. Initialize LLM Common
-    try:
-        print("Initializing HuggingFace LLM...")
-        llm = HuggingFaceEndpoint(
-            repo_id="mistralai/Mistral-7B-Instruct-v0.2", 
-            task="text-generation",
-            max_new_tokens=512,
-            top_k=30,
-            temperature=0.5,
-            huggingfacehub_api_token=HUGGINGFACEHUB_API_TOKEN
-        )
-    except Exception as e:
-        print(f"CRITICAL: Failed to initialize LLM: {e}")
-        yield
-        return
+        print("WARNING: HUGGINGFACEHUB_API_TOKEN is not set. Switching to Local Backup Agent.")
+        llm = LocalFallbackAgent()
+    else:
+        # 1. Initialize LLM Common
+        try:
+            print("Initializing HuggingFace LLM...")
+            llm = HuggingFaceEndpoint(
+                repo_id="mistralai/Mistral-7B-Instruct-v0.2", 
+                task="text-generation",
+                max_new_tokens=512,
+                top_k=30,
+                temperature=0.5,
+                huggingfacehub_api_token=HUGGINGFACEHUB_API_TOKEN
+            )
+        except Exception as e:
+            print(f"CRITICAL: Failed to initialize LLM: {e}")
+            print("Switching to Local Backup Agent (Offline Mode).")
+            llm = LocalFallbackAgent()
 
     # 2. Try to Initialize Vector Store (RAG)
     print(f"Loading content from {CONTENT_DIR}...")
