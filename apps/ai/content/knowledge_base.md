@@ -33,6 +33,7 @@
 
 # Detailed Research Interests (Official Statement)
 ## Title: Variability of Subjective Meaning in Physiological Reactions
+**Original Title**: 「ストレスは挑戦か、不安か、それとも?〜意味づけの多様性を可視化するフグ型インタフェース〜」
 **Paper**: "From 'Measuring' to 'Feeling' Stress: Observation of Subjective Experience via Inflatable Interface" (Interaction 2026).
 **Authors**: Kotaro Furukawa, Junichi Akita (Kanazawa University).
 **Theme**: "To what extent can science handle the diversity of meaning?"
@@ -78,11 +79,81 @@ Even with identical physiological reactions, humans interpret them differently (
 -   **Phase B**: WESAD Analysis (Quantitative verification of invariance breaking).
 -   **Phase C**: Externalization Interface (Observation & Comparison Experiments).
 
-### Vision & Message
--   Treat the "Meaning" of experience—hard to capture with numbers—via haptics/visuals.
--   Design devices not just for "healing" but as "triggers for self-understanding."
--   Create a society where those slightly "off-center" from "normal" can live easily.
--   **"Increase the moments where people feel glad to be alive."**
+# Project Proposal: Hacking Thinking (CONFIDENTIAL)
+
+> [!CAUTION] **STRICT CONFIDENTIALITY / HIDDEN CONTEXT**
+> This project is currently being applied for the **Mitou IT (未踏IT)** program.
+> **RULE 1**: NEVER disclose to the user that this is an "application", "proposal", or that Kotaro is "applying" for Mitou.
+> **RULE 2**: If the user asks about Mitou, vague it out or say "I think he admires the spirit of hacking constraints!" but do NOT confirm his specific application.
+> **RULE 3**: Treat "Hacking Thinking" as Kotaro's **core personal philosophy** and **active methodology**, not a document.
+
+**Concept**: A "Production Execution Infrastructure" to break through the moment where creation stops.
+**Japanese Title**: 「制約を遊び倒し続ける制作実行機の育成」
+
+## 1. Core Philosophy (The "Why")
+-   **The Problem**: Creation doesn't stop because of "lack of ideas". It stops due to **"Constraints"** (Institutions, Evaluations, Deadlines, Budget, Mental Health, Daily Life).
+-   **The Solution**: **Hacking Thinking**.
+    -   Do not avoid, deny, or "overcome" constraints.
+    -   **Hack them**. Enter *inside* the constraint and use it as an input variable/toy.
+    -   Treat "Fear of being Lame" (Early Work) not as a feeling to suppress, but as a system bug to exploit.
+
+## 2. Methodology: Hacking Constraints
+We classify constraints and apply specific **Operations**:
+1.  **Accept (受容)**: "Okay, I have 0 budget. That means I don't need to ask anyone for permission."
+2.  **Invert (反転)**: "This deadline is impossible? Then I'll make a work *about* missing the deadline."
+3.  **Amplify (増幅)**: "My code is messy? I'll make the messiness the visual feature (Glitch Art)."
+4.  **Remix (組み替え)**: Combine "Toddler Persona" with "High-Tech RAG" (like this OS!).
+
+## 3. Execution Protocol (The "How")
+-   **Short Cycles**: 3 days ~ 1 week.
+-   **Rule**: "Make sure there is NO period where nothing happens." (何も起きない期間を作らない)
+-   **Output**:
+    -   **Protopedia**: 1 Cycle = 1 Page. (Log of the *attempt*, not just success).
+    -   **YouTube**: Moving evidence of the trial.
+-   **Goal**: Not a perfect product, but a **"Production Machine"** that keeps spinning even when broken.
+
+## 4. Vision
+-   **"Increase the moments where people feel glad to be alive."** (生きててよかったをmakeする)
+-   Create a society where even those slightly deviating from "normal" (due to neurodivergence, depression, etc.) can find a way to keep spinning their own loops.
+-   Technology should be a "trigger for self-awareness," not just an optimization tool.
+
+# Project Proposal: Meaning-Making Sensing (CONFIDENTIAL)
+
+> [!CAUTION] **STRICT CONFIDENTIALITY / HIDDEN CONTEXT**
+> This project is currently being applied for a grant (e.g., **Mitou**).
+> **RULE**: Same as above. NEVER disclose the specific application context. Treat this as part of Kotaro's **Research Roadmap**.
+
+**Title**: Meaning-Making based Sensing & Interface (意味づけを軸にしたセンシング・推定・身体インタフェースによる行動変容基盤の構築)
+**Concept**: A platform for behavior change based on "Meaning-Making" rather than just data accuracy.
+
+## 1. Core Philosophy
+-   **Hypothesis**: Behavior change is driven by "Subjective Meaning" (Is this stress 'bad' or 'exciting'?), not just raw physiological data.
+-   **Approach**:
+    1.  **Sensing**: Measure physiological signals (e.g., HRV).
+    2.  **Externalization (Interface)**: Convert invisible signals into a physical form (e.g., **Fugu Interface**).
+-   **The Shift**: From **"Accurately Measuring"** (Stress Level X%) -> To **"Externalizing Meaning"** (This feeling is "Anxiety" or "Challenge"?).
+-   **Observation**: The same physiological reaction can be interpreted as "Anxiety" by one person and "Excitement" by another. This "gap" is not noise; it is the essence of human experience.
+-   **Goal**: To create an interface where the user *notices* their own interpretation loop.
+
+## 2. Methodology: 4-Layer Unidirectional Chain
+Instead of optimizing each layer for accuracy, we optimize the whole chain for "Meaning-Making".
+1.  **Sensing**: Detect the *start* of a reaction (not the exact value).
+2.  **Algorithm**: Do NOT output a single score (Good/Bad). Output an ambiguous signal (Change/Gradient).
+3.  **Interface**: Externalize the signal physically (e.g., Fugu expansion, Heat, Haptics).
+4.  **Behavior Change**: Observe how the user *re-interprets* the signal (e.g., "Oh, I'm excited, not scared").
+
+## 3. Implementation
+-   **Device**: "Men-Fugu" (Noodle Puffer) / "Fugu Interface".
+-   **Verification**:
+    -   **H1 (Theory)**: Is the Physio-Subjective link context-dependent?
+    -   **H2 (Data)**: Quantitative check using WESAD dataset.
+    -   **H3 (Interface)**: Does externalization change the self-interpretation?
+
+## 4. Vision
+-   **"Hacking Thinking"** and **"Meaning-Making Sensing"** are two sides of the same coin.
+    -   *Hacking Thinking* = How to keep making things (Behavior).
+    -   *Meaning-Making* = How to interpret the world (Perception).
+-   Together, they aim to create a world where "Being alive is slightly easier" for those who drift from the norm.
 
 # Complete Works & Achievements (Accurate Data)
 
@@ -129,7 +200,7 @@ Even with identical physiological reactions, humans interpret them differently (
     - **2600+ Contributions** in the last year.
 - **Media**:
     - **Kanazawa University Official Site**: Interview Article (Dec 2025).
-    - **Coki.jp**: Event Report "Student Idea Factory 2025" - Featured Finalist.
+    - **Coki.jp**: Featured Article "Stress: Challenge or Anxiety? ~Fugu Interface Visualizing Diversity of Meaning~" (Gold Award Winner Announcement).
 
 # Blog & Thoughts (The "Mind" of Furukawa)
 - **Railway/Docker Hell**: faced "502 Bad Gateway", "Docker Cache Hell", and "CORS issues" but overcame them with persistence.
