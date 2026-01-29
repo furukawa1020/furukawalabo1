@@ -208,12 +208,12 @@ def chat(req: ChatRequest):
     # Attempt 2: LLM Only (if RAG disabled or failed)
     if not response_data:
         try:
-            # Zephyr Prompt Format
-            prompt = f"<|system|>\nYou are a helpful assistant.<|endoftext|>\n<|user|>\n{req.message}<|endoftext|>\n<|assistant|>\n"
+            # Qwen Prompt Format (ChatML)
+            prompt = f"<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\n{req.message}<|im_end|>\n<|im_start|>assistant\n"
 
             # Direct API Call to bypass LangChain/HF-Hub version mismatch
-            # UPDATED: Using router.huggingface.co + Zephyr (Stable)
-            API_URL = "https://router.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta"
+            # UPDATED: Using router.huggingface.co + Qwen/Qwen2.5-7B-Instruct
+            API_URL = "https://router.huggingface.co/models/Qwen/Qwen2.5-7B-Instruct"
             headers = {"Authorization": f"Bearer {HUGGINGFACEHUB_API_TOKEN}"}
             payload = {
                 "inputs": prompt,
