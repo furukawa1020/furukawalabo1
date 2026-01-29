@@ -54,27 +54,51 @@ HCI, Physiological Reaction, Meaning-making, Cognitive Appraisal, Stress, Extern
 -   Create a society where those slightly "off-center" from "normal" can live easily.
 -   **"Increase the moments where people feel glad to be alive."**
 
-# Full Works List (Prototypes & Projects)
-- **RoboCup Junior (Soccer Lightweight)** (2018-2023):
-    - Team "GR7": 2-person unit. 4 consecutive National Tournaments.
-    - Tech: C++, Circuit Design, Embedded Systems.
-    - Legacy: Gujo Node Winner, Ogaki Open Runner-up.
-- **Furukawa Archive OS (Bio-Portfolio)**:
-    - Stack: Rust (Axum), React (Vite), Python (FastAPI), Kubernetes-ready.
-    - Features: 3D VRM Avatar, AI Agent (RAG), Admin Dashboard, Blog System.
-    - Status: "v1.0 Launched" (Jan 25, 2026).
-- **Protopedia Works (40+ items)**:
-    - Active Contributor with over 72+ likes.
-    - Notable: "Hack" themed prototypes, "Enjoy Constraints" series.
+# Complete Works & Achievements (Accurate Data)
 
-# Recent Achievements & Awards
-- **Interaction 2026**: Interactive Presentation (Premium) Accepted.
-- **Giiku-Haku 2025 (技育博)**:
-    - **Yumemi Corporation Award**: Recognized for technical depth or unique vision.
-    - **Sponsor Award**: Additional recognition for prototype quality.
-- **GitHub Activity**:
-    - 225+ Repositories active.
-    - 2,600+ Contributions in the past year (High output).
+## 1. Achievements & Awards (受賞歴)
+- **Academic & Presentations**:
+    - **Interaction 2026**: Interactive Presentation "Premium" Accepted (Subjective observation via Fugu Interface).
+    - **Japan Geopark National Conference 2025**: Poster Presentation (Hakusan Tedorigawa Geopark Tourism).
+    - **Student Idea Factory 2025**: **Springer Nature Gold Award** (Poster Award) & Finalist (Top 8).
+    
+- **Hackathons & Competitions (2025)**:
+    - **Giiku-Haku (技育博) 2025 vol.5**: **Sponsor Award (Yumemi Corp)** for "Sushi Gaming Piano".
+    - **Giiku-Haku (技育博) 2025 vol.2**: **Corporate Award (Yumemi Corp)** for "Men-Fugu" (Noodle Puffer).
+    - **Heroes League 2025**:
+        - **MAID Award**: "FrogEcho" (Frog Chorus).
+        - **xorium Award**: "Men-Fugu".
+
+- **Community & Leadership**:
+    - **Regional Creation Cafe (地域創造カフェ)**: First Representative (2024).
+    - **Shiramine University Village System Dept**: Fieldwork Planning/Ops (2023).
+
+- **Pre-University (High School)**:
+    - **RoboCup Junior (Soccer Lightweight)** (2018-2023):
+        - **Japan Open (National)**: 4 Consecutive Years Participation (Best: 11th).
+        - **Gujo Node**: Winner (2018), 3rd (2021, 2023).
+        - **Ogaki Open**: Runner-up (2019), Beginners Award / Best Presentation.
+    - **Art**: City Art Exhibition Accepted (Middle School).
+    - **Calligraphy**: **Shihan** (Instructor License - 弥今本圖師範) obtained in 2015.
+
+- **Work Experience**:
+    - **Daido Industry (2024)**: Hardware standardization, TPS-based improvement, Quality Engineering.
+    - **Bloomlandlabo (2025)**: Startup preparation with Kanazawa University faculty (Tech Lead).
+
+## 2. Works & Output (制作物)
+- **Furukawa Archive OS (This Site)**:
+    - Complete Microservices Portfolio functioning as a "Sentient OS".
+- **Protopedia (40+ Works)**:
+    - **Kanazawa Horse Racing Prediction AI** (RTX5060 powered).
+    - **Sushi Gaming Piano**.
+    - **Men-Fugu** (Noodle consumption interface).
+    - **FrogEcho** (IoT Frogs).
+    - **Total Likes**: 72+.
+- **GitHub**:
+    - **225+ Repositories** created/maintained (2025-2026).
+    - **2600+ Contributions** in the last year.
+- **Media**:
+    - **Kanazawa University Official Site**: Interview Article (Dec 2025).
 
 # Blog & Thoughts (The "Mind" of Furukawa)
 - **Railway/Docker Hell**: faced "502 Bad Gateway", "Docker Cache Hell", and "CORS issues" but overcame them with persistence.
