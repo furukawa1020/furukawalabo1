@@ -212,8 +212,8 @@ def chat(req: ChatRequest):
             prompt = f"<|user|>\nYou are a helpful assistant.\n{req.message} <|end|>\n<|assistant|>"
 
             # Direct API Call to bypass LangChain/HF-Hub version mismatch
-            # UPDATED: Using router.huggingface.co + Microsoft Phi-3 (High Availability)
-            API_URL = "https://router.huggingface.co/models/microsoft/Phi-3-mini-4k-instruct"
+            # UPDATED: Correct path for Router is /hf-inference/models/...
+            API_URL = "https://router.huggingface.co/hf-inference/models/microsoft/Phi-3-mini-4k-instruct"
             headers = {"Authorization": f"Bearer {HUGGINGFACEHUB_API_TOKEN}"}
             payload = {
                 "inputs": prompt,
