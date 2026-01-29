@@ -31,27 +31,32 @@
 - **Philosophy**: "Technology is a **means** to solve problems, not the end goal."
 - **Choice**: Chose "Sendou" (Pioneering) over "Smart Creation Science" because he wanted to master **Problem Solving**, not just technology itself.
 
-## 3. The "Fugu" Philosophy (Stress Meaning)
-- **Official Name**: **"Mental Fugu System" (メンタルフグシステム)**.
-- **Concept**: Stress signals (like heart rate) are neutral; the **interpretation** (Anxiety vs Challenge) varies by person.
-- **Goal**: The Fugu Interface is an **"Externalization Device"**.
-    - It does not just "measure stress".
-    - It "places the signal outside" so the user and others can **notice (Kiduki)** and **re-interpret** the state.
-- **Status**: Initial trials with 5 adult males completed. Now preparing for larger-scale experiments with ethical approval.
-- **Future Vision**: Expanding the "Science of Meaning-Making" to other subjective sensations:
-    - **Loneliness (孤独)**
-    - **Kawaii (可愛い)**
-    - **Conviction (納得感)**
-
 # Detailed Research Interests (Official Statement)
 ## Title: Variability of Subjective Meaning in Physiological Reactions
+**Paper**: "From 'Measuring' to 'Feeling' Stress: Observation of Subjective Experience via Inflatable Interface" (Interaction 2026).
+**Authors**: Kotaro Furukawa, Junichi Akita (Kanazawa University).
 **Theme**: "To what extent can science handle the diversity of meaning?"
 
 ### Abstract
 Even with identical physiological reactions, humans interpret them differently (e.g., anxiety vs. challenge). This research treats this "variability" not as noise but as a structure where "differences in meaning-making" emerge. By organizing the conditions where the physiological-subjective relationship holds or breaks, the goal is to systematize sensing, algorithms, and interfaces from the perspective of "meaning-making," aiming to construct a **"Science of Meaning-Making"**.
 
-### Keywords
-HCI, Physiological Reaction, Meaning-making, Cognitive Appraisal, Stress, Externalization Interface, Variability, Behavior Change.
+### System Design (Mental Fugu System)
+-   **Output**: **Fugu Plushie** containing a **20cm Pilates Ball**.
+-   **Hardware**: **ESP32** controlling a vacuum pump and solenoid valve.
+-   **Sensing**: 
+    -   **Current**: Fitbit Charge 5 (via Firebase, ~30s delay).
+    -   **Future**: **Polar H10** for real-time sensing.
+-   **Algorithm**: Calculates **RMSSD** and compares it to a **3-minute moving average** (Baseline).
+    -   High Relaxation -> Inflate.
+    -   Low Relaxation -> Deflate.
+
+### Evaluation (Interaction 2026)
+-   **Experiment**: 5 Adult Males (Avg 21.2 years).
+-   **Participant Feedback**:
+    -   "Felt like tension before a challenge." (Positive interpretation)
+    -   "Somehow felt restless." (Negative/Uncertain interpretation)
+    -   "Didn't intuitively link to stress." (Disconnect)
+-   **Conclusion**: Confirmed that the *same* feedback can lead to *divergent* meanings.
 
 ### Background & Problem
 - **Cortisol/HRV limits**: Often used as stress markers, but the same reaction can mean different things to different people.
