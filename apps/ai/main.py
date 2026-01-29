@@ -154,28 +154,55 @@ def chat(req: ChatRequest):
         if len(turn) == 2:
             chat_context += f"User: {turn[0]}\nAssistant: {turn[1]}\n"
     
-    try:
-        if vectorstore:
+    response_data = None
+    
+    # Attempt 1: RAG (if enabled)
+    if vectorstore:
+        try:
             # RAG Mode
-            result = qa_chain({"question": req.message, "chat_history": []}) # Use empty hist list for chain, context managed inside? or pass list.
-            # Mistral Instruct might handle history better in the prompt, but chain handles it.
-            # Convert list of lists to list of tuples for LangChain if needed, but here we just pass simplified.
-            # Actually ConversationalRetrievalChain expects specific format. 
-            # Simple fix: Let's pass empty history to chain for now to avoid format errors, rely on vector search.
+            # Note: passing empty list for chat_history to chain for simplicity, 
+            # context is handled by the prompt or we rely on vector search only for current query.
+            result = qa_chain.invoke({"question": req.message, "chat_history": []})
             
-            return {
+            response_data = {
                 "reply": result["answer"],
                 "sources": [doc.metadata.get("source") for doc in result.get("source_documents", [])]
             }
-        else:
-            # LLM Only Mode
-            # Manually construct prompt
+        except Exception as e:
+            print(f"⚠️ RAG Request failed (API Limit?): {e}")
+            print("Falling back to LLM-only generation...")
+            # Fall through to LLM-only
+            response_data = None
+
+    # Attempt 2: LLM Only (if RAG disabled or failed)
+    if not response_data:
+        try:
+            # Manually construct prompt if we need to call LLM directly
+            # If qa_chain is the chain object, we need to access the underlying LLM
+            # If we are in "LLM-only mode" (vectorstore is None), qa_chain IS the LLM
+            
+            target_llm = qa_chain
+            if vectorstore:
+                # Extract LLM from the chain if possible, or we need global ref to llm?
+                # The 'llm' variable in lifespan is local. 
+                # Ideally we should store 'llm' globally too.
+                # WORKAROUND: Access .llm attribute of the chain
+                if hasattr(qa_chain, "llm"):
+                    target_llm = qa_chain.llm # For RetrievalQA/ConversationalRetrievalChain
+                elif hasattr(qa_chain, "combine_docs_chain") and hasattr(qa_chain.combine_docs_chain, "llm_chain"):
+                     target_llm = qa_chain.combine_docs_chain.llm_chain.llm
+            
             prompt = f"<s>[INST] You are a helpful assistant. \nHistory:\n{chat_context}\nUser: {req.message} [/INST]"
-            response = qa_chain.invoke(prompt) # qa_chain is llm object here
-            return {
+            
+            # Use invoke for string-in string-out
+            response = target_llm.invoke(prompt)
+            
+            response_data = {
                 "reply": response,
                 "sources": []
             }
-    except Exception as e:
-        print(f"Error during generation: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        except Exception as e:
+            print(f"❌ LLM Generation failed: {e}")
+            raise HTTPException(status_code=500, detail=f"AI Error: {str(e)}")
+            
+    return response_data
