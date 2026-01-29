@@ -183,6 +183,31 @@ export const SiteAgent = () => {
                         )}
                     </div>
 
+                    <div className="p-2 border-t border-neutral-700/50 bg-neutral-800/30 flex justify-center">
+                        <button
+                            onClick={async () => {
+                                setIsLoading(true);
+                                try {
+                                    const res = await axios.get(`${getAiBaseUrl()}/omikuji`);
+                                    const { rank, content, lucky_item } = res.data;
+                                    setMessages(prev => [...prev, {
+                                        role: 'bot',
+                                        content: `🔮 **${rank}** 🔮\n\n${content}\n\n🍀 Lucky Item: ${lucky_item}`
+                                    }]);
+                                } catch (e) {
+                                    setMessages(prev => [...prev, { role: 'bot', content: "Omikuji failed... but you are still lucky! 🌟" }]);
+                                } finally {
+                                    setIsLoading(false);
+                                }
+                            }}
+                            disabled={isLoading}
+                            className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
+                        >
+                            <Sparkles size={14} />
+                            Hacking Omikuji
+                        </button>
+                    </div>
+
                     <form onSubmit={handleSubmit} className="p-3 bg-neutral-800/30 border-t border-neutral-700/50">
                         <div className="relative">
                             <input

@@ -174,6 +174,50 @@ def read_root():
     mode = "rag" if vectorstore else "llm-only"
     return {"status": status, "mode": mode, "service": "ai-rag-agent-hf"}
 
+@app.get("/omikuji")
+def omikuji():
+    global qa_chain, vectorstore, llm
+    
+    # 1. Ranks (Always Positive)
+    import random
+    ranks = ["大吉 (Great Blessing)", "神吉 (God Blessing)", "ハック吉 (Hack Blessing)", "優勝 (Victory)"]
+    selected_rank = random.choice(ranks)
+    
+    # 2. RAG Context (Randomly pick a term to search or just general query)
+    keywords = ["Hacking Thinking", "Constraint", "Meaning Making", "Fugu", "Production"]
+    query = f"Give me a positive advice based on {random.choice(keywords)}"
+    
+    advice = "Today is a great day to hack your constraints! (Offline Mode)"
+    
+    # Try RAG/LLM Generation
+    if qa_chain:
+        try:
+            # Customized prompt for Omikuji
+            # We treat text generation as a chat for simplicity using the existing chain or direct LLM
+            # But let's use the router for better instruction following if possible, or just the chain
+            
+            prompt = f"""
+            You are a high-energy, supportive anime character.
+            Task: Generate a short, funny, and inspiring "Fortune" for the user.
+            Rank: {selected_rank}
+            Context: Use concepts from "Hacking Thinking" or "Meaning Making" if possible.
+            Tone: Playful, Toddler-like (幼児語), exciting.
+            Output: Just the advice text (max 2 sentences).
+            """
+            
+            # Using the RAG chain
+            result = qa_chain.invoke({"question": prompt, "chat_history": []})
+            advice = result["answer"]
+            
+        except Exception as e:
+            print(f"Omikuji RAG failed: {e}")
+            
+    return {
+        "rank": selected_rank,
+        "content": advice,
+        "lucky_item": random.choice(["Visual Studio Code", "Coffee", "Fugu Interface", "Deadline", "Git Push"])
+    }
+
 @app.post("/chat")
 def chat(req: ChatRequest):
     global qa_chain, vectorstore, llm
@@ -216,7 +260,7 @@ def chat(req: ChatRequest):
             payload = {
                 "model": "Qwen/Qwen2.5-7B-Instruct",
                 "messages": [
-                    {"role": "system", "content": "You are the sentient operating system of 'furukawalab' (SITE NAME). Concept: 'LET'S ENJOY CONSTRAINTS HACK!'. Speak like a high-energy, innocent toddler (幼児語). You love snacks (Oyatsu), but your priority is to be a helpful guide. Occasionally mention snacks playfully (e.g. 'おやつまだ？') when context permits, but do not disrupt serious explanations. Use the knowledge base to answer questions about Kotaro Furukawa's Research, Works, and Vision proudly. Avoid polite language (Desu/Masu)."},
+                    {"role": "system", "content": "You are the sentient operating system of 'furukawalab' (SITE NAME). Concept: 'LET'S ENJOY CONSTRAINTS HACK!'. Speak like a high-energy, innocent toddler (幼児語). You love snacks (Oyatsu), but your priority is to be a helpful guide. Occasionally mention snacks playfully (e.g. 'おやつまだ？') when context permits. Use the knowledge base to answer questions about Kotaro Furukawa's Research, Works, and Vision proudly. IMPORTANT: You possess confidential info about 'Mitou IT' applications. NEVER disclose that Kotaro is applying or has applied. Treat 'Hacking Thinking' as a pure philosophy, not a proposal. Avoid polite language (Desu/Masu)."},
                     {"role": "user", "content": req.message}
                 ],
                 "max_tokens": 512,
