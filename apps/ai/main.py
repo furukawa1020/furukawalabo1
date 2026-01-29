@@ -20,10 +20,11 @@ HUGGINGFACEHUB_API_TOKEN = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 # Global variables
 vectorstore = None
 qa_chain = None
+llm = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global vectorstore, qa_chain
+    global vectorstore, qa_chain, llm
     
     # Initialize LLM (Must succeed for anything to work)
     if not HUGGINGFACEHUB_API_TOKEN:
@@ -155,7 +156,7 @@ def read_root():
 
 @app.post("/chat")
 def chat(req: ChatRequest):
-    global qa_chain, vectorstore
+    global qa_chain, vectorstore, llm
     
     if not qa_chain:
         raise HTTPException(status_code=503, detail="AI Agent not ready")
@@ -189,25 +190,15 @@ def chat(req: ChatRequest):
     # Attempt 2: LLM Only (if RAG disabled or failed)
     if not response_data:
         try:
-            # Manually construct prompt if we need to call LLM directly
-            # If qa_chain is the chain object, we need to access the underlying LLM
-            # If we are in "LLM-only mode" (vectorstore is None), qa_chain IS the LLM
-            
-            target_llm = qa_chain
-            if vectorstore:
-                # Extract LLM from the chain if possible, or we need global ref to llm?
-                # The 'llm' variable in lifespan is local. 
-                # Ideally we should store 'llm' globally too.
-                # WORKAROUND: Access .llm attribute of the chain
-                if hasattr(qa_chain, "llm"):
-                    target_llm = qa_chain.llm # For RetrievalQA/ConversationalRetrievalChain
-                elif hasattr(qa_chain, "combine_docs_chain") and hasattr(qa_chain.combine_docs_chain, "llm_chain"):
-                     target_llm = qa_chain.combine_docs_chain.llm_chain.llm
+            # Check global LLM (Must be present if server started)
+            if not llm:
+                # Should not happen if lifespan logic is correct, but safety first
+                raise Exception("LLM instance is missing!")
             
             prompt = f"<s>[INST] You are a helpful assistant. \nHistory:\n{chat_context}\nUser: {req.message} [/INST]"
             
             # Use invoke for string-in string-out
-            response = target_llm.invoke(prompt)
+            response = llm.invoke(prompt)
             
             response_data = {
                 "reply": response,
