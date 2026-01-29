@@ -10,7 +10,7 @@ interface Message {
 export const SiteAgent = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
-        { role: 'bot', content: 'こんにちは！このサイトのAIエージェントです。このサイトのことならなんでもおまかせ！(例: 「RTX5060のAIについて教えて」)' }
+        { role: 'bot', content: 'こんにちは！AIエージェントの「はくちゃん」だよ！このサイトのことならなんでもおまかせ！(例: 「RTX5060のAIについて教えて」)' }
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -125,7 +125,7 @@ export const SiteAgent = () => {
                                 <Sparkles size={16} className={status === 'online' ? 'text-cyan-400' : 'text-red-400'} />
                             </div>
                             <div>
-                                <h3 className="font-bold text-sm text-neutral-100">Lab AI Agent</h3>
+                                <h3 className="font-bold text-sm text-neutral-100">はくちゃん (Haku)</h3>
                                 <div className="flex items-center gap-1.5">
                                     <span className={`w-2 h-2 rounded-full animate-pulse ${status === 'online' ? 'bg-green-500' :
                                         status === 'checking' ? 'bg-yellow-500' : 'bg-red-500'
