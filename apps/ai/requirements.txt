@@ -4,7 +4,6 @@ langchain
 langchain-community
 langchain-huggingface
 huggingface-hub
-sentence-transformers
 chromadb
 python-multipart
 requests

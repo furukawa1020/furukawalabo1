@@ -7,7 +7,8 @@ from contextlib import asynccontextmanager
 
 from langchain_community.document_loaders import TextLoader
 from langchain_community.vectorstores import Chroma
-from langchain_huggingface import HuggingFaceEndpoint, HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEndpoint
+from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.chains import ConversationalRetrievalChain
 
@@ -44,9 +45,12 @@ async def lifespan(app: FastAPI):
                 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
                 texts = text_splitter.split_documents(docs)
                 
-                print("Creating vector store with HuggingFace Embeddings...")
-                # Use a small, fast local model for embeddings
-                embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+                print("Creating vector store with HuggingFace Inference API (Cloud Embeddings)...")
+                # Use Cloud API instead of local processing to save memory
+                embeddings = HuggingFaceInferenceAPIEmbeddings(
+                    api_key=HUGGINGFACEHUB_API_TOKEN,
+                    model_name="sentence-transformers/all-MiniLM-L6-v2"
+                )
                 vectorstore = Chroma.from_documents(texts, embeddings)
                 
                 print("Initializing HuggingFace LLM...")
