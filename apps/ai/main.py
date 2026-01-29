@@ -1,6 +1,7 @@
 import os
 import glob
 import time
+import requests # Added for direct API calls
 from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -207,34 +208,46 @@ def chat(req: ChatRequest):
     # Attempt 2: LLM Only (if RAG disabled or failed)
     if not response_data:
         try:
-            # Check global LLM basic validity
-            if not llm:
-                raise Exception("LLM instance is missing!")
-            
-            prompt = f"<s>[INST] You are a helpful assistant. \nHistory:\n{chat_context}\nUser: {req.message} [/INST]"
-            
-            # Retry loop to handle "Model Loading" (503) states common in free tier
+            # Direct API Call to bypass LangChain/HF-Hub version mismatch
+            API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
+            headers = {"Authorization": f"Bearer {HUGGINGFACEHUB_API_TOKEN}"}
+            payload = {
+                "inputs": prompt,
+                "parameters": {
+                    "max_new_tokens": 512,
+                    "temperature": 0.5, 
+                    "return_full_text": False
+                }
+            }
+
+            # Retry loop for 503 Loading
             final_error = None
             for attempt in range(5):
                 try:
-                    # Use invoke for string-in string-out
-                    response = llm.invoke(prompt)
+                    response = requests.post(API_URL, headers=headers, json=payload, timeout=30)
                     
-                    response_data = {
-                        "reply": response,
-                        "sources": []
-                    }
-                    final_error = None
-                    break # Success!
+                    if response.status_code == 200:
+                        # Success
+                        generated_text = response.json()[0]["generated_text"]
+                        response_data = {
+                            "reply": generated_text,
+                            "sources": []
+                        }
+                        final_error = None
+                        break
+                    elif response.status_code == 503:
+                        # Model Loading
+                        print(f"⚠️ External AI Loading (503)... (Attempt {attempt+1}/5)")
+                        time.sleep(5)
+                        final_error = Exception(f"503 Service Unavailable: {response.text}")
+                    else:
+                        # Other error
+                        raise Exception(f"API Error {response.status_code}: {response.text}")
+
                 except Exception as e:
                     final_error = e
-                    error_msg = str(e).lower()
-                    # Only retry on loading/timeout/503 errors
-                    if "503" in error_msg or "loading" in error_msg or "timeout" in error_msg or "temporary" in error_msg:
-                        print(f"⚠️ External AI Loading... (Attempt {attempt+1}/5)")
-                        time.sleep(5) # Wait for cold boot
-                    else:
-                        raise e # Fatal error, don't retry
+                    print(f"   Connection Error (Attempt {attempt+1}): {e}")
+                    time.sleep(2)
             
             if final_error:
                 raise final_error
