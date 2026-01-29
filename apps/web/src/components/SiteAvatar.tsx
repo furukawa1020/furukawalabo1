@@ -156,50 +156,48 @@ const AvatarModel = () => {
 
                 if (spine) spine.rotation.y = Math.sin(cycle) * 0.08;
 
-            } else {
-                // Idle Pose
-                rightUpperArm.rotation.z = 1.2 + Math.sin(t) * 0.05;
-                leftUpperArm.rotation.z = -1.2 - Math.sin(t) * 0.05;
-                rightUpperArm.rotation.x = 0;
-                leftUpperArm.rotation.x = 0;
-
-                if (rightUpperLeg && leftUpperLeg && rightLowerLeg && leftLowerLeg) {
-                    rightUpperLeg.rotation.x = 0;
-                    leftUpperLeg.rotation.x = 0;
-                    rightLowerLeg.rotation.x = 0;
-                    leftLowerLeg.rotation.x = 0;
-                }
                 if (spine) spine.rotation.y = 0;
             }
         }
 
         // Move Group Logic
-        if (action === 'walk' && sceneRef.current) {
+        if (sceneRef.current) {
             const currentX = sceneRef.current.position.x;
             const dist = targetX - currentX;
             const moveSpeed = 1.6 * delta;
 
-            if (Math.abs(dist) > 0.1) {
-                sceneRef.current.position.x += Math.sign(dist) * moveSpeed;
-                const turn = dist > 0 ? Math.PI / 2 : -Math.PI / 2;
-                sceneRef.current.rotation.y = turn;
+            // WALKING STATE
+            if (action === 'walk') {
+                if (Math.abs(dist) > 0.05) {
+                    sceneRef.current.position.x += Math.sign(dist) * moveSpeed;
+                    const turn = dist > 0 ? Math.PI / 2 : -Math.PI / 2;
+                    // Smooth rotation
+                    sceneRef.current.rotation.y = THREE.MathUtils.lerp(sceneRef.current.rotation.y, turn, 0.2);
 
-                const walkCycle = state.clock.elapsedTime * 5.5;
-                sceneRef.current.position.y = -1.1 + Math.abs(Math.cos(walkCycle)) * 0.05; // Base -1.1
-            } else {
-                setAction('idle');
-                sceneRef.current.rotation.y = 0;
-            }
-        } else if (sceneRef.current) {
-            if (action === 'idle') {
-                // Smoothly return to BaseX if drifted
-                const distToBase = baseX - sceneRef.current.position.x;
-                if (Math.abs(distToBase) > 0.05) {
-                    sceneRef.current.position.x += distToBase * delta * 2.0; // Lerp back
+                    const walkCycle = state.clock.elapsedTime * 6.0;
+                    // Base Height -1.3 (Lowered slightly for bigger scale)
+                    sceneRef.current.position.y = -1.3 + Math.abs(Math.cos(walkCycle)) * 0.05;
+                } else {
+                    // Reached target
+                    setAction('idle');
+                    sceneRef.current.rotation.y = 0;
                 }
-
-                sceneRef.current.rotation.y = 0;
-                sceneRef.current.position.y = -1.1; // Base -1.1
+            }
+            // IDLE STATE (Return Logic)
+            else if (action === 'idle') {
+                // If we are too far from BaseX, trigger a walk back!
+                // Don't "slide" (sucked in). PROPERLY WALK.
+                const distToBase = baseX - currentX;
+                if (Math.abs(distToBase) > 0.5) {
+                    // Trigger return walk
+                    setTargetX(baseX);
+                    setAction('walk');
+                } else {
+                    // Minor adjustment if very close (snap logic) without sliding
+                    // Or just stay put. Staying put is more natural than sliding.
+                    sceneRef.current.rotation.y = THREE.MathUtils.lerp(sceneRef.current.rotation.y, 0, 0.1);
+                    sceneRef.current.position.y = -1.3;
+                }
             }
         }
     });
@@ -211,7 +209,9 @@ const AvatarModel = () => {
     };
 
     return vrm ? (
-        <group ref={sceneRef} position={[baseX, -1.1, 0]} scale={[1.1, 1.1, 1.1]}>
+        // Scale Increased: 1.1 -> 1.35
+        // Position Y Lowered: -1.1 -> -1.3 to fit the larger body
+        <group ref={sceneRef} position={[baseX, -1.3, 0]} scale={[1.35, 1.35, 1.35]}>
             <primitive object={vrm.scene} />
             <Html position={[0, 1.0, 0]} center wrapperClass="pointer-events-auto">
                 <div
@@ -229,7 +229,7 @@ export const SiteAvatar = () => {
     return (
         <div className="fixed bottom-0 left-0 right-0 h-[200px] pointer-events-none z-30" style={{ pointerEvents: 'none' }}>
             {/* FOV 40, Higher Camera Y (1.3) to look DOWN and prevent upskirt visibility */}
-            <Canvas camera={{ position: [0, 1.3, 5.0], fov: 40 }} gl={{ alpha: true }}>
+            <Canvas camera={{ position: [0, 1.3, 4.5], fov: 40 }} gl={{ alpha: true }}>
                 <ambientLight intensity={1.0} />
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
                 <pointLight position={[-10, -10, -10]} />
