@@ -13,6 +13,9 @@ from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 from langchain_text_splitters import CharacterTextSplitter
 from langchain.chains import ConversationalRetrievalChain
 
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning) 
+
 # Configuration
 CONTENT_DIR = os.getenv("CONTENT_DIR", "/content")
 HUGGINGFACEHUB_API_TOKEN = os.getenv("HUGGINGFACEHUB_API_TOKEN")
@@ -212,7 +215,7 @@ def chat(req: ChatRequest):
             
             # Retry loop to handle "Model Loading" (503) states common in free tier
             final_error = None
-            for attempt in range(3):
+            for attempt in range(5):
                 try:
                     # Use invoke for string-in string-out
                     response = llm.invoke(prompt)
@@ -228,8 +231,8 @@ def chat(req: ChatRequest):
                     error_msg = str(e).lower()
                     # Only retry on loading/timeout/503 errors
                     if "503" in error_msg or "loading" in error_msg or "timeout" in error_msg or "temporary" in error_msg:
-                        print(f"⚠️ External AI Loading... (Attempt {attempt+1}/3)")
-                        time.sleep(4) # Wait for cold boot
+                        print(f"⚠️ External AI Loading... (Attempt {attempt+1}/5)")
+                        time.sleep(5) # Wait for cold boot
                     else:
                         raise e # Fatal error, don't retry
             
