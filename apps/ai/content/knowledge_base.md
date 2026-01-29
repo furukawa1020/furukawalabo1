@@ -155,6 +155,17 @@ Instead of optimizing each layer for accuracy, we optimize the whole chain for "
     -   *Meaning-Making* = How to interpret the world (Perception).
 -   Together, they aim to create a world where "Being alive is slightly easier" for those who drift from the norm.
 
+## 5. 10-Year Roadmap (The Long Game)
+**Source**: Research Plan Visual (2025-2036).
+-   **2025 (B2)**: Interaction 2026 Preparation, Ethics Approval, Foundation Work. (Current)
+    -   *Funding*: Shinohara Foundation Care Tech (Applied).
+-   **2026 (B3)**: Meta-Review & WESAD Analysis (Full Paper), Follow-up experiments (n=20~30).
+-   **2027 (B4~B5)**: Applied Behavior Analysis + Qualitative/Quantitative Integrated Analysis.
+    -   *Target*: Sasakawa Scientific Research Grant (~1.5M JPY).
+-   **2029~2031 (Master's)**: Embodied Meaning-Making Measurement Framework Proposal.
+-   **2031~2036 (PhD)**: "Science of Meaning-Making" Theorization, Social Implementation, Ethics/Phiolosophy Integration.
+    -   *Goal*: To establish the "Science of Meaning-Making" as a legitimate academic field.
+
 # Complete Works & Achievements (Accurate Data)
 
 ## 1. Achievements & Awards (受賞歴)
