@@ -46,6 +46,10 @@ async def lifespan(app: FastAPI):
         yield
         return
 
+import time
+
+    # ... [keep previous imports] ...
+
     # 2. Try to Initialize Vector Store (RAG)
     print(f"Loading content from {CONTENT_DIR}...")
     docs = []
@@ -63,24 +67,48 @@ async def lifespan(app: FastAPI):
         
         if docs:
             try:
-                text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+                text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=100)
                 texts = text_splitter.split_documents(docs)
+                print(f"Split into {len(texts)} chunks.")
                 
                 print("Creating vector store with HuggingFace Inference API...")
                 embeddings = HuggingFaceInferenceAPIEmbeddings(
                     api_key=HUGGINGFACEHUB_API_TOKEN,
                     model_name="sentence-transformers/all-MiniLM-L6-v2"
                 )
-                vectorstore = FAISS.from_documents(texts, embeddings)
-                print("✅ Vector store created successfully!")
                 
-                qa_chain = ConversationalRetrievalChain.from_llm(
-                    llm=llm,
-                    retriever=vectorstore.as_retriever(),
-                    return_source_documents=True
-                )
-                vectorstore_success = True
-                print("✅ RAG Agent Ready!")
+                # Batch processing to avoid API Rate Limits
+                batch_size = 5
+                batches = [texts[i:i + batch_size] for i in range(0, len(texts), batch_size)]
+                
+                print(f"Processing {len(batches)} batches...")
+                
+                # First batch to initialize
+                if batches:
+                    print("Processing batch 1...")
+                    vectorstore = FAISS.from_documents(batches[0], embeddings)
+                    time.sleep(0.5) # Rate limit
+                    
+                    # Remaining batches
+                    for i, batch in enumerate(batches[1:], start=2):
+                        print(f"Processing batch {i}...")
+                        try:
+                            vectorstore.add_documents(batch)
+                            time.sleep(0.5) 
+                        except Exception as e:
+                            print(f"⚠️ Failed to process batch {i}: {e}")
+                
+                    print("✅ Vector store created successfully!")
+                    
+                    qa_chain = ConversationalRetrievalChain.from_llm(
+                        llm=llm,
+                        retriever=vectorstore.as_retriever(),
+                        return_source_documents=True
+                    )
+                    vectorstore_success = True
+                    print("✅ RAG Agent Ready!")
+                else:
+                    print("⚠️ No text chunks to process.")
                 
             except Exception as e:
                 print(f"⚠️ RAG Initialization failed: {e}")
