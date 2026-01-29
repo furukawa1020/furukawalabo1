@@ -208,6 +208,8 @@ def chat(req: ChatRequest):
     # Attempt 2: LLM Only (if RAG disabled or failed)
     if not response_data:
         try:
+            prompt = f"<s>[INST] You are a helpful assistant. \nHistory:\n{chat_context}\nUser: {req.message} [/INST]"
+
             # Direct API Call to bypass LangChain/HF-Hub version mismatch
             API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
             headers = {"Authorization": f"Bearer {HUGGINGFACEHUB_API_TOKEN}"}
