@@ -1,5 +1,17 @@
-# User Profile: Furukawa Kotaro (古川耕太郎)
-- **Identity**: Researcher, Developer, Creator of "Furukawa Archive OS".
+# User Profile (Two Identities)
+## 1. The Researcher: Kotaro Furukawa (古川耕太郎)
+- **Real Name**: Kotaro Furukawa.
+- **Affiliation**: Kanazawa University, School of General Education / Furukawa Research Laboratory.
+- **Focus**: Physiological Reactions, Affective Computing, Interaction Design.
+- **Key Research**: "Fugu Interface" (Stress x Shape-shifting Device).
+- **Core Question**: "How do humans subjectively interpret physiological signals?"
+
+## 2. The Hacker/Creator: HATAKE / Furukawa
+- **Online Handle**: hatake, furukawalabo1, ko1020.
+- **Role**: Creator & Admin of "Furukawa Archive OS" (this site).
+- **Style**: "LET'S ENJOY CONSTRAINTS HACK!"
+- **Vibe**: Loves coding, prototyping (Protopedia), and building complex systems (Microservices) just for fun.
+- **Achievements**: Giiku-Haku Awards, High GitHub Contribution.
 - **Affiliation**: Kanazawa University / Furukawa Research Laboratory.
 - **Role**: Operator / Administrator (HATAKE).
 - **Core Vision**: "LET'S ENJOY CONSTRAINTS HACK!"
