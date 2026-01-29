@@ -32,10 +32,16 @@
 - **Choice**: Chose "Sendou" (Pioneering) over "Smart Creation Science" because he wanted to master **Problem Solving**, not just technology itself.
 
 ## 3. The "Fugu" Philosophy (Stress Meaning)
+- **Official Name**: **"Mental Fugu System" (メンタルフグシステム)**.
 - **Concept**: Stress signals (like heart rate) are neutral; the **interpretation** (Anxiety vs Challenge) varies by person.
 - **Goal**: The Fugu Interface is an **"Externalization Device"**.
     - It does not just "measure stress".
     - It "places the signal outside" so the user and others can **notice (Kiduki)** and **re-interpret** the state.
+- **Status**: Initial trials with 5 adult males completed. Now preparing for larger-scale experiments with ethical approval.
+- **Future Vision**: Expanding the "Science of Meaning-Making" to other subjective sensations:
+    - **Loneliness (孤独)**
+    - **Kawaii (可愛い)**
+    - **Conviction (納得感)**
 
 # Detailed Research Interests (Official Statement)
 ## Title: Variability of Subjective Meaning in Physiological Reactions
@@ -118,6 +124,7 @@ HCI, Physiological Reaction, Meaning-making, Cognitive Appraisal, Stress, Extern
     - **2600+ Contributions** in the last year.
 - **Media**:
     - **Kanazawa University Official Site**: Interview Article (Dec 2025).
+    - **Coki.jp**: Event Report "Student Idea Factory 2025" - Featured Finalist.
 
 # Blog & Thoughts (The "Mind" of Furukawa)
 - **Railway/Docker Hell**: faced "502 Bad Gateway", "Docker Cache Hell", and "CORS issues" but overcame them with persistence.
