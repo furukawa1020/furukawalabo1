@@ -209,10 +209,10 @@ def chat(req: ChatRequest):
     if not response_data:
         try:
             # OpenAI-Compatible Router API (Most stable method)
-            API_URL = "https://router.huggingface.co/hf-inference/v1/chat/completions"
+            API_URL = "https://router.huggingface.co/v1/chat/completions"
             headers = {"Authorization": f"Bearer {HUGGINGFACEHUB_API_TOKEN}"}
             payload = {
-                "model": "microsoft/Phi-3-mini-4k-instruct",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
                 "messages": [
                     {"role": "system", "content": "You are a helpful assistant."},
                     {"role": "user", "content": req.message}
