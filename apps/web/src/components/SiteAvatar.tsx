@@ -72,10 +72,20 @@ const AvatarModel = () => {
                 const cycle = t * walkSpeed;
 
                 const armAmp = 0.3;
-                rightUpperArm.rotation.z = 1.2;
-                leftUpperArm.rotation.z = -1.2;
+                // Relax arms closer to body (1.2 -> 1.4)
+                rightUpperArm.rotation.z = 1.4;
+                leftUpperArm.rotation.z = -1.4;
                 rightUpperArm.rotation.x = Math.sin(cycle + Math.PI) * armAmp;
                 leftUpperArm.rotation.x = Math.sin(cycle) * armAmp;
+
+                // Add Elbow Bend & Twist to fix "Line" look
+                if (rightLowerArm && leftLowerArm) {
+                    rightLowerArm.rotation.z = 0.1;
+                    leftLowerArm.rotation.z = -0.1;
+                    // Twist to show volume
+                    rightLowerArm.rotation.y = -0.5;
+                    leftLowerArm.rotation.y = 0.5;
+                }
 
                 const legAmp = 0.9;
                 if (rightUpperLeg && leftUpperLeg) {
