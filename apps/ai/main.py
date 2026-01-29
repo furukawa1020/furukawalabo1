@@ -1,5 +1,6 @@
 import os
 import glob
+import time
 from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -45,10 +46,6 @@ async def lifespan(app: FastAPI):
         print(f"CRITICAL: Failed to initialize LLM: {e}")
         yield
         return
-
-import time
-
-    # ... [keep previous imports] ...
 
     # 2. Try to Initialize Vector Store (RAG)
     print(f"Loading content from {CONTENT_DIR}...")
