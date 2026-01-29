@@ -56,6 +56,8 @@ const AvatarModel = () => {
         const leftUpperLeg = vrm.humanoid.getRawBoneNode('leftUpperLeg' as any);
         const rightLowerLeg = vrm.humanoid.getRawBoneNode('rightLowerLeg' as any);
         const leftLowerLeg = vrm.humanoid.getRawBoneNode('leftLowerLeg' as any);
+        const rightHand = vrm.humanoid.getRawBoneNode('rightHand' as any);
+        const leftHand = vrm.humanoid.getRawBoneNode('leftHand' as any);
         const spine = vrm.humanoid.getRawBoneNode('spine' as any);
 
         if (rightUpperArm && rightLowerArm && leftUpperArm && leftLowerArm) {
@@ -70,11 +72,10 @@ const AvatarModel = () => {
                 rightUpperArm.rotation.z = 2.0;
                 leftUpperArm.rotation.z = -1.2;
             } else if (action === 'walk') {
-                // Reverted to "Smoother" version (Step 6140 state)
                 const walkSpeed = 5.5;
                 const cycle = t * walkSpeed;
 
-                const armAmp = 0.3;
+                const armAmp = 0.15; // Reduced swing drastically (0.3 -> 0.15)
                 // Relax arms closer to body (1.2 -> 1.4)
                 rightUpperArm.rotation.z = 1.4;
                 leftUpperArm.rotation.z = -1.4;
@@ -88,6 +89,13 @@ const AvatarModel = () => {
                     // Twist to show volume
                     rightLowerArm.rotation.y = -0.5;
                     leftLowerArm.rotation.y = 0.5;
+                }
+
+                // Hand Rotation: Rotate to show width, not edge (Fix "Line" look)
+                if (rightHand && leftHand) {
+                    // Turn palms (or back of hand) to camera
+                    rightHand.rotation.x = -0.2;
+                    leftHand.rotation.x = -0.2;
                 }
 
                 const legAmp = 0.8; // Reduced for modesty
