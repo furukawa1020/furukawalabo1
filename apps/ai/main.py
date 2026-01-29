@@ -204,23 +204,41 @@ def chat(req: ChatRequest):
     # Attempt 2: LLM Only (if RAG disabled or failed)
     if not response_data:
         try:
-            # Check global LLM (Must be present if server started)
+            # Check global LLM basic validity
             if not llm:
-                # Should not happen if lifespan logic is correct, but safety first
                 raise Exception("LLM instance is missing!")
             
             prompt = f"<s>[INST] You are a helpful assistant. \nHistory:\n{chat_context}\nUser: {req.message} [/INST]"
             
-            # Use invoke for string-in string-out
-            response = llm.invoke(prompt)
+            # Retry loop to handle "Model Loading" (503) states common in free tier
+            final_error = None
+            for attempt in range(3):
+                try:
+                    # Use invoke for string-in string-out
+                    response = llm.invoke(prompt)
+                    
+                    response_data = {
+                        "reply": response,
+                        "sources": []
+                    }
+                    final_error = None
+                    break # Success!
+                except Exception as e:
+                    final_error = e
+                    error_msg = str(e).lower()
+                    # Only retry on loading/timeout/503 errors
+                    if "503" in error_msg or "loading" in error_msg or "timeout" in error_msg or "temporary" in error_msg:
+                        print(f"⚠️ External AI Loading... (Attempt {attempt+1}/3)")
+                        time.sleep(4) # Wait for cold boot
+                    else:
+                        raise e # Fatal error, don't retry
             
-            response_data = {
-                "reply": response,
-                "sources": []
-            }
+            if final_error:
+                raise final_error
+
         except Exception as e:
-            print(f"❌ LLM Generation failed: {e}")
-            # Try Local Fallback Agent
+            print(f"❌ LLM Generation failed after retries: {e}")
+            # Try Local Fallback Agent as last resort
             try:
                 backup = LocalFallbackAgent()
                 fallback_reply = backup.invoke(req.message)
