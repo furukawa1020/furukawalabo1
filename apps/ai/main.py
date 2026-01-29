@@ -218,10 +218,19 @@ def chat(req: ChatRequest):
             }
         except Exception as e:
             print(f"❌ LLM Generation failed: {e}")
-            # Instead of crashing, return a polite error message
-            response_data = {
-                "reply": "申し訳ありません。現在、AIサービスへのアクセスが集中しており応答できない状態です。しばらく時間（30秒ほど）を置いてから、もう一度話しかけてみてください。🐶💦",
-                "sources": []
-            }
+            # Try Local Fallback Agent
+            try:
+                backup = LocalFallbackAgent()
+                fallback_reply = backup.invoke(req.message)
+                response_data = {
+                    "reply": fallback_reply,
+                    "sources": []
+                }
+            except:
+                 # Ultimate safety net
+                 response_data = {
+                    "reply": "申し訳ありません。現在、AIサービスへのアクセスが集中しており応答できない状態です。しばらく時間（30秒ほど）を置いてから、もう一度話しかけてみてください。🐶💦",
+                    "sources": []
+                 }
             
     return response_data

@@ -12,7 +12,7 @@ const AvatarModel = () => {
     const [action, setAction] = useState<'walk' | 'idle' | 'wave' | 'peace'>('idle');
     // Bounds: -5.0 (Far Left) to -3.0 (Left-Center)
     const [targetX, setTargetX] = useState(-4.5);
-    const tailRef = useRef<THREE.Object3D | null>(null);
+    const tailBonesRef = useRef<THREE.Object3D[]>([]);
 
     useEffect(() => {
         const loader = new GLTFLoader();
@@ -24,10 +24,13 @@ const AvatarModel = () => {
             VRMUtils.deepDispose(gltf.scene);
             vrm.scene.rotation.y = 0;
 
-            // Find Tail Bone automatically
+            // Find ALL Tail Bones (Tail1, Tail2, Shippo, etc.)
+            tailBonesRef.current = [];
             vrm.scene.traverse((obj) => {
-                if (obj.name.toLowerCase().includes('tail') && !tailRef.current) {
-                    tailRef.current = obj;
+                const name = obj.name.toLowerCase();
+                if (name.includes('tail') || name.includes('shippo')) {
+                    console.log("Found Tail Bone:", obj.name);
+                    tailBonesRef.current.push(obj);
                 }
             });
 
@@ -69,17 +72,21 @@ const AvatarModel = () => {
         const leftHand = vrm.humanoid.getRawBoneNode('leftHand' as any);
         const spine = vrm.humanoid.getRawBoneNode('spine' as any);
 
-        // Tail Animation
-        if (tailRef.current) {
+        // Tail Animation (Chain)
+        if (tailBonesRef.current.length > 0) {
             const t = state.clock.elapsedTime;
-            const droop = -0.5; // Gravity
-            if (action === 'walk') {
-                tailRef.current.rotation.x = droop + Math.sin(t * 5.5) * 0.1;
-                tailRef.current.rotation.y = Math.cos(t * 5.5) * 0.2; // Wag
-            } else {
-                tailRef.current.rotation.x = droop + Math.sin(t) * 0.05; // Idle breathe
-                tailRef.current.rotation.y = 0;
-            }
+            tailBonesRef.current.forEach((bone, index) => {
+                const speed = action === 'walk' ? 8.0 : 2.0;
+                const amp = action === 'walk' ? 0.15 : 0.05;
+                const offset = index * 0.5; // Wave lag
+
+                // Base Droop (Curve down)
+                const baseDroop = -0.4;
+
+                bone.rotation.x = baseDroop + Math.sin(t * speed - offset) * (amp * 0.5);
+                bone.rotation.y = Math.cos(t * speed - offset) * amp;
+                bone.rotation.z = Math.sin(t * speed - offset) * (amp * 0.2);
+            });
         }
 
         if (rightUpperArm && rightLowerArm && leftUpperArm && leftLowerArm) {
