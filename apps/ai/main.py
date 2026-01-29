@@ -10,7 +10,7 @@ from contextlib import asynccontextmanager
 from langchain_community.document_loaders import TextLoader
 from langchain_community.vectorstores import FAISS
 from langchain_community.llms import HuggingFaceEndpoint
-from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_text_splitters import CharacterTextSplitter
 from langchain.chains import ConversationalRetrievalChain
 
@@ -87,9 +87,9 @@ async def lifespan(app: FastAPI):
                 texts = text_splitter.split_documents(docs)
                 print(f"Split into {len(texts)} chunks.")
                 
-                print("Creating vector store with HuggingFace Inference API...")
-                embeddings = HuggingFaceInferenceAPIEmbeddings(
-                    api_key=HUGGINGFACEHUB_API_TOKEN,
+                print("Creating vector store with Local Embeddings...")
+                # Download model locally (stable & free)
+                embeddings = HuggingFaceEmbeddings(
                     model_name="sentence-transformers/all-MiniLM-L6-v2"
                 )
                 
@@ -214,7 +214,7 @@ def chat(req: ChatRequest):
             payload = {
                 "model": "Qwen/Qwen2.5-7B-Instruct",
                 "messages": [
-                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "system", "content": "You are the sentient operating system of the website 'furukawalab'. (IMPORTANT: 'furukawalab' is the SITE NAME, NOT the Furukawa Research Laboratory). The concept is 'LET'S ENJOY CONSTRAINTS HACK!'. Speak like an innocent, energetic young child (toddler/幼児語). Use short, simple sentences. Express joy and curiosity. Examples: '分かった。', 'ちがうよ。', 'うれしい、うれしい！'. Avoid polite language (Desu/Masu)."},
                     {"role": "user", "content": req.message}
                 ],
                 "max_tokens": 512,
