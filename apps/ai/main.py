@@ -64,7 +64,7 @@ async def lifespan(app: FastAPI):
         
         if docs:
             try:
-                text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=100)
+                text_splitter = CharacterTextSplitter(chunk_size=300, chunk_overlap=50)
                 texts = text_splitter.split_documents(docs)
                 print(f"Split into {len(texts)} chunks.")
                 
@@ -74,36 +74,48 @@ async def lifespan(app: FastAPI):
                     model_name="sentence-transformers/all-MiniLM-L6-v2"
                 )
                 
-                # Batch processing to avoid API Rate Limits
-                batch_size = 5
+                # Careful batch processing for API stability
+                batch_size = 2 # Very small batches
                 batches = [texts[i:i + batch_size] for i in range(0, len(texts), batch_size)]
                 
-                print(f"Processing {len(batches)} batches...")
+                print(f"Processing {len(batches)} batches (Gentle Mode)...")
                 
-                # First batch to initialize
-                if batches:
-                    print("Processing batch 1...")
-                    vectorstore = FAISS.from_documents(batches[0], embeddings)
-                    time.sleep(0.5) # Rate limit
-                    
-                    # Remaining batches
-                    for i, batch in enumerate(batches[1:], start=2):
-                        print(f"Processing batch {i}...")
+                # Helper for retries
+                def index_batch(batch, store=None):
+                    for attempt in range(3):
                         try:
-                            vectorstore.add_documents(batch)
-                            time.sleep(0.5) 
+                            if store:
+                                store.add_documents(batch)
+                                return store
+                            else:
+                                return FAISS.from_documents(batch, embeddings)
                         except Exception as e:
-                            print(f"⚠️ Failed to process batch {i}: {e}")
-                
-                    print("✅ Vector store created successfully!")
+                            print(f"   ⚠️ Rate limit/Error (Attempt {attempt+1}/3): {e}")
+                            time.sleep(2 * (attempt + 1)) # Backoff
+                    print("   ❌ Failed to index batch after retries.")
+                    return store
+
+                if batches:
+                    # Init with first batch
+                    print("Processing batch 1...")
+                    vectorstore = index_batch(batches[0])
                     
-                    qa_chain = ConversationalRetrievalChain.from_llm(
-                        llm=llm,
-                        retriever=vectorstore.as_retriever(),
-                        return_source_documents=True
-                    )
-                    vectorstore_success = True
-                    print("✅ RAG Agent Ready!")
+                    if vectorstore:
+                        # Process remaining
+                        for i, batch in enumerate(batches[1:], start=2):
+                            print(f"Processing batch {i}...")
+                            index_batch(batch, vectorstore)
+                            time.sleep(1.0) # Gentle pacing
+                        
+                        qa_chain = ConversationalRetrievalChain.from_llm(
+                            llm=llm,
+                            retriever=vectorstore.as_retriever(),
+                            return_source_documents=True
+                        )
+                        vectorstore_success = True
+                        print("✅ RAG Agent Ready (Full/Partial Knowledge Loaded)!")
+                    else:
+                        print("❌ Failed to initialize vector store with first batch.")
                 else:
                     print("⚠️ No text chunks to process.")
                 
