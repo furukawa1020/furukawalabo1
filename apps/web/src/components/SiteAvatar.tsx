@@ -99,16 +99,20 @@ const AvatarModel = () => {
         if (tailBonesRef.current.length > 0) {
             const t = state.clock.elapsedTime;
             tailBonesRef.current.forEach((bone, index) => {
-                const speed = action === 'walk' ? 8.0 : 2.0;
-                const amp = action === 'walk' ? 0.15 : 0.05;
-                const offset = index * 0.5; // Wave lag
+                // More dynamic speed/amp
+                const speed = action === 'walk' ? 8.0 : 1.5;
+                const amp = action === 'walk' ? 0.2 : 0.08;
+                const offset = index * 0.3; // Smoother wave
 
-                // Base Droop (Curve down)
-                const baseDroop = -0.4;
+                // Base Droop: Less rigid. 
+                // First bone controls the base angle, others follow curve.
+                const isFirst = index === 0;
+                const baseDroop = isFirst ? -0.5 : -0.1;
 
-                bone.rotation.x = baseDroop + Math.sin(t * speed - offset) * (amp * 0.5);
+                // Add noise/sway
+                bone.rotation.x = baseDroop + Math.sin(t * speed * 0.7 - offset) * (amp * 0.5);
                 bone.rotation.y = Math.cos(t * speed - offset) * amp;
-                bone.rotation.z = Math.sin(t * speed - offset) * (amp * 0.2);
+                bone.rotation.z = Math.sin(t * speed * 0.5 - offset) * (amp * 0.3);
             });
         }
 
