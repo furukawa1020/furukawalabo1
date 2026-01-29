@@ -90,13 +90,13 @@ const AvatarModel = () => {
                     leftLowerArm.rotation.y = 0.5;
                 }
 
-                const legAmp = 0.9;
+                const legAmp = 0.8; // Reduced for modesty
                 if (rightUpperLeg && leftUpperLeg) {
                     rightUpperLeg.rotation.x = Math.sin(cycle + Math.PI) * legAmp;
                     leftUpperLeg.rotation.x = Math.sin(cycle) * legAmp;
                 }
 
-                const kneeBendAmp = 0.5; // Significantly reduced to fix 90-degree issue
+                const kneeBendAmp = 0.4; // Kept low for safety
                 if (rightLowerLeg && leftLowerLeg) {
                     // Logic from 6140 (User preferred base):
                     // Bend when sin(cycle) > 0 (Right Leg Back -> Bend)
@@ -170,8 +170,8 @@ const AvatarModel = () => {
 export const SiteAvatar = () => {
     return (
         <div className="fixed bottom-0 left-0 right-0 h-[200px] pointer-events-none z-30" style={{ pointerEvents: 'none' }}>
-            {/* FOV 40 for Volume, Closer Camera */}
-            <Canvas camera={{ position: [0, 0.9, 5.0], fov: 40 }} gl={{ alpha: true }}>
+            {/* FOV 40, Higher Camera Y (1.3) to look DOWN and prevent upskirt visibility */}
+            <Canvas camera={{ position: [0, 1.3, 5.0], fov: 40 }} gl={{ alpha: true }}>
                 <ambientLight intensity={1.0} />
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
                 <pointLight position={[-10, -10, -10]} />
