@@ -10,7 +10,7 @@ const AvatarModel = () => {
     const [vrm, setVrm] = useState<VRM | null>(null);
     const sceneRef = useRef<THREE.Group>(null);
     const [action, setAction] = useState<'walk' | 'idle' | 'wave' | 'peace'>('idle');
-    const [targetX, setTargetX] = useState(-7);
+    const [targetX, setTargetX] = useState(-7); // Keep left position
 
     useEffect(() => {
         const loader = new GLTFLoader();
@@ -67,6 +67,7 @@ const AvatarModel = () => {
                 rightUpperArm.rotation.z = 2.0;
                 leftUpperArm.rotation.z = -1.2;
             } else if (action === 'walk') {
+                // Reverted to "Smoother" version (Step 6140 state)
                 const walkSpeed = 5.5;
                 const cycle = t * walkSpeed;
 
@@ -76,31 +77,21 @@ const AvatarModel = () => {
                 rightUpperArm.rotation.x = Math.sin(cycle + Math.PI) * armAmp;
                 leftUpperArm.rotation.x = Math.sin(cycle) * armAmp;
 
-                // FIX: Thigh Lift & Knee Phase
-                // Increase Leg Amplitude for "High Step" (Thigh Lift)
-                const legAmp = 1.5; // Strong stride
-                // Knee Bend Amplitude
-                const kneeAmp = 1.8;
-
+                const legAmp = 0.7; // Back to normal amplitude
                 if (rightUpperLeg && leftUpperLeg) {
                     rightUpperLeg.rotation.x = Math.sin(cycle + Math.PI) * legAmp;
                     leftUpperLeg.rotation.x = Math.sin(cycle) * legAmp;
                 }
 
+                const kneeBendAmp = 1.0;
                 if (rightLowerLeg && leftLowerLeg) {
-                    // Knee Logic: Bend during swing (Mid-swing = cos peak).
-                    // Right Cycle: cycle + PI. Thigh = sin(cycle+PI).
-                    // Swing phase is when Thigh moves Back->Front.
-                    // Correct phase for Knee is -cos(cycle) relative to Right ?? 
-                    // Let's rely on previous analysis: 
-                    // Left Thigh=sin(t). Left Knee (Swing) matches cos(t).
-                    // Right Thigh=sin(t+PI). Right Knee (Swing) matches -cos(t).
-
-                    rightLowerLeg.rotation.x = -Math.max(0, -Math.cos(cycle) * kneeAmp);
-                    leftLowerLeg.rotation.x = -Math.max(0, Math.cos(cycle) * kneeAmp);
+                    // Logic from 6140:
+                    // Bend when sin(cycle) > 0 (Right Leg Back -> Bend)
+                    rightLowerLeg.rotation.x = -Math.max(0, Math.sin(cycle) * kneeBendAmp);
+                    leftLowerLeg.rotation.x = -Math.max(0, -Math.sin(cycle) * kneeBendAmp);
                 }
 
-                if (spine) spine.rotation.y = Math.sin(cycle) * 0.1;
+                if (spine) spine.rotation.y = Math.sin(cycle) * 0.08;
 
             } else {
                 rightUpperArm.rotation.z = 1.2 + Math.sin(t) * 0.05;
@@ -121,8 +112,8 @@ const AvatarModel = () => {
         if (action === 'walk' && sceneRef.current) {
             const currentX = sceneRef.current.position.x;
             const dist = targetX - currentX;
-            // Faster movement for bigger steps
-            const moveSpeed = 1.8 * delta;
+            // Revert speed as well
+            const moveSpeed = 1.5 * delta;
 
             if (Math.abs(dist) > 0.1) {
                 sceneRef.current.position.x += Math.sign(dist) * moveSpeed;
@@ -130,7 +121,7 @@ const AvatarModel = () => {
                 sceneRef.current.rotation.y = turn;
 
                 const walkCycle = state.clock.elapsedTime * 5.5;
-                sceneRef.current.position.y = -1.0 + Math.abs(Math.cos(walkCycle)) * 0.06;
+                sceneRef.current.position.y = -1.0 + Math.abs(Math.cos(walkCycle)) * 0.04;
             } else {
                 setAction('idle');
                 sceneRef.current.rotation.y = 0;
