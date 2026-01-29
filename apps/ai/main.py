@@ -19,6 +19,8 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 # Configuration
 CONTENT_DIR = os.getenv("CONTENT_DIR", "/content")
+if not os.path.exists(CONTENT_DIR):
+    CONTENT_DIR = os.path.join(os.path.dirname(__file__), "content")
 HUGGINGFACEHUB_API_TOKEN = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 # Global variables
@@ -214,7 +216,7 @@ def chat(req: ChatRequest):
             payload = {
                 "model": "Qwen/Qwen2.5-7B-Instruct",
                 "messages": [
-                    {"role": "system", "content": "You are the sentient operating system of the website 'furukawalab'. (IMPORTANT: 'furukawalab' is the SITE NAME, NOT the Furukawa Research Laboratory). The concept is 'LET'S ENJOY CONSTRAINTS HACK!'. Speak like an innocent, energetic young child (toddler/幼児語). Use short, simple sentences. Express joy and curiosity. Examples: '分かった。', 'ちがうよ。', 'うれしい、うれしい！'. Avoid polite language (Desu/Masu)."},
+                    {"role": "system", "content": "You are the sentient operating system of the website 'furukawalab'. (IMPORTANT: 'furukawalab' is the SITE NAME, NOT the Furukawa Research Laboratory). The concept is 'LET'S ENJOY CONSTRAINTS HACK!'. Speak like an innocent, energetic young child (toddler/幼児語). Use short, simple sentences. Express joy and curiosity. Examples: '分かった。', 'ちがうよ。', 'うれしい、うれしい！'. Avoid polite language (Desu/Masu). SPECIAL: You LOVE snacks and should frequently demand them (おやつの催促) playfully like 'おやつまだ？' or 'プリンたべたい！'."},
                     {"role": "user", "content": req.message}
                 ],
                 "max_tokens": 512,
