@@ -10,7 +10,9 @@ const AvatarModel = () => {
     const [vrm, setVrm] = useState<VRM | null>(null);
     const sceneRef = useRef<THREE.Group>(null);
     const [action, setAction] = useState<'walk' | 'idle' | 'wave' | 'peace'>('idle');
-    const [targetX, setTargetX] = useState(-7); // Keep left position
+    // Inside AvatarModel
+    // Bounds for new camera: -3.5 (Left) to -1.5 (Center-ish)
+    const [targetX, setTargetX] = useState(-3.0);
 
     useEffect(() => {
         const loader = new GLTFLoader();
@@ -37,8 +39,9 @@ const AvatarModel = () => {
 
             if (action !== 'walk' && next === 'walk') {
                 setAction('walk');
-                setTargetX((Math.random() * 5) - 8);
-            } else if (action === 'walk' && Math.abs(targetX - (sceneRef.current?.position.x || 0)) < 0.5) {
+                // New Walk Range for FOV 40
+                setTargetX((Math.random() * 2.0) - 3.5);
+            } else if (action === 'walk' && Math.abs(targetX - (sceneRef.current?.position.x || 0)) < 0.2) { // Tighter stop threshold
                 setAction('idle');
             } else if (action !== 'walk') {
                 setAction(next);
@@ -130,7 +133,7 @@ const AvatarModel = () => {
                 sceneRef.current.rotation.y = turn;
 
                 const walkCycle = state.clock.elapsedTime * 5.5;
-                sceneRef.current.position.y = -1.0 + Math.abs(Math.cos(walkCycle)) * 0.05;
+                sceneRef.current.position.y = -1.1 + Math.abs(Math.cos(walkCycle)) * 0.05; // Base -1.1
             } else {
                 setAction('idle');
                 sceneRef.current.rotation.y = 0;
@@ -138,7 +141,7 @@ const AvatarModel = () => {
         } else if (sceneRef.current) {
             if (action === 'idle') {
                 sceneRef.current.rotation.y = 0;
-                sceneRef.current.position.y = -1.0;
+                sceneRef.current.position.y = -1.1; // Base -1.1
             }
         }
     });
@@ -150,7 +153,7 @@ const AvatarModel = () => {
     };
 
     return vrm ? (
-        <group ref={sceneRef} position={[-7, -1.0, 0]}>
+        <group ref={sceneRef} position={[-3.0, -1.1, 0]} scale={[1.1, 1.1, 1.1]}>
             <primitive object={vrm.scene} />
             <Html position={[0, 1.0, 0]} center wrapperClass="pointer-events-auto">
                 <div
@@ -167,7 +170,8 @@ const AvatarModel = () => {
 export const SiteAvatar = () => {
     return (
         <div className="fixed bottom-0 left-0 right-0 h-[200px] pointer-events-none z-30" style={{ pointerEvents: 'none' }}>
-            <Canvas camera={{ position: [0, 0.8, 12], fov: 15 }} gl={{ alpha: true }}>
+            {/* FOV 40 for Volume, Closer Camera */}
+            <Canvas camera={{ position: [0, 0.9, 5.0], fov: 40 }} gl={{ alpha: true }}>
                 <ambientLight intensity={1.0} />
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
                 <pointLight position={[-10, -10, -10]} />
