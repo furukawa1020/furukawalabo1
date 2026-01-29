@@ -10,9 +10,8 @@ const AvatarModel = () => {
     const [vrm, setVrm] = useState<VRM | null>(null);
     const sceneRef = useRef<THREE.Group>(null);
     const [action, setAction] = useState<'walk' | 'idle' | 'wave' | 'peace'>('idle');
-    // Inside AvatarModel
-    // Bounds for new camera: -3.5 (Left) to -1.5 (Center-ish)
-    const [targetX, setTargetX] = useState(-3.0);
+    // Bounds: -5.0 (Far Left) to -3.0 (Left-Center)
+    const [targetX, setTargetX] = useState(-4.5);
     const tailRef = useRef<THREE.Object3D | null>(null);
 
     useEffect(() => {
@@ -28,7 +27,6 @@ const AvatarModel = () => {
             // Find Tail Bone automatically
             vrm.scene.traverse((obj) => {
                 if (obj.name.toLowerCase().includes('tail') && !tailRef.current) {
-                    console.log("Found Tail:", obj.name);
                     tailRef.current = obj;
                 }
             });
@@ -43,15 +41,16 @@ const AvatarModel = () => {
         if (!vrm) return;
         vrm.update(delta);
 
+        // Random Action Logic
         if (Math.random() < 0.01) {
             const actions: ('walk' | 'idle' | 'wave' | 'peace')[] = ['walk', 'walk', 'idle', 'wave'];
             const next = actions[Math.floor(Math.random() * actions.length)];
 
             if (action !== 'walk' && next === 'walk') {
                 setAction('walk');
-                // New Walk Range for FOV 40
-                setTargetX((Math.random() * 2.0) - 3.5);
-            } else if (action === 'walk' && Math.abs(targetX - (sceneRef.current?.position.x || 0)) < 0.2) { // Tighter stop threshold
+                // Walk Range (More Left)
+                setTargetX((Math.random() * 2.0) - 5.0);
+            } else if (action === 'walk' && Math.abs(targetX - (sceneRef.current?.position.x || 0)) < 0.2) {
                 setAction('idle');
             } else if (action !== 'walk') {
                 setAction(next);
@@ -98,25 +97,23 @@ const AvatarModel = () => {
                 const walkSpeed = 5.5;
                 const cycle = t * walkSpeed;
 
-                const armAmp = 0.15; // Reduced swing drastically (0.3 -> 0.15)
-                // Relax arms closer to body (1.2 -> 1.4)
+                const armAmp = 0.15; // Reduced swing (0.3 -> 0.15)
+                // Relax arms closer to body
                 rightUpperArm.rotation.z = 1.4;
                 leftUpperArm.rotation.z = -1.4;
                 rightUpperArm.rotation.x = Math.sin(cycle + Math.PI) * armAmp;
                 leftUpperArm.rotation.x = Math.sin(cycle) * armAmp;
 
-                // Add Elbow Bend & Twist to fix "Line" look
+                // Elbow Bend & Twist
                 if (rightLowerArm && leftLowerArm) {
                     rightLowerArm.rotation.z = 0.1;
                     leftLowerArm.rotation.z = -0.1;
-                    // Twist to show volume
                     rightLowerArm.rotation.y = -0.5;
                     leftLowerArm.rotation.y = 0.5;
                 }
 
-                // Hand Rotation: Rotate to show width, not edge (Fix "Line" look)
+                // Hand Rotation (Fix "Line" look)
                 if (rightHand && leftHand) {
-                    // Turn palms (or back of hand) to camera
                     rightHand.rotation.x = -0.2;
                     leftHand.rotation.x = -0.2;
                 }
@@ -129,8 +126,6 @@ const AvatarModel = () => {
 
                 const kneeBendAmp = 0.4; // Kept low for safety
                 if (rightLowerLeg && leftLowerLeg) {
-                    // Logic from 6140 (User preferred base):
-                    // Bend when sin(cycle) > 0 (Right Leg Back -> Bend)
                     rightLowerLeg.rotation.x = -Math.max(0, Math.sin(cycle) * kneeBendAmp);
                     leftLowerLeg.rotation.x = -Math.max(0, -Math.sin(cycle) * kneeBendAmp);
                 }
@@ -138,6 +133,7 @@ const AvatarModel = () => {
                 if (spine) spine.rotation.y = Math.sin(cycle) * 0.08;
 
             } else {
+                // Idle Pose
                 rightUpperArm.rotation.z = 1.2 + Math.sin(t) * 0.05;
                 leftUpperArm.rotation.z = -1.2 - Math.sin(t) * 0.05;
                 rightUpperArm.rotation.x = 0;
@@ -153,6 +149,7 @@ const AvatarModel = () => {
             }
         }
 
+        // Move Group Logic
         if (action === 'walk' && sceneRef.current) {
             const currentX = sceneRef.current.position.x;
             const dist = targetX - currentX;
@@ -184,7 +181,7 @@ const AvatarModel = () => {
     };
 
     return vrm ? (
-        <group ref={sceneRef} position={[-3.0, -1.1, 0]} scale={[1.1, 1.1, 1.1]}>
+        <group ref={sceneRef} position={[-4.5, -1.1, 0]} scale={[1.1, 1.1, 1.1]}>
             <primitive object={vrm.scene} />
             <Html position={[0, 1.0, 0]} center wrapperClass="pointer-events-auto">
                 <div
