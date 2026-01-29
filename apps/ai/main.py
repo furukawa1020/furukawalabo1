@@ -208,11 +208,12 @@ def chat(req: ChatRequest):
     # Attempt 2: LLM Only (if RAG disabled or failed)
     if not response_data:
         try:
-            prompt = f"<s>[INST] You are a helpful assistant. \nHistory:\n{chat_context}\nUser: {req.message} [/INST]"
+            # Zephyr Prompt Format
+            prompt = f"<|system|>\nYou are a helpful assistant.<|endoftext|>\n<|user|>\n{req.message}<|endoftext|>\n<|assistant|>\n"
 
             # Direct API Call to bypass LangChain/HF-Hub version mismatch
-            # UPDATED: Using router.huggingface.co as api-inference is deprecated (410 Gone)
-            API_URL = "https://router.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
+            # UPDATED: Using router.huggingface.co + Zephyr (Stable)
+            API_URL = "https://router.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta"
             headers = {"Authorization": f"Bearer {HUGGINGFACEHUB_API_TOKEN}"}
             payload = {
                 "inputs": prompt,
