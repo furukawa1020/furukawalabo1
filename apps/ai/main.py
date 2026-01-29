@@ -211,7 +211,8 @@ def chat(req: ChatRequest):
             prompt = f"<s>[INST] You are a helpful assistant. \nHistory:\n{chat_context}\nUser: {req.message} [/INST]"
 
             # Direct API Call to bypass LangChain/HF-Hub version mismatch
-            API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
+            # UPDATED: Using router.huggingface.co as api-inference is deprecated (410 Gone)
+            API_URL = "https://router.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
             headers = {"Authorization": f"Bearer {HUGGINGFACEHUB_API_TOKEN}"}
             payload = {
                 "inputs": prompt,
