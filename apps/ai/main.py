@@ -208,12 +208,12 @@ def chat(req: ChatRequest):
     # Attempt 2: LLM Only (if RAG disabled or failed)
     if not response_data:
         try:
-            # Qwen Prompt Format (ChatML)
-            prompt = f"<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\n{req.message}<|im_end|>\n<|im_start|>assistant\n"
+            # Phi-3 Prompt Format
+            prompt = f"<|user|>\nYou are a helpful assistant.\n{req.message} <|end|>\n<|assistant|>"
 
             # Direct API Call to bypass LangChain/HF-Hub version mismatch
-            # UPDATED: Using router.huggingface.co + Qwen/Qwen2.5-7B-Instruct
-            API_URL = "https://router.huggingface.co/models/Qwen/Qwen2.5-7B-Instruct"
+            # UPDATED: Using router.huggingface.co + Microsoft Phi-3 (High Availability)
+            API_URL = "https://router.huggingface.co/models/microsoft/Phi-3-mini-4k-instruct"
             headers = {"Authorization": f"Bearer {HUGGINGFACEHUB_API_TOKEN}"}
             payload = {
                 "inputs": prompt,
