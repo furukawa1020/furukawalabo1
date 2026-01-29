@@ -208,20 +208,17 @@ def chat(req: ChatRequest):
     # Attempt 2: LLM Only (if RAG disabled or failed)
     if not response_data:
         try:
-            # Phi-3 Prompt Format
-            prompt = f"<|user|>\nYou are a helpful assistant.\n{req.message} <|end|>\n<|assistant|>"
-
-            # Direct API Call to bypass LangChain/HF-Hub version mismatch
-            # UPDATED: Correct path for Router is /hf-inference/models/...
-            API_URL = "https://router.huggingface.co/hf-inference/models/microsoft/Phi-3-mini-4k-instruct"
+            # OpenAI-Compatible Router API (Most stable method)
+            API_URL = "https://router.huggingface.co/hf-inference/v1/chat/completions"
             headers = {"Authorization": f"Bearer {HUGGINGFACEHUB_API_TOKEN}"}
             payload = {
-                "inputs": prompt,
-                "parameters": {
-                    "max_new_tokens": 512,
-                    "temperature": 0.5, 
-                    "return_full_text": False
-                }
+                "model": "microsoft/Phi-3-mini-4k-instruct",
+                "messages": [
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": req.message}
+                ],
+                "max_tokens": 512,
+                "temperature": 0.5
             }
 
             # Retry loop for 503 Loading
@@ -231,8 +228,8 @@ def chat(req: ChatRequest):
                     response = requests.post(API_URL, headers=headers, json=payload, timeout=30)
                     
                     if response.status_code == 200:
-                        # Success
-                        generated_text = response.json()[0]["generated_text"]
+                        # Success (OpenAI format)
+                        generated_text = response.json()["choices"][0]["message"]["content"]
                         response_data = {
                             "reply": generated_text,
                             "sources": []
