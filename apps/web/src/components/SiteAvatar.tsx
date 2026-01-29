@@ -77,13 +77,13 @@ const AvatarModel = () => {
                 rightUpperArm.rotation.x = Math.sin(cycle + Math.PI) * armAmp;
                 leftUpperArm.rotation.x = Math.sin(cycle) * armAmp;
 
-                const legAmp = 0.7; // Back to normal amplitude
+                const legAmp = 1.2; // Moderate thigh lift
                 if (rightUpperLeg && leftUpperLeg) {
                     rightUpperLeg.rotation.x = Math.sin(cycle + Math.PI) * legAmp;
                     leftUpperLeg.rotation.x = Math.sin(cycle) * legAmp;
                 }
 
-                const kneeBendAmp = 1.0;
+                const kneeBendAmp = 1.3;
                 if (rightLowerLeg && leftLowerLeg) {
                     // Logic from 6140:
                     // Bend when sin(cycle) > 0 (Right Leg Back -> Bend)
@@ -112,8 +112,8 @@ const AvatarModel = () => {
         if (action === 'walk' && sceneRef.current) {
             const currentX = sceneRef.current.position.x;
             const dist = targetX - currentX;
-            // Revert speed as well
-            const moveSpeed = 1.5 * delta;
+            // Slightly faster for bigger steps
+            const moveSpeed = 1.65 * delta;
 
             if (Math.abs(dist) > 0.1) {
                 sceneRef.current.position.x += Math.sign(dist) * moveSpeed;
@@ -158,7 +158,7 @@ const AvatarModel = () => {
 export const SiteAvatar = () => {
     return (
         <div className="fixed bottom-0 left-0 right-0 h-[200px] pointer-events-none z-30" style={{ pointerEvents: 'none' }}>
-            <Canvas camera={{ position: [0, 0.8, 8.5], fov: 20 }} gl={{ alpha: true }}>
+            <Canvas camera={{ position: [0, 0.8, 12], fov: 15 }} gl={{ alpha: true }}>
                 <ambientLight intensity={1.0} />
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
                 <pointLight position={[-10, -10, -10]} />
