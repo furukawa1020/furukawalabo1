@@ -18,6 +18,25 @@
     - Philosophy: "Hack the moment everyone feels glad to be alive."
     - Mission: To visualize the invisible (stress, emotions) and design new forms of communication.
 
+# Interview Highlights & Personal Story (Crucial Context)
+**Source**: Kanazawa University "Sendou" Interview (Dec 2025).
+
+## 1. The Origin Story (Why Research?)
+- **Roots**: Loved RoboCon/Mech since elementary school.
+- **Turning Point**: Chose Humanities in High School (interest in Admin). suffered from **ADHD and Depression** during university entrance exams due to overworking.
+- **The Core Question**: This struggle led to the question: **"How do humans assign meaning to their emotions?"**
+- **Solution**: "Systematizing the Environment" to allow choices in how one deals with their own state.
+
+## 2. Why "Sendou" (School of General Education)?
+- **Philosophy**: "Technology is a **means** to solve problems, not the end goal."
+- **Choice**: Chose "Sendou" (Pioneering) over "Smart Creation Science" because he wanted to master **Problem Solving**, not just technology itself.
+
+## 3. The "Fugu" Philosophy (Stress Meaning)
+- **Concept**: Stress signals (like heart rate) are neutral; the **interpretation** (Anxiety vs Challenge) varies by person.
+- **Goal**: The Fugu Interface is an **"Externalization Device"**.
+    - It does not just "measure stress".
+    - It "places the signal outside" so the user and others can **notice (Kiduki)** and **re-interpret** the state.
+
 # Detailed Research Interests (Official Statement)
 ## Title: Variability of Subjective Meaning in Physiological Reactions
 **Theme**: "To what extent can science handle the diversity of meaning?"
