@@ -77,15 +77,15 @@ const AvatarModel = () => {
                 rightUpperArm.rotation.x = Math.sin(cycle + Math.PI) * armAmp;
                 leftUpperArm.rotation.x = Math.sin(cycle) * armAmp;
 
-                const legAmp = 1.2; // Moderate thigh lift
+                const legAmp = 1.0; // Reduced from 1.2
                 if (rightUpperLeg && leftUpperLeg) {
                     rightUpperLeg.rotation.x = Math.sin(cycle + Math.PI) * legAmp;
                     leftUpperLeg.rotation.x = Math.sin(cycle) * legAmp;
                 }
 
-                const kneeBendAmp = 1.3;
+                const kneeBendAmp = 1.15; // Reduced from 1.3
                 if (rightLowerLeg && leftLowerLeg) {
-                    // Logic from 6140:
+                    // Logic from 6140 (User preferred base):
                     // Bend when sin(cycle) > 0 (Right Leg Back -> Bend)
                     rightLowerLeg.rotation.x = -Math.max(0, Math.sin(cycle) * kneeBendAmp);
                     leftLowerLeg.rotation.x = -Math.max(0, -Math.sin(cycle) * kneeBendAmp);
@@ -112,8 +112,7 @@ const AvatarModel = () => {
         if (action === 'walk' && sceneRef.current) {
             const currentX = sceneRef.current.position.x;
             const dist = targetX - currentX;
-            // Slightly faster for bigger steps
-            const moveSpeed = 1.65 * delta;
+            const moveSpeed = 1.6 * delta;
 
             if (Math.abs(dist) > 0.1) {
                 sceneRef.current.position.x += Math.sign(dist) * moveSpeed;
@@ -121,7 +120,7 @@ const AvatarModel = () => {
                 sceneRef.current.rotation.y = turn;
 
                 const walkCycle = state.clock.elapsedTime * 5.5;
-                sceneRef.current.position.y = -1.0 + Math.abs(Math.cos(walkCycle)) * 0.04;
+                sceneRef.current.position.y = -1.0 + Math.abs(Math.cos(walkCycle)) * 0.05;
             } else {
                 setAction('idle');
                 sceneRef.current.rotation.y = 0;
