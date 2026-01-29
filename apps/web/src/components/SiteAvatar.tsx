@@ -10,7 +10,7 @@ const AvatarModel = () => {
     const [vrm, setVrm] = useState<VRM | null>(null);
     const sceneRef = useRef<THREE.Group>(null);
     const [action, setAction] = useState<'walk' | 'idle' | 'wave' | 'peace'>('idle');
-    const [targetX, setTargetX] = useState(-3); // Start at left
+    const [targetX, setTargetX] = useState(-7); // Start VERY far left
 
     // Load VRM
     useEffect(() => {
@@ -36,18 +36,15 @@ const AvatarModel = () => {
         vrm.update(delta);
 
         // Basic "AI" Behavior Loop
-        // Decisions fewer times per second
         if (Math.random() < 0.01) {
             const actions: ('walk' | 'idle' | 'wave' | 'peace')[] = ['walk', 'walk', 'idle', 'wave'];
             const next = actions[Math.floor(Math.random() * actions.length)];
 
-            // If already walking, maybe minimal change.
             if (action !== 'walk' && next === 'walk') {
                 setAction('walk');
-                // Pick a random spot, bias towards left side (-4 to 0)
-                setTargetX((Math.random() * 6) - 5);
+                // Restrict movement to LEFT side only (-8 to -3) to avoid center content
+                setTargetX((Math.random() * 5) - 8);
             } else if (action === 'walk' && Math.abs(targetX - (sceneRef.current?.position.x || 0)) < 0.5) {
-                // Reached destination
                 setAction('idle');
             } else if (action !== 'walk') {
                 setAction(next);
@@ -78,8 +75,6 @@ const AvatarModel = () => {
                 leftUpperArm.rotation.z = -1.2;
             } else if (action === 'walk') {
                 // Walking Animation
-                // Fix: Sync leg speed with movement speed.
-                // 1.05m/s movement (moveSpeed) <-> WalkCycle 5.5
                 const walkSpeed = 5.5;
                 const cycle = t * walkSpeed;
 
@@ -89,18 +84,81 @@ const AvatarModel = () => {
                 rightUpperArm.rotation.x = Math.sin(cycle + Math.PI) * armAmp;
                 leftUpperArm.rotation.x = Math.sin(cycle) * armAmp;
 
-                // Legs
-                const legAmp = 0.7; // Bigger steps
+                // Legs Logic
+                const legAmp = 0.7;
                 if (rightUpperLeg && leftUpperLeg) {
+                    // Hip Rotation
                     rightUpperLeg.rotation.x = Math.sin(cycle + Math.PI) * legAmp;
                     leftUpperLeg.rotation.x = Math.sin(cycle) * legAmp;
                 }
 
-                // Knees - Only bend on Swing (forward)
+                // Knee Logic (The Fix)
+                // "Toe should come out before knee" -> Knee needs to EXTEND (0) as leg swings forward.
+                // Standard Walk Phase:
+                // Hip Swing Forward (0 to PI/2 phase): Knee should be straightening.
+                // Hip Max Forward (Heel Strike): Knee should be fully straight (0).
+
+                // My Hip Logic:
+                // Left Leg = sin(cycle). Max Forward at PI/2.
+                // Right Leg = sin(cycle + PI). Max Forward at 3PI/2 (or -PI/2).
+
+                // Previous Logic: -Math.max(0, sin(cycle)*1.2)
+                // Left Leg: Max sin(cycle) is at PI/2. Max(0, 1) = 1. So it was BENDING (-1.2) at max forward!
+                // This explains "Knees are weird". It was bending EXACTLY when it should form a straight line for contact.
+
+                // Fix:
+                // Knee should bend when leg is lifting (Hip Back -> Front mid-swing).
+                // Or simply: Bend when leg is NOT forward.
+                // Let's use phase shift.
+                // We want Knee = 0 when sin(cycle) = 1 (Max Forward).
+                // We want Knee = Bent value when sin(cycle) is ... maybe negative (Leg Back)? 
+                // Actually proper cycle:
+                // Hip Back (Lift) -> Knee Bends.
+                // Hip Swing (Forward) -> Knee Straightens.
+                // Hip Forward (Contact) -> Knee Straight.
+
+                // Try: Knee follows Hip but clamped?
+                // If Hip is positive (Forward), Knee should be 0.
+                // If Hip is negative (Back), Knee can bend.
+
+                // Let's try: Bend = -Math.max(0, -sin(cycle))?
+                // Left Leg Hip = sin(cycle). 
+                // If we use -sin(cycle), it is positive when Hip is Back (negative).
+                // So max(0, -sin) bends the knee when leg is back.
+                // And when leg is forward (sin > 0), max(0, negative) is 0 -> Straight Knee!
+
+                // Wait, "Back" leg is pushing off. Push off leg is straight-ish.
+                // Leg bending happens during the SWING phase (moving from back to front).
+                // Swing happens when sin(cycle) goes from -1 to 1.
+                // That is cos(cycle) peak?
+
+                // Let's try the simple fix first:
+                // Bend knee when leg is BACK (-sin > 0).
+                // Straighten when leg is FORWARD (sin > 0).
+                // This matches "Toe comes out" (Straight leg swings forward).
+
+                const kneeBendAmp = 1.0;
+
+                // Left Leg: Hip = sin(cycle).
+                // We want bend when sin is negative (Back) or transitioning.
+                // Actually, let's try phase shifting the bend to get that "kick" feel.
+                // Kick comes just before full extension.
+                // Using -Math.max(0, -sin(cycle)) means:
+                // - Leg Back: Knee Bent.
+                // - Leg Forwarding: Knee Straightens.
+                // - Leg Forward: Knee Straight.
+                // This sounds correct for the "Toe out" visual.
+
                 if (rightLowerLeg && leftLowerLeg) {
-                    // Right Knee bends when Right Leg swings forward (cycle+PI is positive)
-                    rightLowerLeg.rotation.x = -Math.max(0, Math.sin(cycle + Math.PI) * 1.2);
-                    leftLowerLeg.rotation.x = -Math.max(0, Math.sin(cycle) * 1.2);
+                    // Right Hip: sin(cycle + PI) = -sin(cycle).
+                    // So Right Leg Back when -sin(cycle) < 0 => sin(cycle) > 0.
+                    // Bend when sin(cycle) > 0.
+
+                    rightLowerLeg.rotation.x = -Math.max(0, Math.sin(cycle) * kneeBendAmp);
+
+                    // Left Hip: sin(cycle).
+                    // Bend when sin(cycle) < 0.
+                    leftLowerLeg.rotation.x = -Math.max(0, -Math.sin(cycle) * kneeBendAmp);
                 }
 
                 if (spine) spine.rotation.y = Math.sin(cycle) * 0.08;
@@ -126,9 +184,7 @@ const AvatarModel = () => {
         if (action === 'walk' && sceneRef.current) {
             const currentX = sceneRef.current.position.x;
             const dist = targetX - currentX;
-            // Increased speed to match leg animation (Fixing moonwalk)
-            // Was 0.5, Now 1.2
-            const moveSpeed = 1.2 * delta;
+            const moveSpeed = 1.5 * delta; // Slightly faster to match kick
 
             if (Math.abs(dist) > 0.1) {
                 sceneRef.current.position.x += Math.sign(dist) * moveSpeed;
@@ -143,7 +199,6 @@ const AvatarModel = () => {
                 sceneRef.current.rotation.y = 0;
             }
         } else if (sceneRef.current) {
-            // Ensure idle position is correct
             if (action === 'idle') {
                 sceneRef.current.rotation.y = 0;
                 sceneRef.current.position.y = -1.0;
@@ -157,9 +212,8 @@ const AvatarModel = () => {
         if (sceneRef.current) sceneRef.current.rotation.y = 0;
     };
 
-    // Initial Position set here
     return vrm ? (
-        <group ref={sceneRef} position={[-3, -1.0, 0]}>
+        <group ref={sceneRef} position={[-7, -1.0, 0]}>
             <primitive object={vrm.scene} />
             <Html position={[0, 1.0, 0]} center wrapperClass="pointer-events-auto">
                 <div
@@ -176,8 +230,6 @@ const AvatarModel = () => {
 export const SiteAvatar = () => {
     return (
         <div className="fixed bottom-0 left-0 right-0 h-[200px] pointer-events-none z-30" style={{ pointerEvents: 'none' }}>
-            {/* FOV changed to 20 for less perspective distortion (makes limbs look thicker) */}
-            {/* Position moved back to 8.5 to keep scale similar with lower FOV */}
             <Canvas camera={{ position: [0, 0.8, 8.5], fov: 20 }} gl={{ alpha: true }}>
                 <ambientLight intensity={1.0} />
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
