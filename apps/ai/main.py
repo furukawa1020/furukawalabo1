@@ -30,6 +30,8 @@ class LocalFallbackAgent:
             return "こんにちは！現在AIサーバーが混み合っているため、バックアップモードで応答しています。ご用件は何でしょうか？🐶"
         elif "who are you" in lower_input or "誰" in lower_input:
             return "私はこのサイトの案内人です！現在は回線トラブルのため、簡易モードで動作中です。"
+        elif "error" in lower_input or "エラー" in lower_input or "なぜ" in lower_input:
+            return "現在、メインのAIサービス（外部連携）の方でアクセス集中が発生しており、一時的に応答できなくなっています。そのため、非常用の私（オフライン脳）が代わりに対応しています。申し訳ありません！💦"
         else:
             return "申し訳ありません。現在、外部AIサービスへの接続が不安定です。しばらく経ってからもう一度お試しください。（このメッセージはオフラインのバックアップエージェントから送信されています）🐶⚠️"
 
