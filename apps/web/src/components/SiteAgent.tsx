@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Send, Bot, User, Sparkles } from 'lucide-react';
+import { X, Send, Bot, User, Sparkles, AlertTriangle } from 'lucide-react';
 import axios from 'axios';
 
 interface Message {
-    role: 'user' | 'bot';
+    role: 'user' | 'bot' | 'system';
     content: string;
 }
 
@@ -14,17 +14,15 @@ export const SiteAgent = () => {
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [status, setStatus] = useState<'offline' | 'online' | 'checking'>('checking');
     const scrollRef = useRef<HTMLDivElement>(null);
 
     // AI API Client
     const getAiBaseUrl = () => {
-        // If specific AI URL is set, use it (remove trailing slash)
         if (import.meta.env.VITE_AI_API_URL) {
             return import.meta.env.VITE_AI_API_URL.replace(/\/$/, '');
         }
-
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-        // Fallback logic for Edge Gateway or Monorepo proxy
         return apiUrl.replace(/\/api\/v1\/?$/, '').replace(/\/$/, '') + '/ai';
     };
 
@@ -37,6 +35,34 @@ export const SiteAgent = () => {
     useEffect(() => {
         scrollToBottom();
     }, [messages, isOpen]);
+
+    // Check health on mount/open
+    useEffect(() => {
+        if (isOpen) {
+            checkHealth();
+        }
+    }, [isOpen]);
+
+    const checkHealth = async () => {
+        setStatus('checking');
+        try {
+            const baseUrl = getAiBaseUrl();
+            console.log('Checking AI Health at:', baseUrl);
+            await axios.get(`${baseUrl}/health`, { timeout: 5000 });
+            setStatus('online');
+        } catch (error) {
+            console.error('AI Health Check Failed:', error);
+            setStatus('offline');
+            setMessages(prev => {
+                // Don't add duplicate error messages
+                if (prev[prev.length - 1].role === 'system') return prev;
+                return [...prev, {
+                    role: 'system',
+                    content: `⚠️ AIサーバーに接続できません。\nURL: ${getAiBaseUrl()}\n環境変数を確認してください。`
+                }];
+            });
+        }
+    };
 
     // Listen for custom event from Avatar
     useEffect(() => {
@@ -55,7 +81,6 @@ export const SiteAgent = () => {
         setIsLoading(true);
 
         try {
-            // Reformat history for the specific Python implementation
             const formattedHistory: string[][] = [];
             for (let i = 1; i < messages.length; i += 2) {
                 if (messages[i] && messages[i].role === 'user' && messages[i + 1] && messages[i + 1].role === 'bot') {
@@ -69,9 +94,21 @@ export const SiteAgent = () => {
             });
 
             setMessages(prev => [...prev, { role: 'bot', content: response.data.reply }]);
-        } catch (error) {
+        } catch (error: any) {
             console.error('AI Chat Error:', error);
-            setMessages(prev => [...prev, { role: 'bot', content: 'すみません、エラーが発生しました。時間を置いて再度お試しください。' }]);
+            let errorMsg = 'エラーが発生しました。';
+            if (error.response) {
+                errorMsg += ` (Status: ${error.response.status})`;
+                if (error.response.status === 503) {
+                    errorMsg += '\nAIモデルの準備ができていません。\nHuggingFace Tokenを確認してください。';
+                }
+            } else if (error.request) {
+                errorMsg += '\nサーバーからの応答がありません。CORS設定やURLを確認してください。';
+            } else {
+                errorMsg += `\n${error.message}`;
+            }
+
+            setMessages(prev => [...prev, { role: 'bot', content: errorMsg }]);
         } finally {
             setIsLoading(false);
         }
@@ -84,14 +121,18 @@ export const SiteAgent = () => {
                 <div className="mb-4 w-[350px] max-w-[calc(100vw-48px)] h-[500px] max-h-[70vh] bg-neutral-900 border border-neutral-700/50 rounded-2xl shadow-2xl flex flex-col overflow-hidden pointer-events-auto animate-in slide-in-from-bottom-10 fade-in duration-200">
                     <div className="p-4 border-b border-neutral-700/50 bg-neutral-800/50 backdrop-blur-md flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <div className="p-1.5 bg-cyan-500/20 rounded-lg">
-                                <Sparkles size={16} className="text-cyan-400" />
+                            <div className={`p-1.5 rounded-lg ${status === 'online' ? 'bg-cyan-500/20' : 'bg-red-500/20'}`}>
+                                <Sparkles size={16} className={status === 'online' ? 'text-cyan-400' : 'text-red-400'} />
                             </div>
                             <div>
                                 <h3 className="font-bold text-sm text-neutral-100">Lab AI Agent</h3>
                                 <div className="flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                    <span className="text-xs text-neutral-400">Online</span>
+                                    <span className={`w-2 h-2 rounded-full animate-pulse ${status === 'online' ? 'bg-green-500' :
+                                            status === 'checking' ? 'bg-yellow-500' : 'bg-red-500'
+                                        }`} />
+                                    <span className="text-xs text-neutral-400">
+                                        {status === 'online' ? 'Online' : status === 'checking' ? 'Connecting...' : 'Offline'}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -108,18 +149,25 @@ export const SiteAgent = () => {
                         className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-neutral-700 hover:scrollbar-thumb-neutral-600"
                     >
                         {messages.map((msg, idx) => (
-                            <div key={idx} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'bot' ? 'bg-neutral-700 text-cyan-400' : 'bg-neutral-700 text-neutral-300'
-                                    }`}>
-                                    {msg.role === 'bot' ? <Bot size={16} /> : <User size={16} />}
+                            msg.role === 'system' ? (
+                                <div key={idx} className="flex gap-2 p-3 bg-red-900/20 border border-red-500/30 rounded-lg text-xs text-red-200">
+                                    <AlertTriangle size={16} className="shrink-0 text-red-400" />
+                                    <div className="whitespace-pre-wrap">{msg.content}</div>
                                 </div>
-                                <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed max-w-[80%] ${msg.role === 'bot'
-                                    ? 'bg-neutral-800 text-neutral-200 rounded-tl-none'
-                                    : 'bg-cyan-900/40 text-cyan-100 border border-cyan-800/50 rounded-tr-none'
-                                    }`}>
-                                    {msg.content}
+                            ) : (
+                                <div key={idx} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'bot' ? 'bg-neutral-700 text-cyan-400' : 'bg-neutral-700 text-neutral-300'
+                                        }`}>
+                                        {msg.role === 'bot' ? <Bot size={16} /> : <User size={16} />}
+                                    </div>
+                                    <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed max-w-[80%] ${msg.role === 'bot'
+                                        ? 'bg-neutral-800 text-neutral-200 rounded-tl-none'
+                                        : 'bg-cyan-900/40 text-cyan-100 border border-cyan-800/50 rounded-tr-none'
+                                        }`}>
+                                        <div className="whitespace-pre-wrap">{msg.content}</div>
+                                    </div>
                                 </div>
-                            </div>
+                            )
                         ))}
                         {isLoading && (
                             <div className="flex gap-3">
