@@ -10,7 +10,7 @@ interface Message {
 export const SiteAgent = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
-        { role: 'bot', content: 'こんにちは！AIエージェントの「はくちゃん」だよ！このサイトのことならなんでもおまかせ！(例: 「RTX5060のAIについて教えて」)' }
+        { role: 'bot', content: 'こんにちは！AIエージェントの「はくちゃん」だよ！このサイトのことならなんでもおまかせ！(例: 「このサイトについて教えて」)' }
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
