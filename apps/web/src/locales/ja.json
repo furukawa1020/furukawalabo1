@@ -30,5 +30,37 @@
         "articles": "最新の記事",
         "view_all": "すべて見る",
         "read_more": "もっと読む"
+    },
+    "research": {
+        "title": "Research",
+        "subtitle": "生理反応と主観的意味づけの可変性",
+        "featured": "Featured",
+        "interview_link": "研究に関する詳細なインタビュー記事はこちら"
+    },
+    "about": {
+        "title": "About / Profile",
+        "vision": "Vision & Identity",
+        "connect": "Connect",
+        "media": "Media"
+    },
+    "common": {
+        "read_more": "もっと読む"
+    },
+    "agent": {
+        "name": "はくちゃん (Haku)",
+        "greeting": "こんにちは！AIエージェントの「はくちゃん」だよ！このサイトのことならなんでもおまかせ！(例: 「このサイトについて教えて」)",
+        "placeholder": "はくちゃんに質問する...",
+        "status_online": "Online",
+        "status_connecting": "Connecting...",
+        "status_offline": "Offline"
+    },
+    "works": {
+        "title": "Works",
+        "subtitle": "プロトタイプから実装まで",
+        "all_categories": "すべて"
+    },
+    "seo": {
+        "default_title": "Furukawa Archive OS | Kotaro Furukawa (古川耕太郎)",
+        "default_description": "古川耕太郎 (Kotaro Furukawa) のポートフォリオサイト。研究・開発・デザイン・執筆など、様々な領域での活動とアウトプットをアーカイブしています。"
     }
 }

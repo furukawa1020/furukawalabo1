@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, Send, Bot, User, Sparkles, AlertTriangle } from 'lucide-react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 interface Message {
     role: 'user' | 'bot' | 'system';
@@ -8,14 +9,25 @@ interface Message {
 }
 
 export const SiteAgent = () => {
+    const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
-        { role: 'bot', content: 'こんにちは！AIエージェントの「はくちゃん」だよ！このサイトのことならなんでもおまかせ！(例: 「このサイトについて教えて」)' }
+        { role: 'bot', content: t('agent.greeting') }
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [status, setStatus] = useState<'offline' | 'online' | 'checking'>('checking');
     const scrollRef = useRef<HTMLDivElement>(null);
+
+    // Update greeting when language changes (only if it's the first message)
+    useEffect(() => {
+        setMessages(prev => {
+            if (prev.length === 1 && prev[0].role === 'bot') {
+                return [{ role: 'bot', content: t('agent.greeting') }];
+            }
+            return prev;
+        });
+    }, [t]);
 
     // AI API Client
     const getAiBaseUrl = () => {
@@ -125,13 +137,13 @@ export const SiteAgent = () => {
                                 <Sparkles size={16} className={status === 'online' ? 'text-cyan-400' : 'text-red-400'} />
                             </div>
                             <div>
-                                <h3 className="font-bold text-sm text-neutral-100">はくちゃん (Haku)</h3>
+                                <h3 className="font-bold text-sm text-neutral-100">{t('agent.name')}</h3>
                                 <div className="flex items-center gap-1.5">
                                     <span className={`w-2 h-2 rounded-full animate-pulse ${status === 'online' ? 'bg-green-500' :
                                         status === 'checking' ? 'bg-yellow-500' : 'bg-red-500'
                                         }`} />
                                     <span className="text-xs text-neutral-400">
-                                        {status === 'online' ? 'Online' : status === 'checking' ? 'Connecting...' : 'Offline'}
+                                        {status === 'online' ? t('agent.status_online') : status === 'checking' ? t('agent.status_connecting') : t('agent.status_offline')}
                                     </span>
                                 </div>
                             </div>
@@ -214,7 +226,7 @@ export const SiteAgent = () => {
                                 type="text"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
-                                placeholder="質問を入力..."
+                                placeholder={t('agent.placeholder')}
                                 className="w-full bg-neutral-900 border border-neutral-700 text-white text-sm rounded-xl pl-4 pr-12 py-3 focus:outline-none focus:border-cyan-500/50 transition-colors placeholder:text-neutral-600"
                             />
                             <button

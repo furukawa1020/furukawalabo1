@@ -3,27 +3,32 @@ import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import { SEO } from '../components/SEO';
 import { MediaLinks } from '../components/MediaLinks';
+import { useTranslation } from 'react-i18next';
 
 export const Research = () => {
     const [content, setContent] = useState('');
+    const { t, i18n } = useTranslation();
 
     useEffect(() => {
-        axios.get('/pages/research.md')
+        const lang = i18n.language.startsWith('en') ? 'en' : 'ja';
+        const file = lang === 'en' ? '/pages/research.en.md' : '/pages/research.md';
+
+        axios.get(file)
             .then(res => setContent(res.data))
             .catch(err => console.error('Failed to load research', err));
-    }, []);
+    }, [i18n.language]);
 
     return (
         <>
-            <SEO title="Research" description="生理反応と主観的意味づけの可変性" />
+            <SEO title={t('research.title')} description={t('research.subtitle')} />
             <div className="min-h-screen bg-neutral-900 text-white pt-32 pb-24">
                 <div className="container mx-auto px-6 max-w-5xl">
                     <div className="mb-16">
                         <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
-                            Research
+                            {t('research.title')}
                         </h1>
                         <p className="text-xl md:text-2xl text-neutral-300 font-bold leading-relaxed border-l-8 border-purple-500 pl-6 py-2">
-                            Physiological Reaction & Subjective Meaning
+                            {t('research.subtitle')}
                         </p>
                     </div>
 
@@ -42,10 +47,10 @@ export const Research = () => {
                         <div className="lg:col-span-4">
                             <div className="bg-neutral-800/80 p-8 rounded-3xl border border-neutral-700 sticky top-32">
                                 <h3 className="text-xl font-bold mb-6 flex items-center gap-3 text-purple-400">
-                                    <span className="p-2 bg-purple-900/30 rounded-lg">Featured</span>
+                                    <span className="p-2 bg-purple-900/30 rounded-lg">{t('research.featured')}</span>
                                 </h3>
                                 <p className="text-neutral-400 mb-6 text-sm">
-                                    研究に関する詳細なインタビュー記事はこちら
+                                    {t('research.interview_link')}
                                 </p>
                                 <MediaLinks type="interview" className="grid-cols-1" />
                             </div>

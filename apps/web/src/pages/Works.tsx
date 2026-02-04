@@ -3,11 +3,13 @@ import { ExternalLink, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import api from '../api/client';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 export const Works = () => {
     const [works, setWorks] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showFallback, setShowFallback] = useState(false);
+    const { t } = useTranslation();
 
     useEffect(() => {
         let isMounted = true;
@@ -61,16 +63,16 @@ export const Works = () => {
 
     return (
         <>
-            <SEO title="Works" description="制作物・プロジェクト一覧" />
+            <SEO title={t('works.title')} description={t('works.subtitle')} />
             <div className="min-h-screen bg-neutral-900 text-white pt-32 pb-24">
                 <div className="container mx-auto px-6 max-w-6xl">
                     <div className="mb-16 flex flex-col md:flex-row justify-between items-end gap-6">
                         <div>
                             <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-amber-400">
-                                Works
+                                {t('works.title')}
                             </h1>
                             <p className="text-xl md:text-2xl text-neutral-300 font-bold leading-relaxed border-l-8 border-pink-500 pl-6 py-2">
-                                40+ Prototypes from Protopedia
+                                {t('highlights.prototypes.desc')}
                             </p>
                         </div>
                     </div>
@@ -98,7 +100,7 @@ export const Works = () => {
                                         )}
                                         <div className="absolute top-4 left-4">
                                             <span className="bg-neutral-900/80 backdrop-blur text-pink-400 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider border border-pink-500/30">
-                                                {work.category || "Protopedia"}
+                                                {work.category || t('works.all_categories')}
                                             </span>
                                         </div>
                                     </div>

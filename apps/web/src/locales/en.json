@@ -30,5 +30,37 @@
         "articles": "Latest Articles",
         "view_all": "View All",
         "read_more": "Read More"
+    },
+    "research": {
+        "title": "Research",
+        "subtitle": "Physiological Reaction & Subjective Meaning",
+        "featured": "Featured",
+        "interview_link": "Click here for detailed interviews about the research"
+    },
+    "about": {
+        "title": "About / Profile",
+        "vision": "Vision & Identity",
+        "connect": "Connect",
+        "media": "Media"
+    },
+    "common": {
+        "read_more": "Read More"
+    },
+    "agent": {
+        "name": "Haku-chan (Haku)",
+        "greeting": "Hi! I'm \"Haku-chan\", the AI Agent! Ask me anything about this site! (e.g., \"Tell me about this site\")",
+        "placeholder": "Ask Haku-chan...",
+        "status_online": "Online",
+        "status_connecting": "Connecting...",
+        "status_offline": "Offline"
+    },
+    "works": {
+        "title": "Works",
+        "subtitle": "From Prototype to Implementation",
+        "all_categories": "All"
+    },
+    "seo": {
+        "default_title": "Furukawa Archive OS | Kotaro Furukawa",
+        "default_description": "Portfolio site of Kotaro Furukawa. Archiving activities and outputs in various fields including Research, Development, Design, and Writing."
     }
 }

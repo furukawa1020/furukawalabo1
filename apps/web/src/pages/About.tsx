@@ -6,12 +6,17 @@ import rehypeRaw from 'rehype-raw';
 import { SEO } from '../components/SEO';
 import { SocialLinks } from '../components/SocialLinks';
 import { MediaLinks } from '../components/MediaLinks';
+import { useTranslation } from 'react-i18next';
 
 export const About = () => {
     const [content, setContent] = useState('');
+    const { t, i18n } = useTranslation();
 
     useEffect(() => {
-        axios.get('/content/pages/about.md')
+        const lang = i18n.language.startsWith('en') ? 'en' : 'ja';
+        const file = lang === 'en' ? '/content/pages/about.en.md' : '/content/pages/about.md';
+
+        axios.get(file)
             .then(res => {
                 const raw = res.data;
                 // Remove frontmatter
@@ -19,20 +24,20 @@ export const About = () => {
                 setContent(body);
             })
             .catch(err => console.error('Failed to load about', err));
-    }, []);
+    }, [i18n.language]);
 
     return (
         <>
-            <SEO title="About" description="Vision & Profile" />
+            <SEO title={t('about.title')} description={t('about.vision')} />
             <div className="min-h-screen bg-neutral-900 text-white pt-32 pb-24">
                 <div className="container mx-auto px-6 max-w-5xl">
                     {/* Header Section */}
                     <div className="mb-16">
                         <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">
-                            About / Profile
+                            {t('about.title')}
                         </h1>
                         <p className="text-xl md:text-2xl text-neutral-300 font-bold leading-relaxed border-l-8 border-cyan-500 pl-6 py-2">
-                            Vision & Identity
+                            {t('about.vision')}
                         </p>
                     </div>
 
@@ -57,7 +62,7 @@ export const About = () => {
                         <div className="lg:col-span-4 space-y-8">
                             <div className="bg-neutral-800/80 p-8 rounded-3xl border border-neutral-700 sticky top-32">
                                 <h3 className="text-xl font-bold mb-6 flex items-center gap-3 text-cyan-400">
-                                    <span className="p-2 bg-cyan-900/30 rounded-lg">Connect</span>
+                                    <span className="p-2 bg-cyan-900/30 rounded-lg">{t('about.connect')}</span>
                                 </h3>
                                 <div className="flex justify-center">
                                     <SocialLinks variant="default" />
@@ -65,7 +70,7 @@ export const About = () => {
 
                                 <div className="mt-8 pt-8 border-t border-neutral-700">
                                     <h3 className="text-xl font-bold mb-6 flex items-center gap-3 text-purple-400">
-                                        <span className="p-2 bg-purple-900/30 rounded-lg">Media</span>
+                                        <span className="p-2 bg-purple-900/30 rounded-lg">{t('about.media')}</span>
                                     </h3>
                                     <MediaLinks className="!grid-cols-1" />
                                 </div>

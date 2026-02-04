@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 
 type SEOProps = {
     title?: string;
@@ -8,19 +9,25 @@ type SEOProps = {
 };
 
 export const SEO = ({
-    title = "Furukawa Archive OS | Kotaro Furukawa (古川耕太郎)",
-    description = "古川耕太郎 (Kotaro Furukawa) のポートフォリオサイト。研究・開発・デザイン・執筆など、様々な領域での活動とアウトプットをアーカイブしています。",
+    title,
+    description,
     image = "https://furukawalab.com/images/og-main.png",
     type = "website"
 }: SEOProps) => {
-    const siteTitle = title === "Furukawa Archive OS" ? title : `${title} | Furukawa Archive OS`;
+    const { t } = useTranslation();
+
+    // Use props if provided, otherwise fallback to translated defaults
+    const siteTitleRaw = title || t('seo.default_title');
+    const siteDesc = description || t('seo.default_description');
+
+    const siteTitle = siteTitleRaw === "Furukawa Archive OS" ? siteTitleRaw : `${siteTitleRaw}`;
 
     return (
         <Helmet>
             <title>{siteTitle}</title>
-            <meta name="description" content={description} />
+            <meta name="description" content={siteDesc} />
             <meta property="og:title" content={siteTitle} />
-            <meta property="og:description" content={description} />
+            <meta property="og:description" content={siteDesc} />
             <meta property="og:image" content={image} />
             <meta property="og:type" content={type} />
             <meta name="twitter:card" content="summary_large_image" />
@@ -40,7 +47,7 @@ export const SEO = ({
                         "https://protopedia.net/prototyper/hatake",
                         "https://www.instagram.com/ko1020/"
                     ],
-                    "description": "古川耕太郎 (Kotaro Furukawa) のポートフォリオサイト。研究・開発・デザイン・執筆など、様々な領域での活動とアウトプットをアーカイブしています。"
+                    "description": siteDesc
                 })}
             </script>
         </Helmet>
