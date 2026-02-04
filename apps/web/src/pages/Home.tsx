@@ -4,13 +4,20 @@ import { SEO } from '../components/SEO';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import api from '../api/client';
+import { useTranslation } from 'react-i18next';
+import { LanguageSwitcher } from '../components/LanguageSwitcher';
 
 export const Home = () => {
+    const { t } = useTranslation();
+
     return (
         <>
             <SEO />
             {/* Hero Section */}
             <section className="relative h-screen flex items-center justify-center overflow-hidden">
+                <div className="absolute top-6 right-6 z-50">
+                    <LanguageSwitcher />
+                </div>
                 <h1 className="sr-only">
                     古川耕太郎 (Kotaro Furukawa) - Portfolio.
                     HATAKE / 金沢大学 / 未踏 / 技育博 / 感情コンピューティング / 生理反応 / インタラクション研究
@@ -21,21 +28,19 @@ export const Home = () => {
                         Furukawa Archive OS v1.0
                     </h2>
                     <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-10 leading-[0.9] 
-                        bg-gradient-to-br from-white via-cyan-300 to-purple-400 bg-clip-text text-transparent filter drop-shadow-2xl">
-                        LET'S ENJOY<br />
-                        CONSTRAINTS<br />
-                        HACK!
+                        bg-gradient-to-br from-white via-cyan-300 to-purple-400 bg-clip-text text-transparent filter drop-shadow-2xl whitespace-pre-line">
+                        {t('hero.title')}
                     </h1>
                     <p className="text-xl md:text-3xl text-neutral-300 dark:text-neutral-300 font-bold mb-12 max-w-3xl mx-auto leading-relaxed drop-shadow-lg">
-                        誰もが「生きててよかった」と思える瞬間を<span className="inline-block text-cyan-600 dark:text-cyan-400 font-black">hackする！！</span>
+                        {t('hero.subtitle')}<span className="inline-block text-cyan-600 dark:text-cyan-400 font-black">{t('hero.subtitle_highlight')}</span>
                     </p>
                     <div className="flex flex-col md:flex-row gap-4 justify-center">
                         <Link to="/research" className="group px-8 py-4 bg-neutral-900 dark:bg-white text-white dark:text-black rounded-full font-bold transition-all hover:scale-105 flex items-center justify-center gap-2">
-                            Explore Research
+                            {t('hero.explore_research')}
                             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                         </Link>
                         <Link to="/works" className="px-8 py-4 bg-transparent border border-neutral-300 dark:border-neutral-700 rounded-full font-bold hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all">
-                            View Works
+                            {t('hero.view_works')}
                         </Link>
                     </div>
                 </div>
@@ -44,27 +49,27 @@ export const Home = () => {
             {/* Highlights Section */}
             <section className="py-24 bg-neutral-50 dark:bg-neutral-900/50">
                 <div className="container mx-auto px-6">
-                    <h2 className="text-3xl font-bold mb-12 text-center text-neutral-900 dark:text-white">Highlights</h2>
+                    <h2 className="text-3xl font-bold mb-12 text-center text-neutral-900 dark:text-white">{t('highlights.title')}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <HighlightCard
                             icon={<Star className="text-cyan-500" />}
-                            title="Interaction 2026"
-                            desc="インタラクティブ発表（プレミアム）採択"
+                            title={t('highlights.interaction.title')}
+                            desc={t('highlights.interaction.desc')}
                         />
                         <HighlightCard
                             icon={<Trophy className="text-yellow-500" />}
-                            title="技育博2025"
-                            desc="株式会社ゆめみ企業賞 / スポンサー賞 受賞"
+                            title={t('highlights.gikihaku.title')}
+                            desc={t('highlights.gikihaku.desc')}
                         />
                         <HighlightCard
                             icon={<Code className="text-purple-500" />}
-                            title="GitHub Activity"
-                            desc="年間225+リポジトリ / 2600+コントリビューション"
+                            title={t('highlights.github.title')}
+                            desc={t('highlights.github.desc')}
                         />
                         <HighlightCard
                             icon={<Activity className="text-green-500" />}
-                            title="40+ Prototypes"
-                            desc="Protopediaにて40作品以上公開 / 72+いいね"
+                            title={t('highlights.prototypes.title')}
+                            desc={t('highlights.prototypes.desc')}
                         />
                     </div>
                 </div>
@@ -77,6 +82,7 @@ export const Home = () => {
 };
 
 const LatestContent = () => {
+    const { t } = useTranslation();
     const [works, setWorks] = useState<any[]>([]);
     const [posts, setPosts] = useState<any[]>([]);
 
@@ -111,9 +117,9 @@ const LatestContent = () => {
                     {/* Latest Works */}
                     <div>
                         <div className="flex items-center justify-between mb-8">
-                            <h2 className="text-2xl font-bold">Latest Works</h2>
+                            <h2 className="text-2xl font-bold">{t('latest.works')}</h2>
                             <Link to="/works" className="text-cyan-600 dark:text-cyan-400 font-bold hover:underline flex items-center gap-1">
-                                View All <ArrowRight size={16} />
+                                {t('latest.view_all')} <ArrowRight size={16} />
                             </Link>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -134,9 +140,9 @@ const LatestContent = () => {
                     {/* Latest Blogs */}
                     <div>
                         <div className="flex items-center justify-between mb-8">
-                            <h2 className="text-2xl font-bold">Latest Articles</h2>
+                            <h2 className="text-2xl font-bold">{t('latest.articles')}</h2>
                             <Link to="/blog" className="text-cyan-600 dark:text-cyan-400 font-bold hover:underline flex items-center gap-1">
-                                Read More <ArrowRight size={16} />
+                                {t('latest.read_more')} <ArrowRight size={16} />
                             </Link>
                         </div>
                         <div className="space-y-6">

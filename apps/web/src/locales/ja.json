@@ -1,0 +1,34 @@
+{
+    "hero": {
+        "title": "LET'S ENJOY\nCONSTRAINTS\nHACK!",
+        "subtitle": "誰もが「生きててよかった」と思える瞬間を",
+        "subtitle_highlight": "hackする！！",
+        "explore_research": "研究をみる",
+        "view_works": "作品をみる"
+    },
+    "highlights": {
+        "title": "ハイライト",
+        "interaction": {
+            "title": "Interaction 2026",
+            "desc": "インタラクティブ発表（プレミアム）採択"
+        },
+        "gikihaku": {
+            "title": "技育博2025",
+            "desc": "株式会社ゆめみ企業賞 / スポンサー賞 受賞"
+        },
+        "github": {
+            "title": "GitHub Activity",
+            "desc": "年間225+リポジトリ / 2600+コントリビューション"
+        },
+        "prototypes": {
+            "title": "40+ Prototypes",
+            "desc": "Protopediaにて40作品以上公開 / 72+いいね"
+        }
+    },
+    "latest": {
+        "works": "最新の作品",
+        "articles": "最新の記事",
+        "view_all": "すべて見る",
+        "read_more": "もっと読む"
+    }
+}

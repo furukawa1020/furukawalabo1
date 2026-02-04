@@ -1,0 +1,34 @@
+{
+    "hero": {
+        "title": "LET'S ENJOY\nCONSTRAINTS\nHACK!",
+        "subtitle": "Hacking the moment when everyone feels",
+        "subtitle_highlight": "\"Glad to be alive!!\"",
+        "explore_research": "Explore Research",
+        "view_works": "View Works"
+    },
+    "highlights": {
+        "title": "Highlights",
+        "interaction": {
+            "title": "Interaction 2026",
+            "desc": "Selected for Interactive Presentation (Premium)"
+        },
+        "gikihaku": {
+            "title": "Gikihaku 2025",
+            "desc": "Yumemi Inc. Corporate Award / Sponsor Award"
+        },
+        "github": {
+            "title": "GitHub Activity",
+            "desc": "225+ Repositories / 2600+ Contributions per year"
+        },
+        "prototypes": {
+            "title": "40+ Prototypes",
+            "desc": "40+ works on Protopedia / 72+ Likes"
+        }
+    },
+    "latest": {
+        "works": "Latest Works",
+        "articles": "Latest Articles",
+        "view_all": "View All",
+        "read_more": "Read More"
+    }
+}
