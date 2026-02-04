@@ -19,6 +19,7 @@ import { HyperText } from './components/HyperText';
 import { DonationNotification } from './components/DonationNotification';
 import { SiteAgent } from './components/SiteAgent';
 import { SiteAvatar } from './components/SiteAvatar';
+import { LanguageSwitcher } from './components/LanguageSwitcher';
 
 function App() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -70,6 +71,7 @@ function App() {
                                 </nav>
 
                                 <ThemeToggle />
+                                <LanguageSwitcher />
 
                                 {/* Mobile Menu Button */}
                                 <button

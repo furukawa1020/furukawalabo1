@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import api from '../api/client';
 import { useTranslation } from 'react-i18next';
-import { LanguageSwitcher } from '../components/LanguageSwitcher';
 
 export const Home = () => {
     const { t } = useTranslation();
@@ -15,9 +14,6 @@ export const Home = () => {
             <SEO />
             {/* Hero Section */}
             <section className="relative h-screen flex items-center justify-center overflow-hidden">
-                <div className="absolute top-6 right-6 z-50">
-                    <LanguageSwitcher />
-                </div>
                 <h1 className="sr-only">
                     古川耕太郎 (Kotaro Furukawa) - Portfolio.
                     HATAKE / 金沢大学 / 未踏 / 技育博 / 感情コンピューティング / 生理反応 / インタラクション研究
