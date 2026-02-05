@@ -1,5 +1,23 @@
 [
     {
+        "id": "self-management-app",
+        "title": "自己管理アプリをだんだん自分に使いやすいアプリにしていく",
+        "thumbnail_url": "https://protopedia.net/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcVFVIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--e4cc4f7c8d3e4c0e5c2c5c5c5c5c5c5c/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9MY21WemFYcGxTU0lNTVRBd01IZ3hNREF3QmpvR1JWUTZFM0psYzJsNlpWOTBiVjl0WVhoSlFnPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--6e5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c/placeholder.jpg",
+        "summary": "少しずつ自分特化の自己管理アプリを作っていく記録。健康管理、タスク管理などの機能を実装。Flutter、Kotlin、Golang、Dartを使用。",
+        "published_at": "2025-02-05",
+        "category": "Protopedia",
+        "tags": [
+            "健康管理",
+            "Kotlin",
+            "flutter",
+            "Golang",
+            "Dart",
+            "タスク管理",
+            "Antigravity"
+        ],
+        "url": "https://protopedia.net/prototype/8176"
+    },
+    {
         "id": "robocup-junior",
         "title": "RoboCup Junior (Soccer Lightweight)",
         "thumbnail_url": "/images/robocup-main.jpg",
