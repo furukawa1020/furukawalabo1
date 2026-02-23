@@ -1,5 +1,11 @@
 [
     {
+        "slug": "2026-02-23-rustker-desktop",
+        "title": "Rustker（ラスッカー）Rust製の軽くて速いコンテナアプリをゼロから作ってみた!（失敗）",
+        "date": "2026-02-23",
+        "summary": "Docker Desktopが重いからとコンテナエンジン自作の旅に出た結果、本来の目的を忘れた最強のオチ。"
+    },
+    {
         "slug": "railway-api-crash-fix",
         "title": "RailwayでAPIがクラッシュして絶望した話",
         "date": "2026-01-28",
