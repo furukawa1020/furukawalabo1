@@ -17,10 +17,9 @@ export const SEO = ({
     const { t } = useTranslation();
 
     // Use props if provided, otherwise fallback to translated defaults
-    const siteTitleRaw = title || t('seo.default_title');
     const siteDesc = description || t('seo.default_description');
 
-    const siteTitle = siteTitleRaw === "Furukawa Archive OS" ? siteTitleRaw : `${siteTitleRaw}`;
+    const siteTitle = title ? `${title} | 古川耕太郎 公式サイト` : t('seo.default_title');
 
     return (
         <Helmet>
@@ -38,8 +37,8 @@ export const SEO = ({
                 {JSON.stringify({
                     "@context": "https://schema.org",
                     "@type": "Person",
-                    "name": "Kotaro Furukawa",
-                    "alternateName": ["古川耕太郎", "はたけ/Furukawa", "hatake", "furukawa", "furukawa1020", "ko1020", "古川 耕太郎"],
+                    "name": "古川耕太郎",
+                    "alternateName": ["Kotaro Furukawa", "はたけ/Furukawa", "hatake", "furukawa", "furukawa1020", "ko1020", "古川 耕太郎"],
                     "url": "https://furukawalab.com/",
                     "sameAs": [
                         "https://twitter.com/HATAKE55555",
