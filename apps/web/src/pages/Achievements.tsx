@@ -9,6 +9,7 @@ import imgAward1 from '../assets/images/awards/award-1.jpg';
 import imgAward2 from '../assets/images/awards/award-2.jpg';
 import imgAward3 from '../assets/images/awards/award-3.jpg';
 import imgAward4 from '../assets/images/awards/award-4.jpg';
+import imgAwardGeekcamp from '../assets/images/awards/award-geekcamp.jpg';
 
 const IMAGE_MAP: Record<string, string> = {
     '/images/robocup-main.jpg': imgRobocup,
@@ -17,6 +18,7 @@ const IMAGE_MAP: Record<string, string> = {
     '/images/awards/award-2.jpg': imgAward2,
     '/images/awards/award-3.jpg': imgAward3,
     '/images/awards/award-4.jpg': imgAward4,
+    '/images/awards/award-geekcamp.jpg': imgAwardGeekcamp,
 };
 
 type AchievementItem = {
