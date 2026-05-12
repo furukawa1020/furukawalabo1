@@ -13,6 +13,10 @@ sections:
   - name: 受賞歴（大学以降）
     items:
       - year: 2026
+        title: 日本財団HUMAIプログラム 第二期
+        detail: 奨励金A 採択
+        url: https://humai.nf.or.jp/
+      - year: 2026
         title: 技育CAMPハッカソン2026 vol.1 第2部
         detail: サポーターズ賞「脈アリ！？脈ナシ！？教えて！AI君！」
       - year: 2025
