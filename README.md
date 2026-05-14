@@ -42,3 +42,75 @@ docker compose up --build
   - `ai`: AI Service (Python)
 - `content/`: Managed content (Markdown/YAML)
 
+---
+
+## 🐶 はくちゃん (Haku-chan) — サイト内AIエージェント
+
+このサイト上には「**はくちゃん**」という名のAIエージェントが常駐しています。単なるチャットボットではなく、サイトのコンテンツ・研究・作品について**自分の知識ベースを持って答える**RAG（Retrieval-Augmented Generation）エージェントです。
+
+### 🧠 名前の由来
+- **「Hacking Thinking」** のHa + **「白山（Hakusan）」** のHaku → **「はくちゃん」**
+- コンセプト：*LET'S ENJOY CONSTRAINTS HACK!* を体現するキャラクター
+- 口調：幼児語・ハイテンション（toddler-like）
+
+### ⚙️ AI / RAG アーキテクチャ
+
+```
+[Frontend: SiteAgent.tsx]
+  │
+  │  POST /chat  (message + history)
+  ▼
+[AI Service: FastAPI (Python) — apps/ai/main.py]
+  │
+  ├─── [RAG Mode: FAISS Vector Store + LangChain]
+  │       ├── ローカル埋め込みモデル: sentence-transformers/all-MiniLM-L6-v2
+  │       ├── LLM: HuggingFace Endpoint (Mistral-7B-Instruct-v0.2)
+  │       └── ConversationalRetrievalChain でコンテキスト付き回答
+  │
+  ├─── [LLM-Only Fallback: HuggingFace Router API]
+  │       └── Qwen/Qwen2.5-7B-Instruct (OpenAI互換APIフォーマット)
+  │
+  └─── [オフライン最終保護: LocalFallbackAgent]
+          └── トークンなし・外部API障害時もユーザーを見捨てない
+```
+
+### 📚 知識ベースの構築（RAG Ingestion）
+- `apps/ai/content/` 以下のMarkdown/JSONファイルをすべてロード
+- PDF → Markdown 変換スクリプト（`ingest_pdf.py`）でリサーチ論文・提案書を投入
+- テキストを300文字チャンク・50文字オーバーラップで分割しFAISSにインデックス
+- バッチサイズ2・リトライ付きの「ジェントルモード」でレートリミット対策済み
+
+```python
+# 知識ベースに追加するPDFの処理例
+reader = PdfReader(pdf_path)
+markdown_content = "# Project Proposal: Hacking Thinking\n\n..."
+# → apps/ai/content/*.md として保存 → 次回起動時に自動インデックス化
+```
+
+### 🎯 特徴的な実装ポイント
+
+| 機能 | 実装 |
+|---|---|
+| **3段階フォールバック** | RAG → LLMOnly → ローカルエージェントの順で必ず応答を返す |
+| **ヘルスチェック** | チャット起動時に `/health` を叩きステータス（online/connecting/offline）をリアルタイム表示 |
+| **Hacking おみくじ** | RAGコンテキストを利用しポジティブな運勢のみを生成（大吉/神吉/ハック吉/優勝） |
+| **会話履歴** | フロントエンド側で `[user, bot]` ペアの履歴を管理しAPIに渡す |
+| **アバター連動** | `open-site-agent` カスタムイベント経由で3DアバターとチャットUIが連携 |
+| **プライバシー保護** | システムプロンプトで未踏IT等の応募情報を絶対に漏洩しないよう制御 |
+| **i18n対応** | `react-i18next` でUIテキストが日英切り替えに追従 |
+
+### 🔒 システムプロンプト設計
+- キャラクター定義・口調・禁止事項をプロンプトに組み込み
+- 「Hacking Thinking」は哲学として語るが、提案書の存在は開示しない
+- 研究・作品・ビジョンについては誇りを持って答える
+
+---
+
+## 🖥️ SiteAvatar — 3D VRM アバター
+
+- **Three.js / `@pixiv/three-vrm`** でVRMモデルをWebブラウザ上で動作
+- アイドル時：腕を自然に下ろし、尻尾と体に微細なスウェイアニメーション
+- クリック時：チャットUIを `open-site-agent` カスタムイベントで呼び出す
+- モデルファイル：`apps/ai/hakusan-avatar.vrm`
+
+---
