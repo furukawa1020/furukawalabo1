@@ -106,11 +106,99 @@ markdown_content = "# Project Proposal: Hacking Thinking\n\n..."
 
 ---
 
-## 🖥️ SiteAvatar — 3D VRM アバター
+## 🖥️ SiteAvatar — 3D VRM アバターの動かし方
 
-- **Three.js / `@pixiv/three-vrm`** でVRMモデルをWebブラウザ上で動作
-- アイドル時：腕を自然に下ろし、尻尾と体に微細なスウェイアニメーション
-- クリック時：チャットUIを `open-site-agent` カスタムイベントで呼び出す
-- モデルファイル：`apps/ai/hakusan-avatar.vrm`
+- **Three.js / `@pixiv/three-vrm`** でVRMモデルをWebブラウザ上でリアルタイム描画
+- モデルファイル：`apps/ai/hakusan-avatar.vrm`（約15MB）
+- 実装ファイル：`apps/web/src/components/SiteAvatar.tsx`
+
+### 🦴 ボーン直接操作でアニメーション制御
+
+VRMの`humanoid.getRawBoneNode()`でボーンを直接取得し、`useFrame()`（毎フレームコールバック）の中でsinカーブを使って角度を手動で計算・適用しています。
+
+```
+アニメーション状態 (action)
+  ├── 'idle'  : 待機（腕を自然に下ろし、呼吸する）
+  ├── 'walk'  : 歩行（腕・脚の逆位相スウィング）
+  ├── 'wave'  : 手を振る（右腕を振り上げてsin揺れ）
+  └── 'peace' : 片手ピース
+```
+
+操作しているボーン一覧：
+
+| ボーン | idle | walk | wave |
+|---|---|---|---|
+| `rightUpperArm` / `leftUpperArm` | z=±1.3（腕下げ）+ 呼吸 | z=±1.4 + x=sin（前後振り） | z=2.5+sin（振る） |
+| `rightLowerArm` / `leftLowerArm` | z=0（リセット） | 肘曲げ・捻り | z=0.5 |
+| `rightUpperLeg` / `leftUpperLeg` | x=0 | x=sin（逆位相） | - |
+| `rightLowerLeg` / `leftLowerLeg` | x=0 | x=膝曲げ（max(0,sin)） | - |
+| `spine` | y=0 | y=sin*0.08（体の捻り） | - |
+
+### 🐾 しっぽ物理（チェーンアニメーション）
+
+VRMモデルのボーン名を`traverse()`でスキャンし、`tail` / `shippo` を含む全ボーンを配列に収集。各ボーンにオフセットをかけて**波状のしっぽスウェイ**を実現：
+
+```typescript
+// action='walk'時はハイスピード・大振り、idle時はゆっくり・小振り
+const speed = action === 'walk' ? 8.0 : 1.5;
+const amp   = action === 'walk' ? 0.2  : 0.08;
+const offset = index * 0.3; // ボーンごとに位相ずらし → 波が伝播
+
+bone.rotation.x = baseDroop + Math.sin(t * speed * 0.7 - offset) * (amp * 0.5);
+bone.rotation.y = Math.cos(t * speed - offset) * amp;
+bone.rotation.z = Math.sin(t * speed * 0.5 - offset) * (amp * 0.3);
+```
+
+### 👁️ アイコンタクト（カメラ追従）
+
+VRMの`lookAt.lookAt()`にThree.jsのカメラ位置を渡すことで、常にユーザーの目を見る動作を実現：
+
+```typescript
+if (vrm.lookAt) {
+    vrm.lookAt.lookAt(state.camera.position);
+}
+```
+
+### 🚶 移動ロジック（自律歩行）
+
+毎フレーム1%の確率でランダムにアクション遷移。歩行時はターゲット座標に向かって`lerp`ではなく速度・方向制御で**ちゃんと歩いて移動**します（スライドしない）：
+
+```typescript
+// 向きも滑らかに回転
+const turn = dist > 0 ? Math.PI / 2 : -Math.PI / 2;
+sceneRef.current.rotation.y = THREE.MathUtils.lerp(current.rotation.y, turn, 0.2);
+
+// 歩行ボブ（上下バウンス）
+sceneRef.current.position.y = -1.3 + Math.abs(Math.cos(walkCycle)) * 0.05;
+```
+
+- **レスポンシブ対応**：モバイル（幅<768px）はX=0、デスクトップはX=-4.5にベース位置を切り替え
+- 画面リサイズ時もidle状態なら即座に新しいベース位置に移動
+
+### 🖱️ クリックでチャット起動
+
+アバター上に透明な`<Html>`オーバーレイを重ね、クリックで `open-site-agent` カスタムイベントをdispatch。`SiteAgent.tsx`側でこれをリッスンしてチャットUIを開く：
+
+```typescript
+// SiteAvatar.tsx
+window.dispatchEvent(new Event('open-site-agent'));
+
+// SiteAgent.tsx
+window.addEventListener('open-site-agent', () => setIsOpen(true));
+```
+
+### 🎥 レンダリング設定
+
+```typescript
+<Canvas camera={{ position: [0, 1.3, 4.5], fov: 40 }} gl={{ alpha: true }}>
+    {/* FOV 40で適度な望遠感・カメラY=1.3で俯瞰気味に */}
+    <ambientLight intensity={1.0} />
+    <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
+    <pointLight position={[-10, -10, -10]} />
+</Canvas>
+```
+
+- `gl={{ alpha: true }}`でCanvas背景を透過し、ページのグラデーションが透けて見える
+- 固定位置（`fixed bottom-0`）・`pointer-events-none`でページ操作を妨げない
 
 ---
