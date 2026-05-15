@@ -50,7 +50,7 @@ docker compose up --build
 | **Backend (Rails API)** | 本番稼働 | Railway |
 | **Worker (Go)** | 本番稼働（6時間ごとに自動同期） | Railway |
 | **AI Service (Python / RAG)** | 本番稼働 | Railway |
-| **Edge Gateway (Rust)** | ローカル・Docker Compose環境で動作確認済み。本番はVercel/Railwayのリバースプロキシに委任中 |  - |
+| **Edge Gateway (Rust)** | 本番稼働 | Railway |
 | **Rate Limiting** | 未実装（Rust edge へのtower middleware追加として計画中） | - |
 | **ActionCable / Redis** | 本番稼働（投げ銭リアルタイム通知） | Railway |
 
