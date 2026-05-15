@@ -44,8 +44,6 @@ docker compose up --build
 
 ## Deployment Status
 
-どこが本番稼働していて、どこが開発中・将来実装かを明示します。
-
 | Component | Status | Hosting |
 | --- | --- | --- |
 | **Frontend (React)** | 本番稼働 | Vercel |
