@@ -42,6 +42,22 @@ docker compose up --build
   - `ai`: AI Service (Python)
 - `content/`: Managed content (Markdown/YAML)
 
+## Deployment Status
+
+どこが本番稼働していて、どこが開発中・将来実装かを明示します。
+
+| Component | Status | Hosting |
+| --- | --- | --- |
+| **Frontend (React)** | 本番稼働 | Vercel |
+| **Backend (Rails API)** | 本番稼働 | Railway |
+| **Worker (Go)** | 本番稼働（6時間ごとに自動同期） | Railway |
+| **AI Service (Python / RAG)** | 本番稼働 | Railway |
+| **Edge Gateway (Rust)** | ローカル・Docker Compose環境で動作確認済み。本番はVercel/Railwayのリバースプロキシに委任中 |  - |
+| **Rate Limiting** | 未実装（Rust edge へのtower middleware追加として計画中） | - |
+| **ActionCable / Redis** | 本番稼働（投げ銭リアルタイム通知） | Railway |
+
+> `WORKER_AUTH_TOKEN` は本番環境では必須の環境変数です。未設定の場合、起動時にWARNINGログが出力されます（フォールバックはローカル開発専用）。
+
 ---
 
 ## Edge Gateway (Rust) — なぜRustで書いたか、何をやっているか

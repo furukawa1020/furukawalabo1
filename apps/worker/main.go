@@ -86,10 +86,12 @@ func main() {
 
 func startHTTPServer(db *sql.DB) {
 	http.HandleFunc("/sync", func(w http.ResponseWriter, r *http.Request) {
-		// Simple token auth
+		// Token auth: WORKER_AUTH_TOKEN must be set in production.
+		// The fallback below is intentionally weak and for local development only.
 		authToken := os.Getenv("WORKER_AUTH_TOKEN")
 		if authToken == "" {
-			authToken = "default-secret-token" // Fallback for local dev
+			authToken = "default-secret-token-dev-only"
+			fmt.Println("WARNING: WORKER_AUTH_TOKEN is not set. Using insecure default. Set this env var in production.")
 		}
 
 		if r.Header.Get("Authorization") != "Bearer "+authToken {

@@ -18,7 +18,7 @@ graph TD
 
 - **Web (React/TS)**: High-fidelity PWA frontend. Optimized for OGP and accessibility.
 - **API (Rails)**: Central data authority. Manages donations, blog metadata, and core resources.
-- **Edge Gateway (Rust/Axum)**: Performance-oriented routing, rate limiting, and security.
+- **Edge Gateway (Rust/Axum)**: Performance-oriented routing and proxying (API/AI). No GC pauses. Rate limiting planned via tower middleware.
 - **Worker (Go)**: Efficient background synchronization. Handles Protopedia periodic updates every 6 hours.
 - **AI (Python)**: Specialized service for future semantic enhancements (meaning-making analysis).
 

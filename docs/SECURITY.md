@@ -7,7 +7,7 @@
 
 ## Implementation Details
 - **Stripe**: All payment processing is handled by Stripe. No credit card information touches our servers. Webhook signatures are strictly verified.
-- **Edge Gateway**: Rate limiting is implemented in the Rust gateway to prevent DDoS and brute-force attacks.
+- **Edge Gateway**: The Rust gateway handles routing, CORS, and request proxying to internal services. Rate limiting is planned as the next layer (tower middleware) but not yet active in the current release.
 - **Content Security**: Markdown content is sanitized before rendering to prevent XSS.
 
 ## Reporting Vulnerabilities
