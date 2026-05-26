@@ -13,6 +13,10 @@ sections:
   - name: 受賞歴（大学以降）
     items:
       - year: 2026
+        title: SecHack365'26 研究駆動コース
+        detail: 採択
+        url: https://sechack365.nict.go.jp/
+      - year: 2026
         title: 日本財団HUMAIプログラム 第二期
         detail: 奨励金A 採択
         url: https://humai.nf.or.jp/

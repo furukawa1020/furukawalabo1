@@ -44,15 +44,15 @@ docker compose up --build
 
 ## Deployment Status
 
-| Component | Status | Hosting |
-| --- | --- | --- |
-| **Frontend (React)** | 本番稼働 | Vercel |
-| **Backend (Rails API)** | 本番稼働 | Railway |
-| **Worker (Go)** | 本番稼働（6時間ごとに自動同期） | Railway |
-| **AI Service (Python / RAG)** | 本番稼働 | Railway |
-| **Edge Gateway (Rust)** | 本番稼働 | Railway |
-| **Rate Limiting** | 未実装（Rust edge へのtower middleware追加として計画中） | - |
-| **ActionCable / Redis** | 本番稼働（投げ銭リアルタイム通知） | Railway |
+| Component | Status |
+| --- | --- |
+| **Frontend (React)** | 本番稼働 |
+| **Backend (Rails API)** | 本番稼働 |
+| **Worker (Go)** | 本番稼働（6時間ごとに自動同期） |
+| **AI Service (Python / RAG)** | 本番稼働 |
+| **Edge Gateway (Rust)** | 本番稼働 |
+| **Rate Limiting** | 未実装（Rust edge へのtower middleware追加として計画中） |
+| **ActionCable / Redis** | 本番稼働（投げ銭リアルタイム通知） |
 
 > `WORKER_AUTH_TOKEN` は本番環境では必須の環境変数です。未設定の場合、起動時にWARNINGログが出力されます（フォールバックはローカル開発専用）。
 
