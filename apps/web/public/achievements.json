@@ -34,6 +34,12 @@
             "items": [
                 {
                     "year": "2026",
+                    "title": "SecHack365'26 研究駆動コース",
+                    "detail": "採択",
+                    "url": "https://sechack365.nict.go.jp/"
+                },
+                {
+                    "year": "2026",
                     "title": "日本財団HUMAIプログラム 第二期",
                     "detail": "奨励金A 採択",
                     "url": "https://humai.nf.or.jp/"
@@ -90,6 +96,12 @@
         {
             "name": "コミュニティ・運営",
             "items": [
+                {
+                    "year": "2026",
+                    "title": "STECH",
+                    "detail": "所属（上位1%の学生エンジニアが集う審査制コミュニティ）",
+                    "url": "https://jinnen.co.jp/"
+                },
                 {
                     "year": "2024",
                     "title": "地域創造カフェ 初代代表",
