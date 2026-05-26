@@ -49,6 +49,10 @@ sections:
 
   - name: コミュニティ・運営経験
     items:
+      - year: 2026
+        title: STECH
+        detail: 所属（学生エンジニア向け審査制コミュニティ）
+        url: https://jinnen.co.jp/
       - year: 2023
         title: 地域創造カフェ（学内コミュニティ）
         detail: 初代代表 / 人が集まり、試し、続けるための「場の設計」
