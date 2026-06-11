@@ -15,20 +15,21 @@ export const Works = () => {
         let isMounted = true;
 
         // 1. Data Fetching
-        const load = new Promise<void>((resolve) => {
+        const load = new Promise<void>((resolve, reject) => {
             Promise.all([
-                api.get('/works').catch(() => ({ data: { works: [] } })),
+                api.get('/works'), // logical API doesn't cache usually
                 axios.get(`/content/works.json?v=${new Date().getTime()}`).catch(() => ({ data: [] }))
             ])
                 .then(([apiRes, localRes]) => {
                     if (isMounted) {
                         const apiWorks = apiRes.data.works || [];
                         const localWorks = localRes.data || [];
+                        // Merge local works (RoboCup, etc) with API works
                         setWorks([...localWorks, ...apiWorks]);
                         resolve();
                     }
                 })
-                .catch(() => resolve()); // always resolve, never reject
+                .catch(reject);
         });
 
         // 2. Timeout (3 seconds)
