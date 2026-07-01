@@ -1,6 +1,14 @@
 export const MediaLinks = ({ type = 'all', className = '' }: { type?: 'all' | 'interview', className?: string }) => {
     const items = [
         {
+            title: "🐡 ふぐ研究員募集！— 休む合図のふくらみ技術を開発せよ —",
+            url: "https://colabfield.org/project/fugu/",
+            date: "CoLabField",
+            badge: "参加者募集中（8月〜11月）",
+            isInterview: false,
+            color: "bg-purple-700 hover:bg-purple-600"
+        },
+        {
             title: "金沢大学公式サイト インタビュー",
             url: "https://innov.w3.kanazawa-u.ac.jp/articles/articles-3769/",
             date: "2025-12-05",
@@ -39,6 +47,11 @@ export const MediaLinks = ({ type = 'all', className = '' }: { type?: 'all' | 'i
                         {item.date && (
                             <span className="text-[10px] opacity-90 mb-1 block font-mono bg-black/20 w-fit px-2 py-0.5 rounded">
                                 {item.date}
+                            </span>
+                        )}
+                        {'badge' in item && item.badge && (
+                            <span className="text-[10px] font-bold mb-1 block bg-yellow-400 text-black w-fit px-2 py-0.5 rounded animate-pulse">
+                                🔔 {item.badge}
                             </span>
                         )}
                         <h3 className="font-bold text-base leading-snug w-full">
