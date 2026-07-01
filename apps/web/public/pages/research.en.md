@@ -52,16 +52,3 @@ Even with the same physiological reaction, people interpret it as different mean
 * We treat the "meaning" of experiences, which is difficult to capture with numerical indicators, through touch and vision, designing it not as "healing" but as a "trigger for self-understanding."
 * Creating a society where even those who deviate slightly from "normal" can live easily.
 * I want to increase the moments of "I'm glad I'm alive."
-
----
-
-## 🐡 CoLabField Project — Open Collaboration
-
-**"Recruiting Fugu Researchers! — Develop the Inflation Technology for Rest Signals —"**
-
-Based on the insights from "Menfugu," winner of the みらい共創Award2026 Special Prize, we are running an open collaboration project on CoLabField.
-Join us in researching and developing an inflation-type interface that solves "wanting to rest but unable to."
-
-**Participants Wanted (August – November 2026)**
-
-👉 [Project Details & Sign Up](https://colabfield.org/project/fugu/)

@@ -44,7 +44,7 @@ export const Research = () => {
                             </article>
                         </div>
 
-                        <div className="lg:col-span-4">
+                        <div className="lg:col-span-4 space-y-6">
                             <div className="bg-neutral-800/80 p-8 rounded-3xl border border-neutral-700 sticky top-32">
                                 <h3 className="text-xl font-bold mb-6 flex items-center gap-3 text-purple-400">
                                     <span className="p-2 bg-purple-900/30 rounded-lg">{t('research.featured')}</span>
@@ -53,6 +53,26 @@ export const Research = () => {
                                     {t('research.interview_link')}
                                 </p>
                                 <MediaLinks type="interview" className="grid-cols-1" />
+
+                                <div className="mt-8 pt-8 border-t border-neutral-700">
+                                    <h3 className="text-base font-bold mb-3 flex items-center gap-2 text-yellow-400">
+                                        <span>🐡</span> 現在募集中のプロジェクト
+                                    </h3>
+                                    <a
+                                        href="https://colabfield.org/project/fugu/"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="group flex flex-col gap-2 p-4 rounded-xl bg-purple-900/40 border border-purple-700 hover:bg-purple-900/60 transition-all hover:scale-[1.02] shadow-lg"
+                                    >
+                                        <span className="text-[10px] font-bold bg-yellow-400 text-black w-fit px-2 py-0.5 rounded animate-pulse">
+                                            🔔 参加者募集中（2026年8月〜11月）
+                                        </span>
+                                        <span className="text-sm font-bold text-white leading-snug">
+                                            ふぐ研究員募集！— 休む合図のふくらみ技術を開発せよ —
+                                        </span>
+                                        <span className="text-xs text-purple-300">CoLabField →</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
