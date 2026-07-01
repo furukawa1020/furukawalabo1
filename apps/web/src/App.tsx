@@ -9,6 +9,7 @@ import { Donate } from './pages/Donate';
 import { About } from './pages/About';
 import { Admin } from './pages/Admin';
 import { Legal } from './pages/Legal';
+import { Contact } from './pages/Contact';
 import { CookieConsent } from './components/CookieConsent';
 import { ThemeProvider } from './components/ThemeContext';
 import { ThemeToggle } from './components/ThemeToggle';
@@ -36,6 +37,7 @@ function App() {
         { to: '/works', label: 'Works' },
         { to: '/achievements', label: 'Achievements' },
         { to: '/blog', label: 'Blog' },
+        { to: '/contact', label: 'Contact' },
         { to: '/donate', label: 'おやつ代と質問ボックス', special: true },
     ];
 
@@ -121,12 +123,14 @@ function App() {
                             <Route path="/blog/:slug" element={<Blog />} />
                             <Route path="/donate" element={<Donate />} />
                             <Route path="/legal" element={<Legal />} />
+                            <Route path="/contact" element={<Contact />} />
                         </Routes>
                     </main>
 
                     <footer className="py-12 border-t border-neutral-200 dark:border-neutral-800 mt-24 text-center text-neutral-500 dark:text-neutral-600 text-sm transition-colors duration-300">
                         <p>&copy; 2026 Furukawa Archive OS. All rights reserved.</p>
-                        <div className="mt-4">
+                        <div className="mt-4 flex justify-center gap-6">
+                            <Link to="/contact" className="hover:text-cyan-500 transition-colors">Contact</Link>
                             <Link to="/legal" className="hover:text-cyan-500 transition-colors">特定商取引法に基づく表記</Link>
                         </div>
                     </footer>
