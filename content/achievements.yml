@@ -13,6 +13,10 @@ sections:
   - name: 受賞歴（大学以降）
     items:
       - year: 2026
+        title: みらい共創Award2026（CoLabField主催）
+        detail: 特別賞「めんふぐ〜ストレスを"測る"から"感じる"へ〜」
+        url: https://colabfield.org/post-20260701/
+      - year: 2026
         title: SecHack365'26 研究駆動コース
         detail: 採択
         url: https://sechack365.nict.go.jp/
