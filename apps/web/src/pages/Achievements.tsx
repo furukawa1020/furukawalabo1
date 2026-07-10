@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { SEO } from '../components/SEO';
-import { Award, Briefcase, Users, FileText, Star, Mic } from 'lucide-react';
+import { Award, Briefcase, Users, FileText, Star, Mic, ExternalLink } from 'lucide-react';
 
 import imgRobocup from '../assets/images/robocup-main.jpg';
 import imgAwardGold from '../assets/images/awards/award-gold.jpg';
@@ -28,6 +28,7 @@ type AchievementItem = {
     detail_secondary?: string;
     date?: string;
     image?: string;
+    url?: string;
 };
 
 type AchievementSection = {
@@ -96,35 +97,55 @@ export const Achievements = () => {
                                         ))}
                                     </div>
                                 )}
-                                {section.items.map((item, i) => (
-                                    <div key={i} className="group relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl hover:border-neutral-300 dark:hover:border-neutral-700 transition-all hover:shadow-lg dark:hover:shadow-neutral-900/50">
-                                        <div className="flex flex-col md:flex-row md:items-start justify-between gap-2 mb-2">
-                                            <h3 className="font-bold text-lg leading-snug group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
-                                                {item.title}
-                                            </h3>
-                                            <span className="shrink-0 text-sm font-mono text-neutral-500 bg-neutral-100 dark:bg-neutral-800 px-3 py-1 rounded-full">
-                                                {item.year}
-                                            </span>
-                                        </div>
-                                        <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">
-                                            {item.detail}
-                                        </p>
-                                        {item.detail_secondary && (
-                                            <p className="text-neutral-500 dark:text-neutral-500 text-xs mt-2 italic">
-                                                {item.detail_secondary}
-                                            </p>
-                                        )}
-                                        {item.image && (
-                                            <div className="mt-4 rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-700">
-                                                <img
-                                                    src={IMAGE_MAP[item.image] || item.image}
-                                                    alt={item.title}
-                                                    className="w-full h-auto max-h-64 object-cover hover:scale-105 transition-transform duration-500"
-                                                />
+                                {section.items.map((item, i) => {
+                                    const CardWrapper = item.url
+                                        ? ({ children }: { children: React.ReactNode }) => (
+                                            <a
+                                                href={item.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="group relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl hover:border-cyan-400 dark:hover:border-cyan-600 transition-all hover:shadow-lg dark:hover:shadow-neutral-900/50 block"
+                                            >
+                                                {children}
+                                            </a>
+                                        )
+                                        : ({ children }: { children: React.ReactNode }) => (
+                                            <div className="group relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl hover:border-neutral-300 dark:hover:border-neutral-700 transition-all hover:shadow-lg dark:hover:shadow-neutral-900/50">
+                                                {children}
                                             </div>
-                                        )}
-                                    </div>
-                                ))}
+                                        );
+
+                                    return (
+                                        <CardWrapper key={i}>
+                                            <div className="flex flex-col md:flex-row md:items-start justify-between gap-2 mb-2">
+                                                <h3 className="font-bold text-lg leading-snug group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors flex items-center gap-2">
+                                                    {item.title}
+                                                    {item.url && <ExternalLink size={14} className="shrink-0 opacity-50 group-hover:opacity-100 transition-opacity" />}
+                                                </h3>
+                                                <span className="shrink-0 text-sm font-mono text-neutral-500 bg-neutral-100 dark:bg-neutral-800 px-3 py-1 rounded-full">
+                                                    {item.year}
+                                                </span>
+                                            </div>
+                                            <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">
+                                                {item.detail}
+                                            </p>
+                                            {item.detail_secondary && (
+                                                <p className="text-neutral-500 dark:text-neutral-500 text-xs mt-2 italic">
+                                                    {item.detail_secondary}
+                                                </p>
+                                            )}
+                                            {item.image && (
+                                                <div className="mt-4 rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-700">
+                                                    <img
+                                                        src={IMAGE_MAP[item.image] || item.image}
+                                                        alt={item.title}
+                                                        className="w-full h-auto max-h-64 object-cover hover:scale-105 transition-transform duration-500"
+                                                    />
+                                                </div>
+                                            )}
+                                        </CardWrapper>
+                                    );
+                                })}
                             </div>
                         </div>
                     ))}
