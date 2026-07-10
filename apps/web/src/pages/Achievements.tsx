@@ -98,25 +98,8 @@ export const Achievements = () => {
                                     </div>
                                 )}
                                 {section.items.map((item, i) => {
-                                    const CardWrapper = item.url
-                                        ? ({ children }: { children: React.ReactNode }) => (
-                                            <a
-                                                href={item.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="group relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl hover:border-cyan-400 dark:hover:border-cyan-600 transition-all hover:shadow-lg dark:hover:shadow-neutral-900/50 block"
-                                            >
-                                                {children}
-                                            </a>
-                                        )
-                                        : ({ children }: { children: React.ReactNode }) => (
-                                            <div className="group relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl hover:border-neutral-300 dark:hover:border-neutral-700 transition-all hover:shadow-lg dark:hover:shadow-neutral-900/50">
-                                                {children}
-                                            </div>
-                                        );
-
-                                    return (
-                                        <CardWrapper key={i}>
+                                    const innerContent = (
+                                        <>
                                             <div className="flex flex-col md:flex-row md:items-start justify-between gap-2 mb-2">
                                                 <h3 className="font-bold text-lg leading-snug group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors flex items-center gap-2">
                                                     {item.title}
@@ -143,9 +126,29 @@ export const Achievements = () => {
                                                     />
                                                 </div>
                                             )}
-                                        </CardWrapper>
+                                        </>
+                                    );
+
+                                    return item.url ? (
+                                        <a
+                                            key={i}
+                                            href={item.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="group relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl hover:border-cyan-400 dark:hover:border-cyan-600 transition-all hover:shadow-lg dark:hover:shadow-neutral-900/50 block"
+                                        >
+                                            {innerContent}
+                                        </a>
+                                    ) : (
+                                        <div
+                                            key={i}
+                                            className="group relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl hover:border-neutral-300 dark:hover:border-neutral-700 transition-all hover:shadow-lg dark:hover:shadow-neutral-900/50"
+                                        >
+                                            {innerContent}
+                                        </div>
                                     );
                                 })}
+
                             </div>
                         </div>
                     ))}
