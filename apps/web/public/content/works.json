@@ -1,17 +1,22 @@
 [
     {
+        "id": "m5flick",
+        "title": "M5Flick — 昇竜拳ができる！ストレス解消パンチングフリックインターフェース",
+        "thumbnail_url": "https://protopedia.net/pic/8bc0517a-952b-4d61-850e-5b9e75771622.png",
+        "summary": "M5Flickは、巨大クッションを真っ赤なグローブで殴るだけで日本語が飛び出す新感覚装置。昇竜拳も入力になる、全身で打つ文字入力体験、笑えて気持ちいいストレス解消パンチングフリックインターフェース！",
+        "published_at": "2026-07-21",
+        "category": "HCI",
+        "tags": ["M5Stack", "HCI", "Python", "OpenCV", "Physical Computing", "UnitV2"],
+        "url": "https://protopedia.net/prototype/9000"
+    },
+    {
         "id": "robocup-junior",
         "title": "RoboCup Junior (Soccer Lightweight)",
         "thumbnail_url": "/images/robocup-main.jpg",
         "summary": "2018-2023. 全国大会4年連続出場、郡上ノード優勝、大垣オープン準優勝。2人チーム「GR7」として活動し、自律移動ロボットのハードウェア設計・回路製作・組込みプログラミングを担当。",
         "published_at": "2023-01-01",
         "category": "Pre-University",
-        "tags": [
-            "Robotics",
-            "C++",
-            "Circuit Design",
-            "Competition"
-        ],
+        "tags": ["Robotics", "C++", "Circuit Design", "Competition"],
         "url": null
     }
 ]

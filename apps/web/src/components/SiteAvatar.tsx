@@ -260,8 +260,131 @@ const AvatarModel = () => {
 };
 
 export const SiteAvatar = () => {
+    const [visitorCount, setVisitorCount] = useState<number | null>(null);
+    const [showBubble, setShowBubble] = useState(false);
+    const [bubbleVisible, setBubbleVisible] = useState(false);
+
+    useEffect(() => {
+        // CounterAPI: increment on each visit and get count
+        fetch('https://api.counterapi.dev/v1/furukawalab-site/visits/up')
+            .then(res => res.json())
+            .then(data => {
+                const count = data.count ?? data.value ?? null;
+                if (count !== null) {
+                    setVisitorCount(count);
+                    // Show after 2.5s (avatar loads)
+                    setTimeout(() => {
+                        setShowBubble(true);
+                        setTimeout(() => setBubbleVisible(true), 50);
+                    }, 2500);
+                    // Auto-hide after 12s
+                    setTimeout(() => {
+                        setBubbleVisible(false);
+                        setTimeout(() => setShowBubble(false), 500);
+                    }, 12500);
+                }
+            })
+            .catch(() => { /* silently fail */ });
+    }, []);
+
+    const handleClose = () => {
+        setBubbleVisible(false);
+        setTimeout(() => setShowBubble(false), 500);
+    };
+
+    const shareOnX = () => {
+        const url = window.location.origin;
+        const text = `古川耕太郎さんのポートフォリオ、私は${visitorCount?.toLocaleString()}人目の来訪者でした！🎉\n#ポートフォリオ #HCI\n${url}`;
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+    };
+
     return (
         <div className="fixed bottom-0 left-0 right-0 h-[200px] pointer-events-none z-30" style={{ pointerEvents: 'none' }}>
+            {/* Visitor Bubble */}
+            {showBubble && visitorCount !== null && (
+                <div
+                    className="absolute pointer-events-auto"
+                    style={{
+                        bottom: '195px',
+                        left: 'clamp(12px, 5vw, 80px)',
+                        transition: 'opacity 0.5s ease, transform 0.5s ease',
+                        opacity: bubbleVisible ? 1 : 0,
+                        transform: bubbleVisible ? 'translateY(0)' : 'translateY(12px)',
+                    }}
+                >
+                    <div style={{
+                        background: 'white',
+                        color: '#1a1a2e',
+                        borderRadius: '16px',
+                        boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+                        padding: '14px 16px 12px',
+                        width: '200px',
+                        position: 'relative',
+                        fontFamily: 'sans-serif',
+                    }}>
+                        {/* Close button */}
+                        <button
+                            onClick={handleClose}
+                            style={{
+                                position: 'absolute', top: '-8px', right: '-8px',
+                                width: '22px', height: '22px',
+                                background: '#6b7280', color: 'white',
+                                borderRadius: '50%', border: 'none',
+                                cursor: 'pointer', fontSize: '12px',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                lineHeight: 1,
+                            }}
+                        >×</button>
+                        {/* Message */}
+                        <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+                            <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '2px' }}>
+                                🎉 いらっしゃい！
+                            </div>
+                            <div style={{ fontSize: '12px', fontWeight: 600, lineHeight: 1.4 }}>
+                                あなたは
+                            </div>
+                            <div style={{ fontSize: '28px', fontWeight: 900, color: '#06b6d4', lineHeight: 1.1 }}>
+                                {visitorCount.toLocaleString()}
+                            </div>
+                            <div style={{ fontSize: '12px', fontWeight: 600, lineHeight: 1.4 }}>
+                                人目の来訪者です！
+                            </div>
+                        </div>
+                        {/* X Share button */}
+                        <button
+                            onClick={shareOnX}
+                            style={{
+                                width: '100%',
+                                background: '#000',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: '8px',
+                                padding: '7px 0',
+                                fontSize: '12px',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '5px',
+                            }}
+                        >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.631L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+                            でシェアする
+                        </button>
+                        {/* Tail */}
+                        <div style={{
+                            position: 'absolute', bottom: '-8px', left: '24px',
+                            width: '16px', height: '16px',
+                            background: 'white',
+                            transform: 'rotate(45deg)',
+                            boxShadow: '2px 2px 4px rgba(0,0,0,0.1)',
+                            borderRadius: '2px',
+                        }} />
+                    </div>
+                </div>
+            )}
+
             {/* FOV 40, Higher Camera Y (1.3) to look DOWN and prevent upskirt visibility */}
             <Canvas camera={{ position: [0, 1.3, 4.5], fov: 40 }} gl={{ alpha: true }}>
                 <ambientLight intensity={1.0} />
