@@ -265,19 +265,16 @@ export const SiteAvatar = () => {
     const [bubbleVisible, setBubbleVisible] = useState(false);
 
     useEffect(() => {
-        // CounterAPI: increment on each visit and get count
         fetch('https://api.counterapi.dev/v1/furukawalab-site/visits/up')
             .then(res => res.json())
             .then(data => {
                 const count = data.count ?? data.value ?? null;
                 if (count !== null) {
                     setVisitorCount(count);
-                    // Show after 2.5s (avatar loads)
                     setTimeout(() => {
                         setShowBubble(true);
                         setTimeout(() => setBubbleVisible(true), 50);
                     }, 2500);
-                    // Auto-hide after 12s
                     setTimeout(() => {
                         setBubbleVisible(false);
                         setTimeout(() => setShowBubble(false), 500);
@@ -287,6 +284,36 @@ export const SiteAvatar = () => {
             .catch(() => { /* silently fail */ });
     }, []);
 
+    // キリ番判定＋はくちゃんコメント生成
+    const getKiribannComment = (n: number): string | null => {
+        if (n === 1)       return '🥇 記念すべき1人目！！';
+        if (n === 7)       return '🎰 ラッキー7！！';
+        if (n === 10)      return '🎯 ちょうど10人目！';
+        if (n === 77)      return '🎰 ゾロ目だ！！';
+        if (n === 100)     return '🎊 100人突破！やったー！';
+        if (n === 111)     return '👀 ゾロ目ゲット！';
+        if (n === 123)     return '📈 123！順調すぎる！';
+        if (n === 222)     return '👀 222！ゾロ目！';
+        if (n === 333)     return '👀 333！みんなありがとう！';
+        if (n === 444)     return '🍀 444！ラッキー！';
+        if (n === 500)     return '🎉 500人！すごい！';
+        if (n === 555)     return '👀 ゾロ目555！！';
+        if (n === 777)     return '🎰 ラッキー777！！！';
+        if (n === 1000)    return '🚀 1000人突破！！！！';
+        if (n === 1111)    return '👀 1111！ゾロ目すぎる！';
+        if (n === 2000)    return '🎊 2000人！ありがとう！';
+        if (n === 5000)    return '🔥 5000人！！信じられない！';
+        if (n === 10000)   return '🏆 1万人！！！神！';
+        // 末尾が000
+        if (n >= 1000 && n % 1000 === 0) return `🎉 ${n.toLocaleString()}人！キリ番！`;
+        // 末尾が00
+        if (n >= 100 && n % 100 === 0)   return `✨ ${n.toLocaleString()}人！キリ番ゲット！`;
+        // ゾロ目（全桁同じ）
+        const s = String(n);
+        if (s.length > 1 && [...s].every(c => c === s[0])) return `👀 ${n}！ゾロ目！！`;
+        return null;
+    };
+
     const handleClose = () => {
         setBubbleVisible(false);
         setTimeout(() => setShowBubble(false), 500);
@@ -294,9 +321,13 @@ export const SiteAvatar = () => {
 
     const shareOnX = () => {
         const url = window.location.origin;
-        const text = `古川耕太郎さんのポートフォリオ、私は${visitorCount?.toLocaleString()}人目の来訪者でした！🎉\n#ポートフォリオ #HCI\n${url}`;
+        const kiribann = visitorCount !== null ? getKiribannComment(visitorCount) : null;
+        const extra = kiribann ? `\n${kiribann}` : '';
+        const text = `はたけ/Furukawa @HATAKE55555 のポートフォリオ furukawalab に${visitorCount?.toLocaleString()}人目の来訪者でした！🎉${extra}\n#furukawalab\n${url}`;
         window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
     };
+
+    const kiribannComment = visitorCount !== null ? getKiribannComment(visitorCount) : null;
 
     return (
         <div className="fixed bottom-0 left-0 right-0 h-[200px] pointer-events-none z-30" style={{ pointerEvents: 'none' }}>
@@ -349,6 +380,21 @@ export const SiteAvatar = () => {
                             <div style={{ fontSize: '12px', fontWeight: 600, lineHeight: 1.4 }}>
                                 人目の来訪者です！
                             </div>
+                            {/* キリ番コメント */}
+                            {kiribannComment && (
+                                <div style={{
+                                    marginTop: '6px',
+                                    fontSize: '12px',
+                                    fontWeight: 700,
+                                    color: '#f59e0b',
+                                    background: '#fefce8',
+                                    borderRadius: '8px',
+                                    padding: '4px 8px',
+                                    lineHeight: 1.4,
+                                }}>
+                                    {kiribannComment}
+                                </div>
+                            )}
                         </div>
                         {/* X Share button */}
                         <button
