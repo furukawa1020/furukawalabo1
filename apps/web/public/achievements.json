@@ -17,6 +17,13 @@
             "items": [
                 {
                     "year": "2026",
+                    "title": "EAI MobiQuitous 2026 — 査読付き Regular Paper 採択",
+                    "detail": "Furukawa, K. \"Claim-Capped Biosignal Feedback for Privacy-Calibrated Self-Observation on Mobile and Wearable Devices.\" Accepted as a Regular Paper following peer review.",
+                    "detail_secondary": "※ Peer-Reviewed / Accepted・Not Published — 著者登録・カメラレディ提出未完了のため会議録には未収録",
+                    "url": "https://mobiquitous.eai-conferences.org/2026/"
+                },
+                {
+                    "year": "2026",
                     "title": "インタラクション2026",
                     "detail": "インタラクティブ発表（プレミアム）採択：「ストレスを〈測る〉から〈感じる〉へ― 膨張型インターフェースによる主観的体験の観察法」",
                     "url": "https://www.interaction-ipsj.org/2026/"
