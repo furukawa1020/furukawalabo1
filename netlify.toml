@@ -6,6 +6,15 @@
 [dev]
   framework = "#static"
 
+# Edge Function: OGP injection for SNS crawlers on blog pages
+[[edge_functions]]
+  function = "ogp"
+  path = "/blog"
+
+[[edge_functions]]
+  function = "ogp"
+  path = "/blog/*"
+
 [[redirects]]
   from = "/api/*"
   to = "https://furukawa-api-production.up.railway.app/api/:splat"
