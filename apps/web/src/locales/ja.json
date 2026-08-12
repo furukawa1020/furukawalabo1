@@ -12,13 +12,21 @@
             "title": "EAI MobiQuitous 2026",
             "desc": "Regular Paper 査読採択"
         },
+        "interaction": {
+            "title": "Interaction 2026",
+            "desc": "インタラクティブ発表（プレミアム）採択"
+        },
+        "sechack": {
+            "title": "SecHack365",
+            "desc": "優秀修了生 / 表現駆動コース"
+        },
         "gikihaku": {
             "title": "技育博2025",
             "desc": "株式会社ゆめみ企業賞 / スポンサー賞 受賞"
         },
         "github": {
             "title": "GitHub Activity",
-            "desc": "過去1年間に 5,700+ Contributions"
+            "desc": "過去1年間に 9,000+ Contributions"
         },
         "prototypes": {
             "title": "50+ Prototypes",

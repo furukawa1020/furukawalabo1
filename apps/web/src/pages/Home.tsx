@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Trophy, Code, Star, Activity } from 'lucide-react';
+import { ArrowRight, Trophy, Code, Star, Activity, Award } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -51,6 +51,16 @@ export const Home = () => {
                             icon={<Star className="text-cyan-500" />}
                             title={t('highlights.mobiquitous.title')}
                             desc={t('highlights.mobiquitous.desc')}
+                        />
+                        <HighlightCard
+                            icon={<Award className="text-purple-400" />}
+                            title={t('highlights.interaction.title')}
+                            desc={t('highlights.interaction.desc')}
+                        />
+                        <HighlightCard
+                            icon={<Trophy className="text-pink-500" />}
+                            title={t('highlights.sechack.title')}
+                            desc={t('highlights.sechack.desc')}
                         />
                         <HighlightCard
                             icon={<Trophy className="text-yellow-500" />}

@@ -12,13 +12,21 @@
             "title": "EAI MobiQuitous 2026",
             "desc": "Accepted as a Regular Paper"
         },
+        "interaction": {
+            "title": "Interaction 2026",
+            "desc": "Selected for Interactive Presentation (Premium)"
+        },
+        "sechack": {
+            "title": "SecHack365",
+            "desc": "Outstanding Graduate / Expression-driven Course"
+        },
         "gikihaku": {
             "title": "Gikihaku 2025",
             "desc": "Yumemi Inc. Corporate Award / Sponsor Award"
         },
         "github": {
             "title": "GitHub Activity",
-            "desc": "5,700+ contributions in the last year"
+            "desc": "9,000+ contributions in the last year"
         },
         "prototypes": {
             "title": "50+ Prototypes",
