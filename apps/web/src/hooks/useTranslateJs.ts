@@ -44,34 +44,33 @@ export function reExecuteTranslation() {
     if (lang === 'japanese') return;
     const t = window.translate;
     if (!t) return;
-    try {
-        // Small delay so React has finished rendering the new page
-        setTimeout(() => { t.execute(); }, 600);
-    } catch (e) {
-        console.warn('[translate.js] re-execute error:', e);
-    }
+
+    const executeSafe = () => {
+        try { t.execute(); } catch (e) { /* ignore */ }
+    };
+
+    // React async rendering: fire immediately, and again after typical network fetch delays
+    executeSafe();
+    setTimeout(executeSafe, 500);
+    setTimeout(executeSafe, 1500);
+    setTimeout(executeSafe, 3000);
 }
 
 /** Switch to a language */
 export function switchLanguage(langCode: string) {
     if (langCode === 'japanese') {
-        // Reload page with no saved language to restore original Japanese
         localStorage.removeItem(LANG_KEY);
-        window.location.reload();
-        return;
+    } else {
+        localStorage.setItem(LANG_KEY, langCode);
     }
-
-    localStorage.setItem(LANG_KEY, langCode);
 
     const t = window.translate;
     if (!t) {
-        // translate.js not ready — reload will pick up from localStorage
         window.location.reload();
         return;
     }
 
     try {
-        // ✅ Correct API: translate.changeLanguage() not translate.use()
         t.changeLanguage(langCode);
         console.log('[translate.js] changeLanguage ->', langCode);
     } catch (e) {
