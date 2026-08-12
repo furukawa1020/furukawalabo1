@@ -1,5 +1,15 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { initTranslateJs, reExecuteTranslation } from './hooks/useTranslateJs';
+
+// Re-executes translate.js on every route change (SPA support)
+function TranslateExecutor() {
+    const location = useLocation();
+    useEffect(() => {
+        reExecuteTranslation();
+    }, [location.pathname]);
+    return null;
+}
 import { Home } from './pages/Home';
 import { Research } from './pages/Research';
 import { Works } from './pages/Works';
@@ -25,6 +35,11 @@ import { LanguageSwitcher } from './components/LanguageSwitcher';
 function App() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+    // Initialize translate.js once on mount
+    useEffect(() => {
+        initTranslateJs();
+    }, []);
+
     type NavLink = {
         to: string;
         label: string;
@@ -44,6 +59,7 @@ function App() {
     return (
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
             <Router>
+                <TranslateExecutor />
                 <div className="min-h-screen bg-white dark:bg-neutral-900 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#ffffff05_1px,transparent_1px)] [background-size:20px_20px] text-neutral-900 dark:text-neutral-50 font-sans selection:bg-cyan-500 selection:text-white transition-colors duration-300">
                     <SpotlightOverlay />
                     <UniversalAccess />
