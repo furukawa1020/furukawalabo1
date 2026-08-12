@@ -175,7 +175,38 @@ export const Blog = () => {
                                     prose-p:leading-relaxed prose-li:marker:text-neutral-400
                                     prose-a:text-cyan-600 dark:prose-a:text-cyan-400 prose-a:no-underline hover:prose-a:underline
                                     prose-img:rounded-xl prose-img:shadow-lg">
-                                    <ReactMarkdown>{content}</ReactMarkdown>
+                                    <ReactMarkdown
+                                        components={{
+                                            // リンク: 外部は新しいタブで開く
+                                            a: ({ href, children }) => (
+                                                <a
+                                                    href={href}
+                                                    target={href?.startsWith('http') ? '_blank' : undefined}
+                                                    rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
+                                                    className="text-cyan-600 dark:text-cyan-400 underline underline-offset-2 hover:opacity-80 transition-opacity"
+                                                >
+                                                    {children}
+                                                </a>
+                                            ),
+                                            // コードブロック
+                                            code: ({ inline, children, className }: any) =>
+                                                inline ? (
+                                                    <code className="px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-800 rounded text-sm font-mono text-cyan-700 dark:text-cyan-300">
+                                                        {children}
+                                                    </code>
+                                                ) : (
+                                                    <code className={className}>{children}</code>
+                                                ),
+                                            // 引用
+                                            blockquote: ({ children }) => (
+                                                <blockquote className="border-l-4 border-cyan-500 pl-4 italic text-neutral-600 dark:text-neutral-400 my-6">
+                                                    {children}
+                                                </blockquote>
+                                            ),
+                                        }}
+                                    >
+                                        {content}
+                                    </ReactMarkdown>
                                 </div>
 
                                 <div className="mt-16 pt-8 border-t border-neutral-200 dark:border-neutral-800">
