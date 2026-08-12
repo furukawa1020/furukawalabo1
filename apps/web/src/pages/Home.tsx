@@ -49,8 +49,8 @@ export const Home = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <HighlightCard
                             icon={<Star className="text-cyan-500" />}
-                            title={t('highlights.interaction.title')}
-                            desc={t('highlights.interaction.desc')}
+                            title={t('highlights.mobiquitous.title')}
+                            desc={t('highlights.mobiquitous.desc')}
                         />
                         <HighlightCard
                             icon={<Trophy className="text-yellow-500" />}
