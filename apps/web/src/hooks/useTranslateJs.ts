@@ -1,5 +1,5 @@
-// translate.js (xnx3/translate) integration
-// Loads the script dynamically so we know exactly when it's ready
+// translate.js (xnx3/translate v4) integration
+// Correct API: translate.changeLanguage() — NOT translate.use()
 
 declare global {
     interface Window {
@@ -8,7 +8,6 @@ declare global {
 }
 
 const LANG_KEY = 'translatejs_language';
-const CDN_URL  = 'https://res.zvo.cn/translate/translate.js';
 
 export const SUPPORTED_LANGUAGES = [
     { code: 'japanese',            label: '日本語',    flag: '🇯🇵', short: 'JA' },
@@ -23,70 +22,40 @@ export const SUPPORTED_LANGUAGES = [
     { code: 'arabic',              label: 'العربية',   flag: '🇸🇦', short: 'AR' },
 ];
 
-let _initialized = false;
-
-function _setup(t: any) {
-    try {
-        if (t.setUseVersion2)             t.setUseVersion2();
-        if (t.language?.setDefaultTo)     t.language.setDefaultTo('japanese');
-        if (t.listener?.start)            t.listener.start();
-
-        const saved = localStorage.getItem(LANG_KEY);
-        if (saved && saved !== 'japanese') {
-            t.use(saved);
-            setTimeout(() => { try { t.execute(); } catch (_) {} }, 800);
-        }
-        _initialized = true;
-        console.log('[translate.js] ready, lang=', saved || 'japanese');
-    } catch (e) {
-        console.warn('[translate.js] setup error:', e);
-    }
-}
-
-/** Load translate.js dynamically and initialize */
+/** Call after React has rendered the initial DOM */
 export function initTranslateJs() {
-    if (_initialized) return;
-
-    // Already loaded (e.g. hot-reload)
-    if (window.translate) {
-        _setup(window.translate);
+    const t = window.translate;
+    if (!t) {
+        console.warn('[translate.js] not found on window — was /translate.js loaded?');
         return;
     }
-
-    // Dynamically inject the <script> tag
-    const script = document.createElement('script');
-    script.src = CDN_URL;
-    script.async = true;
-    script.onload = () => {
-        if (window.translate) {
-            _setup(window.translate);
-        } else {
-            console.warn('[translate.js] loaded but window.translate not found');
-        }
-    };
-    script.onerror = () => {
-        console.warn('[translate.js] failed to load from CDN:', CDN_URL);
-    };
-    document.head.appendChild(script);
+    // Execute translation now that React DOM is populated
+    try {
+        t.execute();
+        console.log('[translate.js] execute() called on mount');
+    } catch (e) {
+        console.warn('[translate.js] execute error:', e);
+    }
 }
 
-/** Re-execute translation after route change */
+/** Call after each React route change */
 export function reExecuteTranslation() {
     const lang = localStorage.getItem(LANG_KEY) || 'japanese';
     if (lang === 'japanese') return;
     const t = window.translate;
     if (!t) return;
     try {
-        setTimeout(() => { t.execute(); }, 500);
+        // Small delay so React has finished rendering the new page
+        setTimeout(() => { t.execute(); }, 600);
     } catch (e) {
         console.warn('[translate.js] re-execute error:', e);
     }
 }
 
-/** Switch language */
+/** Switch to a language */
 export function switchLanguage(langCode: string) {
     if (langCode === 'japanese') {
-        // Reset: clear key and reload so all original text is restored
+        // Reload page with no saved language to restore original Japanese
         localStorage.removeItem(LANG_KEY);
         window.location.reload();
         return;
@@ -96,16 +65,17 @@ export function switchLanguage(langCode: string) {
 
     const t = window.translate;
     if (!t) {
-        // translate.js not loaded yet → reload, it will restore from localStorage
+        // translate.js not ready — reload will pick up from localStorage
         window.location.reload();
         return;
     }
 
     try {
-        t.use(langCode);
-        t.execute();
+        // ✅ Correct API: translate.changeLanguage() not translate.use()
+        t.changeLanguage(langCode);
+        console.log('[translate.js] changeLanguage ->', langCode);
     } catch (e) {
-        console.warn('[translate.js] switch error:', e);
+        console.warn('[translate.js] changeLanguage error:', e);
     }
 }
 

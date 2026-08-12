@@ -36,6 +36,24 @@
 </head>
 
 <body>
+  <!-- translate.js: self-hosted for reliability (xnx3/translate v4) -->
+  <script src="/translate.js"></script>
+  <script>
+    // Initialize BEFORE React mounts so listener is ready
+    translate.whole.enableAll();           // Translate full element content (React-friendly)
+    translate.language.setLocal('japanese'); // Page source language
+    translate.listener.start();            // Watch DOM mutations → re-translate React renders
+    translate.service.use('client.edge'); // Faster translation channel
+
+    // Restore saved language preference
+    (function () {
+      var saved = localStorage.getItem('translatejs_language');
+      if (saved && saved !== 'japanese') {
+        translate.language.setDefaultTo(saved);
+      }
+    })();
+  </script>
+
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>
