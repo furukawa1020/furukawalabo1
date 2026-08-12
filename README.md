@@ -298,3 +298,57 @@ window.addEventListener('open-site-agent', () => setIsOpen(true));
 - 固定位置（`fixed bottom-0`）・`pointer-events-none`でページ操作を妨げない
 
 ---
+
+## 🌐 多言語対応 — translate.js の組み込み方
+
+このサイトは **[translate.js (xnx3/translate)](https://github.com/xnx3/translate)** を使って、日本語・英語・中国語(簡/繁)・韓国語・フランス語・スペイン語・ドイツ語・ポルトガル語・アラビア語の**10言語切り替え**に対応しています。
+
+### なぜ translate.js を選んだか
+
+React SPA の全テキストを多言語対応させようとすると、通常は `react-i18next` などで全コンテンツを手動で管理する必要があります。しかしブログ記事（Markdown）や API から動的に取得する Works/Research データまでを全部 i18n 管理するのは現実的ではありません。
+
+`translate.js` は DOM 全体を監視・翻訳するアプローチで、**Markdown/JSON由来のコンテンツも含めてページ上のすべてのテキストを自動翻訳**できます。
+
+### 実装の構造
+
+```
+index.html
+ └── <script src="/translate.js">  ← セルフホスト・同期ロード（React 起動前）
+      ├── translate.whole.enableAll()          // 要素丸ごと翻訳モード（React DOM 向け）
+      ├── translate.language.setLocal('japanese') // ページ原文言語を宣言
+      ├── translate.listener.start()           // DOM 変化の継続監視（SPA対応）
+      ├── translate.service.use('client.edge') // 翻訳サービスチャネル
+      └── translate.language.setDefaultTo(saved) // localStorage から言語復元
+
+React App
+ └── TranslateExecutor (App.tsx)
+      └── ルート変更ごとに reExecuteTranslation()
+           └── 0ms / 500ms / 1500ms / 3000ms で translate.execute() を時間差発火
+                （fetch完了→Reactレンダリング→翻訳 の順番を保証）
+
+useTranslateJs.ts (apps/web/src/hooks/)
+ ├── switchLanguage(langCode)
+ │    ├── localStorage に保存
+ │    └── translate.changeLanguage(langCode)  ← 正しいAPI (v4)
+ └── reExecuteTranslation()  ← SPA ルート変更時の再翻訳
+```
+
+### ハマりポイント
+
+| 問題 | 原因 | 解決策 |
+|---|---|---|
+| `window.translate is undefined` | CDN script がReact mount後に実行された | `public/translate.js` にセルフホストし `<body>` 先頭で同期ロード |
+| 言語切替が反応しない | `translate.use()` は v4 では存在しない | 正しいAPI `translate.changeLanguage()` に修正 |
+| 日本語に戻らない | リロード時に内部キャッシュが前言語を保持 | `localStorage.removeItem()` + `changeLanguage('japanese')` を明示呼出し |
+| 非同期コンテンツが翻訳されない | fetch完了後にDOMが更新されても翻訳が追いつかない | 時間差で `translate.execute()` を複数回発火 |
+
+### 関連ファイル
+
+- [`apps/web/index.html`](apps/web/index.html) — translate.js のロードと初期化
+- [`apps/web/src/hooks/useTranslateJs.ts`](apps/web/src/hooks/useTranslateJs.ts) — 言語切替ロジック
+- [`apps/web/src/App.tsx`](apps/web/src/App.tsx) — ルート変更時の再翻訳フック
+- [`apps/web/public/translate.js`](apps/web/public/translate.js) — セルフホストしたライブラリ本体
+
+> **参考**: [translate.js GitHub](https://github.com/xnx3/translate) / 詳細な実装記録は[ブログ記事](https://furukawalab.com/blog)にも掲載しています。
+
+---

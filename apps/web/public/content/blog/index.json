@@ -1,5 +1,11 @@
 [
     {
+        "slug": "2026-08-13-translatejs-react-spa",
+        "title": "React SPA に translate.js を組み込んだ話",
+        "date": "2026-08-13",
+        "summary": "10言語対応を実現するために translate.js を React SPA に組み込んでみた。タイミング問題・ API 名の誤り・非同期フェッチとの敗北など、SPA特有のハマりどころについて実際のコードとともに記録。"
+    },
+    {
         "slug": "2026-08-12-why-i-stopped-stress-prediction",
         "title": "ストレスを当てる研究をやめた理由",
         "date": "2026-08-12",
