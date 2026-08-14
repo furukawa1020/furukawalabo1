@@ -167,51 +167,43 @@ export const Interaction2026Modal = ({ onClose }: { onClose: () => void }) => {
             />
 
             {/* モーダルウィンドウ */}
-            <div className="relative z-10 w-full max-w-3xl max-h-[90vh] flex flex-col bg-white dark:bg-neutral-900 rounded-3xl shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+            <div className="relative z-10 w-full max-w-3xl h-[85vh] md:h-[90vh] flex flex-col bg-white dark:bg-neutral-900 rounded-3xl shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
 
                 {/* ヘッダー */}
-                <div className="flex-shrink-0 px-8 pt-8 pb-6 border-b border-neutral-100 dark:border-neutral-800">
-                    <div className="flex items-start justify-between gap-4 mb-4">
+                <div className="flex-shrink-0 px-6 pt-6 pb-4 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50">
+                    <div className="flex items-start justify-between gap-4 mb-3">
                         <div>
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="inline-block px-3 py-1 bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 text-xs font-bold rounded-full uppercase tracking-wider">
+                            <div className="flex items-center gap-2 mb-1.5">
+                                <span className="inline-block px-2.5 py-0.5 bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 text-[11px] font-bold rounded-full uppercase tracking-wider">
                                     情報処理学会 インタラクション2026 ☆ プレミアム発表
                                 </span>
-                                <span className="inline-block px-3 py-1 bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 text-xs font-bold rounded-full">
-                                    論文ID: 1B33
+                                <span className="inline-block px-2.5 py-0.5 bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 text-[11px] font-bold rounded-full">
+                                    1B33
                                 </span>
                             </div>
-                            <h2 className="text-xl md:text-2xl font-black text-neutral-900 dark:text-white leading-tight">
+                            <h2 className="text-lg md:text-xl font-black text-neutral-900 dark:text-white leading-tight">
                                 ストレスを“測る”から“感じる”へ
-                                <span className="block text-base font-medium text-neutral-500 dark:text-neutral-400 mt-1">
+                                <span className="block text-xs md:text-sm font-medium text-neutral-500 dark:text-neutral-400 mt-0.5">
                                     膨張型インターフェースによる主観的体験の観察法
                                 </span>
                             </h2>
-                            <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">古川耕太郎, 秋田純一（金沢大学）</p>
                         </div>
                         <button
                             onClick={onClose}
-                            className="flex-shrink-0 p-2 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                            className="flex-shrink-0 p-2 rounded-xl hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors"
                             aria-label="閉じる"
                         >
                             <X size={20} className="text-neutral-500" />
                         </button>
                     </div>
 
-                    {/* 一言説明（常時表示） */}
-                    <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 rounded-2xl border border-purple-100 dark:border-purple-900/50">
-                        <p className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed font-medium">
-                            💡 {ONE_LINE}
-                        </p>
-                    </div>
-
                     {/* タブ */}
-                    <div className="flex gap-2 mt-5">
+                    <div className="flex gap-2">
                         <button
                             onClick={() => setTab('short')}
                             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${tab === 'short'
                                 ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
-                                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                                : 'bg-neutral-200/70 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-300 dark:hover:bg-neutral-700'
                                 }`}
                         >
                             <FileText size={15} />
@@ -221,7 +213,7 @@ export const Interaction2026Modal = ({ onClose }: { onClose: () => void }) => {
                             onClick={() => setTab('long')}
                             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${tab === 'long'
                                 ? 'bg-pink-600 text-white shadow-md shadow-pink-600/30'
-                                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                                : 'bg-neutral-200/70 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-300 dark:hover:bg-neutral-700'
                                 }`}
                         >
                             <Microscope size={15} />
@@ -231,7 +223,14 @@ export const Interaction2026Modal = ({ onClose }: { onClose: () => void }) => {
                 </div>
 
                 {/* スクロール可能なコンテンツ */}
-                <div className="flex-1 overflow-y-auto px-8 py-6">
+                <div className="flex-1 overflow-y-auto px-6 md:px-8 py-6 space-y-6">
+                    {/* 一言説明（スクロールエリアの上部に常時表示） */}
+                    <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/40 dark:to-pink-950/40 rounded-2xl border border-purple-100 dark:border-purple-900/50 shadow-sm">
+                        <p className="text-xs md:text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed font-medium">
+                            💡 <strong>【一言で言うと】</strong>{ONE_LINE}
+                        </p>
+                    </div>
+
                     {tab === 'short' && (
                         <div className="space-y-8">
                             {SHORT_SECTIONS.map((sec, i) => (
