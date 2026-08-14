@@ -55,6 +55,7 @@ export const Home = () => {
                             title={t('highlights.mobiquitous.title')}
                             desc={t('highlights.mobiquitous.desc')}
                             onReadMore={() => setShowResearch(true)}
+                            href="https://confyplus.eai.eu/app#manage-paper/id/367209/cid/53753/tid/5314"
                         />
                         <HighlightCard
                             icon={<Award className="text-purple-400" />}
@@ -173,21 +174,34 @@ const LatestContent = () => {
     );
 };
 
-const HighlightCard = ({ icon, title, desc, onReadMore }: { icon: React.ReactNode, title: string, desc: string, onReadMore?: () => void }) => (
+const HighlightCard = ({ icon, title, desc, onReadMore, href }: { icon: React.ReactNode, title: string, desc: string, onReadMore?: () => void, href?: string }) => (
     <div className="p-6 bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-100 dark:border-neutral-700 hover:shadow-md transition-shadow flex flex-col">
         <div className="mb-4 text-neutral-900 dark:text-white p-3 bg-neutral-100 dark:bg-neutral-700/50 rounded-xl w-fit">
             {icon}
         </div>
         <h3 className="text-xl font-bold mb-2 text-neutral-900 dark:text-white">{title}</h3>
         <p className="text-neutral-500 dark:text-neutral-400 flex-1">{desc}</p>
-        {onReadMore && (
-            <button
-                onClick={onReadMore}
-                className="mt-4 flex items-center gap-2 text-sm font-bold text-cyan-600 dark:text-cyan-400 hover:underline w-fit"
-            >
-                <BookOpen size={14} />
-                研究内容を読む
-            </button>
-        )}
+        <div className="mt-4 flex items-center gap-3 flex-wrap">
+            {onReadMore && (
+                <button
+                    onClick={onReadMore}
+                    className="flex items-center gap-2 text-sm font-bold text-cyan-600 dark:text-cyan-400 hover:underline"
+                >
+                    <BookOpen size={14} />
+                    研究内容を読む
+                </button>
+            )}
+            {href && (
+                <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-sm font-bold text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
+                >
+                    <ArrowRight size={13} />
+                    論文ページ
+                </a>
+            )}
+        </div>
     </div>
 );

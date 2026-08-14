@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { X, Share2, Copy, Check, BookOpen, FileText, Microscope } from 'lucide-react';
+import { X, Share2, Copy, Check, BookOpen, FileText, Microscope, ExternalLink } from 'lucide-react';
 
 // ─── コンテンツ定義 ────────────────────────────────────────────────
 
@@ -348,9 +348,20 @@ export const ResearchModal = ({ onClose }: { onClose: () => void }) => {
                 {/* フッター（共有ボタン） */}
                 <div className="flex-shrink-0 px-8 py-5 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/80">
                     <div className="flex items-center justify-between flex-wrap gap-3">
-                        <div className="flex items-center gap-2 text-sm text-neutral-500">
-                            <BookOpen size={14} />
-                            <span>カメラレディ完了・DOI取得待ち</span>
+                        <div className="flex items-center gap-3 flex-wrap">
+                            <div className="flex items-center gap-2 text-sm text-neutral-500">
+                                <BookOpen size={14} />
+                                <span>カメラレディ完了・DOI取得待ち</span>
+                            </div>
+                            <a
+                                href="https://confyplus.eai.eu/app#manage-paper/id/367209/cid/53753/tid/5314"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1.5 text-sm font-bold text-cyan-600 dark:text-cyan-400 hover:underline"
+                            >
+                                <ExternalLink size={13} />
+                                論文ページを開く
+                            </a>
                         </div>
                         <ShareButton />
                     </div>
