@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { SEO } from '../components/SEO';
-import { Award, Briefcase, Users, FileText, Star, Mic, ExternalLink } from 'lucide-react';
+import { Award, Briefcase, Users, FileText, Star, Mic, ExternalLink, BookOpen } from 'lucide-react';
+import { ResearchModal } from '../components/ResearchModal';
 
 import imgRobocup from '../assets/images/robocup-main.jpg';
 import imgAwardGold from '../assets/images/awards/award-gold.jpg';
@@ -43,6 +44,7 @@ type AchievementsData = {
 
 export const Achievements = () => {
     const [data, setData] = useState<AchievementsData | null>(null);
+    const [showResearch, setShowResearch] = useState(false);
 
     useEffect(() => {
         // Fetch JSON directly
@@ -67,6 +69,7 @@ export const Achievements = () => {
     return (
         <>
             <SEO title="Achievements" description="受賞歴・活動実績・登壇情報" />
+            {showResearch && <ResearchModal onClose={() => setShowResearch(false)} />}
             <div className="container mx-auto px-6 pt-32 pb-24">
                 <h1 className="text-4xl font-bold mb-16 text-center tracking-tight">Achievements</h1>
 
@@ -116,6 +119,15 @@ export const Achievements = () => {
                                                 <p className="text-neutral-500 dark:text-neutral-500 text-xs mt-2 italic">
                                                     {item.detail_secondary}
                                                 </p>
+                                            )}
+                                            {item.title.includes('MobiQuitous') && (
+                                                <button
+                                                    onClick={(e) => { e.preventDefault(); setShowResearch(true); }}
+                                                    className="mt-3 flex items-center gap-1.5 text-sm font-bold text-cyan-600 dark:text-cyan-400 hover:underline"
+                                                >
+                                                    <BookOpen size={13} />
+                                                    研究内容を詳しく読む
+                                                </button>
                                             )}
                                             {item.image && (
                                                 <div className="mt-4 rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-700">

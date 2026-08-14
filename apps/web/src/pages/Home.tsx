@@ -1,17 +1,20 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Trophy, Code, Star, Activity, Award } from 'lucide-react';
+import { ArrowRight, Trophy, Code, Star, Activity, Award, BookOpen } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import api from '../api/client';
 import { useTranslation } from 'react-i18next';
+import { ResearchModal } from '../components/ResearchModal';
 
 export const Home = () => {
     const { t } = useTranslation();
+    const [showResearch, setShowResearch] = useState(false);
 
     return (
         <>
             <SEO />
+            {showResearch && <ResearchModal onClose={() => setShowResearch(false)} />}
             {/* Hero Section */}
             <section className="relative h-screen flex items-center justify-center overflow-hidden">
                 <h1 className="sr-only">
@@ -51,6 +54,7 @@ export const Home = () => {
                             icon={<Star className="text-cyan-500" />}
                             title={t('highlights.mobiquitous.title')}
                             desc={t('highlights.mobiquitous.desc')}
+                            onReadMore={() => setShowResearch(true)}
                         />
                         <HighlightCard
                             icon={<Award className="text-purple-400" />}
@@ -169,12 +173,21 @@ const LatestContent = () => {
     );
 };
 
-const HighlightCard = ({ icon, title, desc }: { icon: React.ReactNode, title: string, desc: string }) => (
-    <div className="p-6 bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-100 dark:border-neutral-700 hover:shadow-md transition-shadow">
+const HighlightCard = ({ icon, title, desc, onReadMore }: { icon: React.ReactNode, title: string, desc: string, onReadMore?: () => void }) => (
+    <div className="p-6 bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-100 dark:border-neutral-700 hover:shadow-md transition-shadow flex flex-col">
         <div className="mb-4 text-neutral-900 dark:text-white p-3 bg-neutral-100 dark:bg-neutral-700/50 rounded-xl w-fit">
             {icon}
         </div>
         <h3 className="text-xl font-bold mb-2 text-neutral-900 dark:text-white">{title}</h3>
-        <p className="text-neutral-500 dark:text-neutral-400">{desc}</p>
+        <p className="text-neutral-500 dark:text-neutral-400 flex-1">{desc}</p>
+        {onReadMore && (
+            <button
+                onClick={onReadMore}
+                className="mt-4 flex items-center gap-2 text-sm font-bold text-cyan-600 dark:text-cyan-400 hover:underline w-fit"
+            >
+                <BookOpen size={14} />
+                研究内容を読む
+            </button>
+        )}
     </div>
 );
