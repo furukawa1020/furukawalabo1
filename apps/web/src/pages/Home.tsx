@@ -56,6 +56,7 @@ export const Home = () => {
                             desc={t('highlights.mobiquitous.desc')}
                             onReadMore={() => setShowResearch(true)}
                             href="https://confyplus.eai.eu/app#manage-paper/id/367209/cid/53753/tid/5314"
+                            href2="https://mobiquitous.eai-conferences.org/2026/"
                         />
                         <HighlightCard
                             icon={<Award className="text-purple-400" />}
@@ -174,7 +175,7 @@ const LatestContent = () => {
     );
 };
 
-const HighlightCard = ({ icon, title, desc, onReadMore, href }: { icon: React.ReactNode, title: string, desc: string, onReadMore?: () => void, href?: string }) => (
+const HighlightCard = ({ icon, title, desc, onReadMore, href, href2 }: { icon: React.ReactNode, title: string, desc: string, onReadMore?: () => void, href?: string, href2?: string }) => (
     <div className="p-6 bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-100 dark:border-neutral-700 hover:shadow-md transition-shadow flex flex-col">
         <div className="mb-4 text-neutral-900 dark:text-white p-3 bg-neutral-100 dark:bg-neutral-700/50 rounded-xl w-fit">
             {icon}
@@ -200,6 +201,17 @@ const HighlightCard = ({ icon, title, desc, onReadMore, href }: { icon: React.Re
                 >
                     <ArrowRight size={13} />
                     論文ページ
+                </a>
+            )}
+            {href2 && (
+                <a
+                    href={href2}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-sm font-bold text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
+                >
+                    <ArrowRight size={13} />
+                    公式サイト
                 </a>
             )}
         </div>

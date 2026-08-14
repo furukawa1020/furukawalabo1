@@ -360,7 +360,16 @@ export const ResearchModal = ({ onClose }: { onClose: () => void }) => {
                                 className="flex items-center gap-1.5 text-sm font-bold text-cyan-600 dark:text-cyan-400 hover:underline"
                             >
                                 <ExternalLink size={13} />
-                                論文ページを開く
+                                論文管理ページ
+                            </a>
+                            <a
+                                href="https://mobiquitous.eai-conferences.org/2026/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1.5 text-sm font-bold text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
+                            >
+                                <ExternalLink size={13} />
+                                会議公式サイト
                             </a>
                         </div>
                         <ShareButton />

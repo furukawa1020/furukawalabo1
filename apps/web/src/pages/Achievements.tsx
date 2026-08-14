@@ -30,6 +30,7 @@ type AchievementItem = {
     date?: string;
     image?: string;
     url?: string;
+    url_paper?: string;
 };
 
 type AchievementSection = {
@@ -121,13 +122,27 @@ export const Achievements = () => {
                                                 </p>
                                             )}
                                             {item.title.includes('MobiQuitous') && (
-                                                <button
-                                                    onClick={(e) => { e.preventDefault(); setShowResearch(true); }}
-                                                    className="mt-3 flex items-center gap-1.5 text-sm font-bold text-cyan-600 dark:text-cyan-400 hover:underline"
-                                                >
-                                                    <BookOpen size={13} />
-                                                    研究内容を詳しく読む
-                                                </button>
+                                                <div className="mt-3 flex items-center gap-3 flex-wrap">
+                                                    <button
+                                                        onClick={(e) => { e.preventDefault(); setShowResearch(true); }}
+                                                        className="flex items-center gap-1.5 text-sm font-bold text-cyan-600 dark:text-cyan-400 hover:underline"
+                                                    >
+                                                        <BookOpen size={13} />
+                                                        研究内容を詳しく読む
+                                                    </button>
+                                                    {item.url_paper && (
+                                                        <a
+                                                            href={item.url_paper}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className="flex items-center gap-1.5 text-sm font-bold text-neutral-400 dark:text-neutral-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+                                                        >
+                                                            <ExternalLink size={13} />
+                                                            論文管理ページ
+                                                        </a>
+                                                    )}
+                                                </div>
                                             )}
                                             {item.image && (
                                                 <div className="mt-4 rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-700">
