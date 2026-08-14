@@ -17,9 +17,9 @@
             "items": [
                 {
                     "year": "2026",
-                    "title": "EAI MobiQuitous 2026 — 査読付き Regular Paper 採択",
-                    "detail": "Furukawa, K. \"Claim-Capped Biosignal Feedback for Privacy-Calibrated Self-Observation on Mobile and Wearable Devices.\" Accepted as a Regular Paper following peer review.",
-                    "detail_secondary": "※ Peer-Reviewed / Accepted・Not Published — 著者登録・カメラレディ提出未完了のため会議録には未収録",
+                    "title": "EAI MobiQuitous 2026 — 査読付き Regular Paper 採択（単著）",
+                    "detail": "Kotaro Furukawa, \"Claim-Capped Biosignal Feedback for Privacy-Calibrated Self-Observation on Mobile and Wearable Devices.\" 23rd EAI International Conference on Mobile and Ubiquitous Systems: Computing, Networking and Services, 2026.",
+                    "detail_secondary": "カメラレディ完了・DOI取得待ち（出版予定）",
                     "url": "https://mobiquitous.eai-conferences.org/2026/"
                 },
                 {
