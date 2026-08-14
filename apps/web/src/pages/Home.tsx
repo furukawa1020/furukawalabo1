@@ -6,15 +6,18 @@ import axios from 'axios';
 import api from '../api/client';
 import { useTranslation } from 'react-i18next';
 import { ResearchModal } from '../components/ResearchModal';
+import { Interaction2026Modal } from '../components/Interaction2026Modal';
 
 export const Home = () => {
     const { t } = useTranslation();
     const [showResearch, setShowResearch] = useState(false);
+    const [showInteraction, setShowInteraction] = useState(false);
 
     return (
         <>
             <SEO />
             {showResearch && <ResearchModal onClose={() => setShowResearch(false)} />}
+            {showInteraction && <Interaction2026Modal onClose={() => setShowInteraction(false)} />}
             {/* Hero Section */}
             <section className="relative h-screen flex items-center justify-center overflow-hidden">
                 <h1 className="sr-only">
@@ -62,6 +65,8 @@ export const Home = () => {
                             icon={<Award className="text-purple-400" />}
                             title={t('highlights.interaction.title')}
                             desc={t('highlights.interaction.desc')}
+                            onReadMore={() => setShowInteraction(true)}
+                            href="https://www.interaction-ipsj.org/2026/"
                         />
                         <HighlightCard
                             icon={<Trophy className="text-pink-500" />}

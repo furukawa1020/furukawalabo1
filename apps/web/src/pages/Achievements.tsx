@@ -3,6 +3,7 @@ import axios from 'axios';
 import { SEO } from '../components/SEO';
 import { Award, Briefcase, Users, FileText, Star, Mic, ExternalLink, BookOpen } from 'lucide-react';
 import { ResearchModal } from '../components/ResearchModal';
+import { Interaction2026Modal } from '../components/Interaction2026Modal';
 
 import imgRobocup from '../assets/images/robocup-main.jpg';
 import imgAwardGold from '../assets/images/awards/award-gold.jpg';
@@ -46,6 +47,7 @@ type AchievementsData = {
 export const Achievements = () => {
     const [data, setData] = useState<AchievementsData | null>(null);
     const [showResearch, setShowResearch] = useState(false);
+    const [showInteraction, setShowInteraction] = useState(false);
 
     useEffect(() => {
         // Fetch JSON directly
@@ -71,6 +73,7 @@ export const Achievements = () => {
         <>
             <SEO title="Achievements" description="受賞歴・活動実績・登壇情報" />
             {showResearch && <ResearchModal onClose={() => setShowResearch(false)} />}
+            {showInteraction && <Interaction2026Modal onClose={() => setShowInteraction(false)} />}
             <div className="container mx-auto px-6 pt-32 pb-24">
                 <h1 className="text-4xl font-bold mb-16 text-center tracking-tight">Achievements</h1>
 
@@ -142,6 +145,17 @@ export const Achievements = () => {
                                                             論文管理ページ
                                                         </a>
                                                     )}
+                                                </div>
+                                            )}
+                                            {item.title.includes('インタラクション2026') && (
+                                                <div className="mt-3 flex items-center gap-3 flex-wrap">
+                                                    <button
+                                                        onClick={(e) => { e.preventDefault(); setShowInteraction(true); }}
+                                                        className="flex items-center gap-1.5 text-sm font-bold text-purple-600 dark:text-purple-400 hover:underline"
+                                                    >
+                                                        <BookOpen size={13} />
+                                                        研究内容を詳しく読む
+                                                    </button>
                                                 </div>
                                             )}
                                             {item.image && (
