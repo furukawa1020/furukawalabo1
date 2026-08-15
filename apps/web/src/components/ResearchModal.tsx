@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
-import { X, Share2, Copy, Check, BookOpen, FileText, Microscope, ExternalLink } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { X, Share2, Copy, Check, BookOpen, FileText, Microscope, ExternalLink, Sparkles } from 'lucide-react';
 
-// ─── コンテンツ定義 ────────────────────────────────────────────────
+// ─── コンテンツ定義 (完全維持) ────────────────────────────────────────────────
 
 const ONE_LINE = `ストレスを当てるのではなく、「いつもの自分と今がどれくらい違うか」だけを捉え、その情報から本人特定や元データの復元がどこまでできてしまうかを攻撃実験で調べながら、「あなたはストレスです」のような断定をシステムが出せないようにした生体情報フィードバックの研究です。`;
 
@@ -119,6 +119,123 @@ const LONG_SECTIONS: LongSection[] = [
     },
 ];
 
+// ─── 生体信号・高次元ベクトル幾何学のCanvasグラフィック ─────────────────────────────
+const SignalArtCanvas = () => {
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        let animationFrameId: number;
+        let width = (canvas.width = canvas.offsetWidth);
+        let height = (canvas.height = canvas.offsetHeight);
+
+        const handleResize = () => {
+            if (!canvas) return;
+            width = canvas.width = canvas.offsetWidth;
+            height = canvas.height = canvas.offsetHeight;
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        // 208次元から8次元への主成分圧縮ベクトルパーティクル
+        const points = Array.from({ length: 40 }, () => ({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 0.4,
+            vy: (Math.random() - 0.5) * 0.4,
+            radius: Math.random() * 2 + 1,
+            phase: Math.random() * Math.PI * 2,
+        }));
+
+        let t = 0;
+
+        const render = () => {
+            t += 0.015;
+            ctx.clearRect(0, 0, width, height);
+
+            // 背景波形 (ECG/PPG 脈流)
+            ctx.beginPath();
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = 'rgba(6, 182, 212, 0.25)'; // Cyan 500
+
+            for (let x = 0; x < width; x += 2) {
+                // 生体信号の周期とP-Q-R-S-T波形シミュレーション
+                const cycle = (x + t * 60) % 240;
+                let yOffset = Math.sin((x + t * 20) * 0.01) * 6;
+
+                if (cycle > 90 && cycle < 100) {
+                    yOffset -= (cycle - 90) * 2; // P波
+                } else if (cycle >= 100 && cycle < 105) {
+                    yOffset += (cycle - 100) * 6; // Q波
+                } else if (cycle >= 105 && cycle < 115) {
+                    yOffset -= (115 - cycle) * 8; // R波 (鋭いスパイク)
+                } else if (cycle >= 115 && cycle < 125) {
+                    yOffset += (cycle - 115) * 5; // S波
+                } else if (cycle >= 140 && cycle < 170) {
+                    yOffset -= Math.sin((cycle - 140) / 30 * Math.PI) * 12; // T波
+                }
+
+                const y = height * 0.4 + yOffset;
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // 8次元圧縮空間の接続線 (幾何学的グラフ)
+            ctx.strokeStyle = 'rgba(168, 85, 247, 0.12)'; // Purple
+            ctx.lineWidth = 1;
+
+            for (let i = 0; i < points.length; i++) {
+                const p = points[i];
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > width) p.vx *= -1;
+                if (p.y < 0 || p.y > height) p.vy *= -1;
+
+                // 点の描画
+                const pulse = Math.sin(t * 2 + p.phase) * 0.5 + 1;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius * pulse, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(6, 182, 212, 0.5)';
+                ctx.fill();
+
+                // 近接点とのクラスタリング線（次元圧縮の表現）
+                for (let j = i + 1; j < points.length; j++) {
+                    const p2 = points[j];
+                    const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if (dist < 90) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            animationFrameId = requestAnimationFrame(render);
+        };
+
+        render();
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            cancelAnimationFrame(animationFrameId);
+        };
+    }, []);
+
+    return (
+        <canvas
+            ref={canvasRef}
+            className="absolute inset-0 w-full h-full pointer-events-none opacity-80"
+        />
+    );
+};
+
 // ─── 共有ボタン ────────────────────────────────────────────────────
 
 const ShareButton = () => {
@@ -135,22 +252,22 @@ const ShareButton = () => {
     const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}&via=HATAKE55555`;
 
     return (
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-2 flex-wrap items-center">
             <a
                 href={tweetUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full text-sm font-bold hover:opacity-80 transition-opacity"
+                className="flex items-center gap-2 px-4 py-2 bg-neutral-900 hover:bg-neutral-800 dark:bg-neutral-100 dark:hover:bg-white text-white dark:text-neutral-900 rounded-lg text-xs font-semibold tracking-wider uppercase transition-all shadow-sm"
             >
-                <Share2 size={14} />
-                X でシェア
+                <Share2 size={13} />
+                Xでシェア
             </a>
             <button
                 onClick={handleCopy}
-                className="flex items-center gap-2 px-4 py-2 bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-full text-sm font-bold hover:opacity-80 transition-opacity"
+                className="flex items-center gap-2 px-4 py-2 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 rounded-lg text-xs font-semibold tracking-wider transition-all border border-neutral-200/80 dark:border-neutral-700/80"
             >
-                {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
-                {copied ? "コピーしました" : "URLをコピー"}
+                {copied ? <Check size={13} className="text-emerald-500" /> : <Copy size={13} />}
+                {copied ? "コピー完了" : "URLコピー"}
             </button>
         </div>
     );
@@ -161,28 +278,32 @@ const ShareButton = () => {
 const TermBadge = ({ word, def }: { word: string; def: string }) => {
     const [open, setOpen] = useState(false);
     return (
-        <span className="relative inline-block">
+        <span className="relative inline-block my-1 mx-0.5">
             <button
                 onClick={() => setOpen(v => !v)}
-                className="inline-flex items-center gap-1 px-2 py-0.5 bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 rounded-md text-xs font-mono cursor-help border border-cyan-200 dark:border-cyan-700 hover:bg-cyan-200 dark:hover:bg-cyan-800 transition-colors"
+                onMouseEnter={() => setOpen(true)}
+                onMouseLeave={() => setOpen(false)}
+                className="inline-flex items-center gap-1 px-2.5 py-1 bg-cyan-50 dark:bg-cyan-950/60 text-cyan-800 dark:text-cyan-300 rounded-md text-xs font-mono tracking-tight border border-cyan-200 dark:border-cyan-800/80 hover:bg-cyan-100 dark:hover:bg-cyan-900/60 transition-all cursor-help"
             >
-                📖 {word}
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
+                {word}
             </button>
             {open && (
-                <span className="absolute z-50 left-0 top-full mt-1 w-72 p-3 bg-white dark:bg-neutral-800 border border-cyan-200 dark:border-cyan-700 rounded-xl shadow-2xl text-xs text-neutral-700 dark:text-neutral-300 leading-relaxed">
-                    <strong className="text-cyan-600 dark:text-cyan-400">{word}</strong>：{def}
+                <span className="absolute z-50 left-0 top-full mt-1.5 w-72 p-3.5 bg-neutral-900/95 dark:bg-neutral-900 backdrop-blur-md border border-neutral-700 dark:border-neutral-700 rounded-xl shadow-2xl text-xs text-neutral-200 leading-relaxed z-50 pointer-events-none">
+                    <strong className="block text-cyan-400 font-mono mb-1">{word}</strong>
+                    {def}
                 </span>
             )}
         </span>
     );
 };
 
-// ─── テキストを段落に分割して表示 ─────────────────────────────────
+// ─── テキストを段落に分割して表示 (可読性極大化エディトリアル) ─────────────────
 
 const BodyText = ({ text }: { text: string }) => (
-    <div className="space-y-4">
+    <div className="space-y-4 font-sans text-neutral-800 dark:text-neutral-200 leading-relaxed tracking-normal text-base md:text-[15px]">
         {text.split('\n\n').map((para, i) => (
-            <p key={i} className="text-neutral-700 dark:text-neutral-300 leading-relaxed whitespace-pre-line text-base">
+            <p key={i} className="whitespace-pre-line leading-7 text-neutral-700 dark:text-neutral-300 font-normal">
                 {para}
             </p>
         ))}
@@ -210,81 +331,102 @@ export const ResearchModal = ({ onClose }: { onClose: () => void }) => {
     }, [handleKey]);
 
     return (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center p-3 md:p-6" role="dialog" aria-modal="true">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+        <div className="fixed inset-0 z-[999] flex items-center justify-center p-3 sm:p-4 md:p-6" role="dialog" aria-modal="true">
+            {/* 背景オーバーレイ */}
+            <div className="absolute inset-0 bg-neutral-950/80 backdrop-blur-md transition-opacity" onClick={onClose} />
 
-            <div className="relative z-10 w-full max-w-2xl h-[85vh] md:h-[90vh] flex flex-col bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl overflow-hidden">
+            {/* メインウィンドウ (エディトリアル・モダン建築的デザイン) */}
+            <div className="relative z-10 w-full max-w-3xl h-[88vh] md:h-[88vh] flex flex-col bg-white dark:bg-neutral-950 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-2xl overflow-hidden font-sans">
 
-                {/* ヘッダー */}
-                <div className="flex-shrink-0 px-6 md:px-8 pt-6 pb-4 border-b border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900">
-                    <div className="flex items-start justify-between gap-4 mb-4">
-                        <div>
-                            <div className="flex items-center gap-2 mb-1">
-                                <span className="text-xs font-bold text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-900/30 px-2 py-0.5 rounded-full">
-                                    EAI MobiQuitous 2026
-                                </span>
-                                <span className="text-xs text-neutral-400">Regular Paper · 単著</span>
+                {/* ヘッダーセクション（幾何学・生体信号アート統合） */}
+                <div className="relative flex-shrink-0 px-6 sm:px-8 pt-7 pb-5 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/80 dark:bg-neutral-900/60 backdrop-blur-sm overflow-hidden">
+                    <SignalArtCanvas />
+
+                    <div className="relative z-10">
+                        <div className="flex items-start justify-between gap-4 mb-3">
+                            <div>
+                                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-cyan-500/10 dark:bg-cyan-400/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20 rounded-full text-xs font-mono font-medium">
+                                        <Sparkles size={12} className="text-cyan-500" />
+                                        EAI MobiQuitous 2026
+                                    </span>
+                                    <span className="text-xs font-mono text-neutral-500 dark:text-neutral-400 tracking-wider">
+                                        Regular Paper · 単著
+                                    </span>
+                                </div>
+                                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white leading-tight font-sans">
+                                    Claim-Capped Biosignal Feedback
+                                </h2>
+                                <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400 mt-1">
+                                    Kotaro Furukawa · カメラレディ完了・DOI取得待ち
+                                </p>
                             </div>
-                            <h2 className="text-lg md:text-xl font-black text-neutral-900 dark:text-white leading-snug">
-                                Claim-Capped Biosignal Feedback
-                            </h2>
-                            <p className="text-xs text-neutral-500 mt-0.5">Kotaro Furukawa · カメラレディ完了・DOI取得待ち</p>
+                            <button
+                                onClick={onClose}
+                                className="flex-shrink-0 p-2 rounded-xl text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-200/60 dark:hover:bg-neutral-800/60 transition-all"
+                                aria-label="閉じる"
+                            >
+                                <X size={20} />
+                            </button>
                         </div>
-                        <button
-                            onClick={onClose}
-                            className="flex-shrink-0 p-2 rounded-xl hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors"
-                            aria-label="閉じる"
-                        >
-                            <X size={20} className="text-neutral-500" />
-                        </button>
-                    </div>
 
-                    {/* タブ */}
-                    <div className="flex gap-2">
-                        <button
-                            onClick={() => setTab('short')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${tab === 'short'
-                                ? 'bg-cyan-500 text-white shadow-md shadow-cyan-500/30'
-                                : 'bg-neutral-200/70 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-300 dark:hover:bg-neutral-700'
-                                }`}
-                        >
-                            <FileText size={15} />
-                            短い版
-                        </button>
-                        <button
-                            onClick={() => setTab('long')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${tab === 'long'
-                                ? 'bg-purple-500 text-white shadow-md shadow-purple-500/30'
-                                : 'bg-neutral-200/70 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
-                                }`}
-                        >
-                            <Microscope size={15} />
-                            長い版（全内容）
-                        </button>
+                        {/* タブ切り替え */}
+                        <div className="flex gap-2 pt-1">
+                            <button
+                                onClick={() => setTab('short')}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono font-bold tracking-wider transition-all ${tab === 'short'
+                                    ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-md'
+                                    : 'bg-neutral-200/60 dark:bg-neutral-800/80 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-300 dark:hover:bg-neutral-700'
+                                    }`}
+                            >
+                                <FileText size={14} />
+                                短い版
+                            </button>
+                            <button
+                                onClick={() => setTab('long')}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono font-bold tracking-wider transition-all ${tab === 'long'
+                                    ? 'bg-purple-900 text-white dark:bg-purple-500 dark:text-white shadow-md'
+                                    : 'bg-neutral-200/60 dark:bg-neutral-800/80 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-300 dark:hover:bg-neutral-700'
+                                    }`}
+                            >
+                                <Microscope size={14} />
+                                長い版（論文全文）
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                {/* スクロール可能なコンテンツ */}
-                <div className="flex-1 overflow-y-auto px-6 md:px-8 py-6 space-y-6">
-                    {/* 一言説明（常時表示） */}
-                    <div className="p-4 bg-gradient-to-r from-cyan-50 to-purple-50 dark:from-cyan-950/40 dark:to-purple-950/40 rounded-2xl border border-cyan-100 dark:border-cyan-900/50 shadow-sm">
-                        <p className="text-xs md:text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed font-medium">
-                            💡 <strong>【一言で言うと】</strong>{ONE_LINE}
-                        </p>
+                {/* スクロール可能な文章ビューワー（最高の可読性） */}
+                <div className="flex-1 overflow-y-auto px-6 sm:px-8 py-7 space-y-8 bg-white dark:bg-neutral-950 scrollbar-thin scrollbar-thumb-neutral-300 dark:scrollbar-thumb-neutral-800">
+                    {/* 一言説明（常時表示カード） */}
+                    <div className="relative p-5 bg-gradient-to-br from-cyan-500/5 via-purple-500/5 to-transparent dark:from-cyan-500/10 dark:via-purple-500/10 rounded-xl border border-cyan-500/20 dark:border-cyan-500/30">
+                        <div className="flex gap-3">
+                            <span className="text-base flex-shrink-0">💡</span>
+                            <div className="space-y-1">
+                                <span className="block text-xs font-mono font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+                                    一言で説明
+                                </span>
+                                <p className="text-sm sm:text-[15px] text-neutral-800 dark:text-neutral-200 leading-relaxed font-medium">
+                                    {ONE_LINE}
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
+                    {/* 短い版コンテンツ */}
                     {tab === 'short' && (
                         <div className="space-y-8">
                             {SHORT_SECTIONS.map((sec, i) => (
-                                <div key={i} className="space-y-3">
+                                <div key={i} className="group space-y-3 pb-6 border-b border-neutral-100 dark:border-neutral-900 last:border-0">
                                     {sec.heading && (
-                                        <h3 className="text-lg font-black text-neutral-900 dark:text-white border-l-4 border-cyan-500 pl-3">
+                                        <h3 className="text-lg font-bold tracking-tight text-neutral-900 dark:text-white flex items-center gap-2">
+                                            <span className="w-1.5 h-4 bg-cyan-500 rounded-full" />
                                             {sec.heading}
                                         </h3>
                                     )}
                                     <BodyText text={sec.body} />
                                     {sec.term && (
-                                        <div className="flex flex-wrap gap-2 mt-2">
+                                        <div className="flex flex-wrap gap-1.5 pt-1">
                                             {sec.term.map((t, j) => (
                                                 <TermBadge key={j} word={t.word} def={t.def} />
                                             ))}
@@ -295,40 +437,38 @@ export const ResearchModal = ({ onClose }: { onClose: () => void }) => {
                         </div>
                     )}
 
+                    {/* 長い版コンテンツ (論文フルテキスト) */}
                     {tab === 'long' && (
                         <div className="space-y-10">
                             {LONG_SECTIONS.map((sec, i) => (
-                                <div key={i} className="space-y-3">
+                                <div key={i} className="space-y-4 pb-8 border-b border-neutral-100 dark:border-neutral-900 last:border-0">
                                     <div>
-                                        <h3 className="text-xl font-black text-neutral-900 dark:text-white border-l-4 border-purple-500 pl-4 leading-snug">
+                                        <h3 className="text-lg sm:text-xl font-bold tracking-tight text-neutral-900 dark:text-white leading-snug">
                                             {sec.heading}
                                         </h3>
                                         {sec.sub && (
-                                            <p className="mt-1 ml-5 text-base font-bold text-purple-600 dark:text-purple-400">
-                                                {sec.sub}
+                                            <p className="mt-1 text-sm font-mono font-medium text-purple-600 dark:text-purple-400 tracking-wide">
+                                                — {sec.sub}
                                             </p>
                                         )}
                                     </div>
                                     <BodyText text={sec.body} />
                                     {sec.items && (
-                                        <ul className="ml-4 space-y-1">
+                                        <ul className="my-3 grid grid-cols-1 sm:grid-cols-2 gap-2 p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border border-neutral-200/60 dark:border-neutral-800/60">
                                             {sec.items.map((item, j) => (
-                                                <li key={j} className="text-neutral-700 dark:text-neutral-300 text-sm flex gap-2">
-                                                    <span className="text-cyan-500 flex-shrink-0">▸</span>
+                                                <li key={j} className="text-xs font-mono text-neutral-700 dark:text-neutral-300 flex items-center gap-2">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
                                                     {item}
                                                 </li>
                                             ))}
                                         </ul>
                                     )}
                                     {sec.terms && (
-                                        <div className="flex flex-wrap gap-2 mt-2">
+                                        <div className="flex flex-wrap gap-1.5 pt-1">
                                             {sec.terms.map((t, j) => (
                                                 <TermBadge key={j} word={t.word} def={t.def} />
                                             ))}
                                         </div>
-                                    )}
-                                    {i < LONG_SECTIONS.length - 1 && (
-                                        <div className="border-b border-neutral-100 dark:border-neutral-800 pt-4" />
                                     )}
                                 </div>
                             ))}
@@ -337,30 +477,30 @@ export const ResearchModal = ({ onClose }: { onClose: () => void }) => {
                 </div>
 
                 {/* フッター */}
-                <div className="flex-shrink-0 px-8 py-5 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/80">
-                    <div className="flex items-center justify-between flex-wrap gap-3">
-                        <div className="flex items-center gap-3 flex-wrap">
-                            <div className="flex items-center gap-2 text-sm text-neutral-500">
-                                <BookOpen size={14} />
+                <div className="flex-shrink-0 px-6 sm:px-8 py-4 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/90">
+                    <div className="flex items-center justify-between flex-wrap gap-4">
+                        <div className="flex items-center gap-4 flex-wrap text-xs font-mono text-neutral-500 dark:text-neutral-400">
+                            <div className="flex items-center gap-1.5">
+                                <BookOpen size={14} className="text-cyan-500" />
                                 <span>カメラレディ完了・DOI取得待ち</span>
                             </div>
                             <a
                                 href="https://confyplus.eai.eu/app#manage-paper/id/367209/cid/53753/tid/5314"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-1.5 text-sm font-bold text-cyan-600 dark:text-cyan-400 hover:underline"
+                                className="flex items-center gap-1 font-bold text-cyan-600 dark:text-cyan-400 hover:underline"
                             >
-                                <ExternalLink size={13} />
-                                論文管理ページ
+                                <ExternalLink size={12} />
+                                論文管理
                             </a>
                             <a
                                 href="https://mobiquitous.eai-conferences.org/2026/"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-1.5 text-sm font-bold text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
+                                className="flex items-center gap-1 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors"
                             >
-                                <ExternalLink size={13} />
-                                会議公式サイト
+                                <ExternalLink size={12} />
+                                会議サイト
                             </a>
                         </div>
                         <ShareButton />

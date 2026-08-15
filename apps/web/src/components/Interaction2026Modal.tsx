@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
-import { X, Share2, Copy, Check, BookOpen, FileText, Microscope, ExternalLink } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { X, Share2, Copy, Check, BookOpen, FileText, Microscope, ExternalLink, Sparkles } from 'lucide-react';
 
-// ─── コンテンツ定義 ────────────────────────────────────────────────
+// ─── コンテンツ定義 (完全維持) ────────────────────────────────────────────────
 
 const ONE_LINE = `心拍変動（HRV）を「ストレス値」として画面に表示するのではなく、フグ型ぬいぐるみ「めんふぐ」が物理的に膨らむ触覚・視覚フィードバックへ変換することで、同じ身体の変化でも「不安」と感じるか「挑戦」と感じるかという意味づけの個人差を、ユーザー自身が直感的に観察・内省できるようにした研究です。`;
 
@@ -60,7 +60,7 @@ const LONG_SECTIONS: LongSection[] = [
     {
         heading: "外在化という設計思想",
         sub: "内部状態を「触れるもの」へ",
-        body: "本研究の中心的な設計思想は「外在化（externalization）」です。\n\n外在化とは、内部の状態（今回は生理変化）を、外から見たり触れたりできる形に変換することです。\n\n従来の生体情報フィードバックの多くは、数値、グラフ、色の変化、スコアなどを画面に表示します。これらは情報を「読む」インターフェースです。\n\n一方でめんふぐは、HRVの変化を「膨らみ」という物理的な動きに変換します。これは情報を「感じる」インターフェースです。\n\n膨らんでいるものを目で見ること、手で触れること、隣に置いておくことで、「今の自分の身体状態」が意識の外から少しずつ入ってきます。\n\nこれは、スマートウォッチの振動通知や画面のポップアップとは異なる、アンビエント（環境的・周辺的）なフィードバックの形です。\n\n「どう感じるかは自分が決める」という余白を、インターフェース側が意図的に作っています。",
+        body: "本研究の中心的な設計思想は「外在化（externalization）」です。\n\n外在化とは、内部の状態（生理変化）を、外から見たり触れたりできる形に変換することです。\n\n従来の生体情報フィードバックの多くは、数値、グラフ、色の変化、スコアなどを画面に表示します。これらは情報を「読む」インターフェースです。\n\n一方でめんふぐは、HRVの変化を「膨らみ」という物理的な動きに変換します。これは情報を「感じる」インターフェースです。\n\n膨らんでいるものを目で見ること、手で触れること、隣に置いておくことで、「今の自分の身体状態」が意識の外から少しずつ入ってきます。\n\nこれは、スマートウォッチの振動通知や画面のポップアップとは異なる、アンビエント（環境的・周辺的）なフィードバックの形です。\n\n「どう感じるかは自分が決める」という余白を、インターフェース側が意図的に作っています。",
         terms: [
             { word: "アンビエントインターフェース", def: "中心的な注意を必要とせず、周辺視野や触覚などを通じてさりげなく情報を届ける設計思想。情報を「読む」のではなく「感じる」に近い。" },
         ],
@@ -107,6 +107,108 @@ const LONG_SECTIONS: LongSection[] = [
     },
 ];
 
+// ─── 物理膨張・有機呼吸のCanvasグラフィック (めぐふぐの物理運動) ─────────────────
+const OrganicPuffCanvas = () => {
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        let animationFrameId: number;
+        let width = (canvas.width = canvas.offsetWidth);
+        let height = (canvas.height = canvas.offsetHeight);
+
+        const handleResize = () => {
+            if (!canvas) return;
+            width = canvas.width = canvas.offsetWidth;
+            height = canvas.height = canvas.offsetHeight;
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        let t = 0;
+
+        const render = () => {
+            t += 0.02;
+            ctx.clearRect(0, 0, width, height);
+
+            const centerX = width * 0.85;
+            const centerY = height * 0.5;
+
+            // 呼吸・物理膨張の脈動サイクル (有機的な変形)
+            const breath = Math.sin(t * 1.2) * 0.5 + 0.5; // 0 to 1
+            const baseRadius = 40 + breath * 35; // 40px to 75px への膨張
+
+            // 膨らむ流体的なオーラ・波紋 (HRV のゆらぎ)
+            for (let ring = 3; ring >= 1; ring--) {
+                const ringRadius = baseRadius + ring * (15 + Math.sin(t * 2 + ring) * 6);
+                const alpha = (0.15 - ring * 0.03) * (0.8 + breath * 0.4);
+
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, ringRadius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(249, 115, 22, ${alpha})`; // Amber/Orange 500
+                ctx.fill();
+            }
+
+            // フグの有機的な曲面シェイプ (ノイズ付き膨張体)
+            ctx.beginPath();
+            const pointsCount = 36;
+            for (let i = 0; i <= pointsCount; i++) {
+                const angle = (i / pointsCount) * Math.PI * 2;
+                // 有機的ノイズ (呼吸と連動して形が伸び縮みする)
+                const deform = Math.sin(angle * 4 + t * 3) * (4 + breath * 6) + Math.cos(angle * 2 - t * 2) * 3;
+                const r = baseRadius + deform;
+                const x = centerX + Math.cos(angle) * r;
+                const y = centerY + Math.sin(angle) * r;
+
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+
+            // グラデーション（ぬくもりのある有機質感）
+            const grad = ctx.createRadialGradient(
+                centerX - baseRadius * 0.2,
+                centerY - baseRadius * 0.2,
+                baseRadius * 0.1,
+                centerX,
+                centerY,
+                baseRadius * 1.2
+            );
+            grad.addColorStop(0, 'rgba(254, 215, 170, 0.6)'); // Orange 200
+            grad.addColorStop(0.6, 'rgba(249, 115, 22, 0.4)'); // Orange 500
+            grad.addColorStop(1, 'rgba(225, 29, 72, 0.15)'); // Rose 600
+
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            // 脈動する境界線
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = `rgba(249, 115, 22, ${0.4 + breath * 0.3})`;
+            ctx.stroke();
+
+            animationFrameId = requestAnimationFrame(render);
+        };
+
+        render();
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            cancelAnimationFrame(animationFrameId);
+        };
+    }, []);
+
+    return (
+        <canvas
+            ref={canvasRef}
+            className="absolute inset-0 w-full h-full pointer-events-none opacity-85"
+        />
+    );
+};
+
 // ─── 共有ボタン ────────────────────────────────────────────────────
 
 const ShareButton = () => {
@@ -123,22 +225,22 @@ const ShareButton = () => {
     const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}&via=HATAKE55555`;
 
     return (
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-2 flex-wrap items-center">
             <a
                 href={tweetUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full text-sm font-bold hover:opacity-80 transition-opacity"
+                className="flex items-center gap-2 px-4 py-2 bg-neutral-900 hover:bg-neutral-800 dark:bg-neutral-100 dark:hover:bg-white text-white dark:text-neutral-900 rounded-lg text-xs font-semibold tracking-wider uppercase transition-all shadow-sm"
             >
-                <Share2 size={14} />
-                X でシェア
+                <Share2 size={13} />
+                Xでシェア
             </a>
             <button
                 onClick={handleCopy}
-                className="flex items-center gap-2 px-4 py-2 bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-full text-sm font-bold hover:opacity-80 transition-opacity"
+                className="flex items-center gap-2 px-4 py-2 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 rounded-lg text-xs font-semibold tracking-wider transition-all border border-neutral-200/80 dark:border-neutral-700/80"
             >
-                {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
-                {copied ? "コピーしました" : "URLをコピー"}
+                {copied ? <Check size={13} className="text-emerald-500" /> : <Copy size={13} />}
+                {copied ? "コピー完了" : "URLコピー"}
             </button>
         </div>
     );
@@ -149,28 +251,32 @@ const ShareButton = () => {
 const TermBadge = ({ word, def }: { word: string; def: string }) => {
     const [open, setOpen] = useState(false);
     return (
-        <span className="relative inline-block">
+        <span className="relative inline-block my-1 mx-0.5">
             <button
                 onClick={() => setOpen(v => !v)}
-                className="inline-flex items-center gap-1 px-2 py-0.5 bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 rounded-md text-xs font-mono cursor-help border border-orange-200 dark:border-orange-700 hover:bg-orange-200 dark:hover:bg-orange-800 transition-colors"
+                onMouseEnter={() => setOpen(true)}
+                onMouseLeave={() => setOpen(false)}
+                className="inline-flex items-center gap-1 px-2.5 py-1 bg-orange-50 dark:bg-orange-950/60 text-orange-800 dark:text-orange-300 rounded-md text-xs font-mono tracking-tight border border-orange-200 dark:border-orange-800/80 hover:bg-orange-100 dark:hover:bg-orange-900/60 transition-all cursor-help"
             >
-                📖 {word}
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+                {word}
             </button>
             {open && (
-                <span className="absolute z-50 left-0 top-full mt-1 w-72 p-3 bg-white dark:bg-neutral-800 border border-orange-200 dark:border-orange-700 rounded-xl shadow-2xl text-xs text-neutral-700 dark:text-neutral-300 leading-relaxed">
-                    <strong className="text-orange-600 dark:text-orange-400">{word}</strong>：{def}
+                <span className="absolute z-50 left-0 top-full mt-1.5 w-72 p-3.5 bg-neutral-900/95 dark:bg-neutral-900 backdrop-blur-md border border-neutral-700 dark:border-neutral-700 rounded-xl shadow-2xl text-xs text-neutral-200 leading-relaxed pointer-events-none">
+                    <strong className="block text-orange-400 font-mono mb-1">{word}</strong>
+                    {def}
                 </span>
             )}
         </span>
     );
 };
 
-// ─── テキストを段落に分割して表示 ─────────────────────────────────
+// ─── テキストを段落に分割して表示 (可読性極大化エディトリアル) ─────────────────
 
 const BodyText = ({ text }: { text: string }) => (
-    <div className="space-y-4">
+    <div className="space-y-4 font-sans text-neutral-800 dark:text-neutral-200 leading-relaxed tracking-normal text-base md:text-[15px]">
         {text.split('\n\n').map((para, i) => (
-            <p key={i} className="text-neutral-700 dark:text-neutral-300 leading-relaxed whitespace-pre-line text-base">
+            <p key={i} className="whitespace-pre-line leading-7 text-neutral-700 dark:text-neutral-300 font-normal">
                 {para}
             </p>
         ))}
@@ -198,83 +304,102 @@ export const Interaction2026Modal = ({ onClose }: { onClose: () => void }) => {
     }, [handleKey]);
 
     return (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center p-3 md:p-6" role="dialog" aria-modal="true">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+        <div className="fixed inset-0 z-[999] flex items-center justify-center p-3 sm:p-4 md:p-6" role="dialog" aria-modal="true">
+            {/* 背景オーバーレイ */}
+            <div className="absolute inset-0 bg-neutral-950/80 backdrop-blur-md transition-opacity" onClick={onClose} />
 
-            <div className="relative z-10 w-full max-w-2xl h-[85vh] md:h-[90vh] flex flex-col bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl overflow-hidden">
+            {/* メインウィンドウ (エディトリアル・有機建築的デザイン) */}
+            <div className="relative z-10 w-full max-w-3xl h-[88vh] md:h-[88vh] flex flex-col bg-white dark:bg-neutral-950 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-2xl overflow-hidden font-sans">
 
-                {/* ヘッダー */}
-                <div className="flex-shrink-0 px-6 md:px-8 pt-6 pb-4 border-b border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900">
-                    <div className="flex items-start justify-between gap-4 mb-4">
-                        <div>
-                            <div className="flex items-center gap-2 mb-1">
-                                <span className="text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/30 px-2 py-0.5 rounded-full">
-                                    インタラクション2026
-                                </span>
-                                <span className="text-xs font-bold text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/30 px-2 py-0.5 rounded-full">
-                                    ☆ プレミアム発表
-                                </span>
+                {/* ヘッダーセクション（有機呼吸アートCanvas統合） */}
+                <div className="relative flex-shrink-0 px-6 sm:px-8 pt-7 pb-5 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/80 dark:bg-neutral-900/60 backdrop-blur-sm overflow-hidden">
+                    <OrganicPuffCanvas />
+
+                    <div className="relative z-10">
+                        <div className="flex items-start justify-between gap-4 mb-3">
+                            <div>
+                                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-500/10 dark:bg-orange-400/10 text-orange-700 dark:text-orange-300 border border-orange-500/20 rounded-full text-xs font-mono font-medium">
+                                        <Sparkles size={12} className="text-orange-500" />
+                                        インタラクション2026
+                                    </span>
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-500/10 dark:bg-amber-400/10 text-amber-700 dark:text-amber-300 border border-amber-500/20 rounded-full text-xs font-mono font-semibold">
+                                        ☆ プレミアム発表
+                                    </span>
+                                </div>
+                                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white leading-tight font-sans">
+                                    ストレスを"測る"から"感じる"へ
+                                </h2>
+                                <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400 mt-1">
+                                    古川耕太郎, 秋田純一（金沢大学融合学域） · 1B33
+                                </p>
                             </div>
-                            <h2 className="text-lg md:text-xl font-black text-neutral-900 dark:text-white leading-snug">
-                                ストレスを"測る"から"感じる"へ
-                            </h2>
-                            <p className="text-xs text-neutral-500 mt-0.5">古川耕太郎, 秋田純一（金沢大学融合学域） · 1B33</p>
+                            <button
+                                onClick={onClose}
+                                className="flex-shrink-0 p-2 rounded-xl text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-200/60 dark:hover:bg-neutral-800/60 transition-all"
+                                aria-label="閉じる"
+                            >
+                                <X size={20} />
+                            </button>
                         </div>
-                        <button
-                            onClick={onClose}
-                            className="flex-shrink-0 p-2 rounded-xl hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors"
-                            aria-label="閉じる"
-                        >
-                            <X size={20} className="text-neutral-500" />
-                        </button>
-                    </div>
 
-                    {/* タブ */}
-                    <div className="flex gap-2">
-                        <button
-                            onClick={() => setTab('short')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${tab === 'short'
-                                ? 'bg-orange-500 text-white shadow-md shadow-orange-500/30'
-                                : 'bg-neutral-200/70 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-300 dark:hover:bg-neutral-700'
-                                }`}
-                        >
-                            <FileText size={15} />
-                            短い版
-                        </button>
-                        <button
-                            onClick={() => setTab('long')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${tab === 'long'
-                                ? 'bg-rose-500 text-white shadow-md shadow-rose-500/30'
-                                : 'bg-neutral-200/70 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
-                                }`}
-                        >
-                            <Microscope size={15} />
-                            長い版（全内容）
-                        </button>
+                        {/* タブ切り替え */}
+                        <div className="flex gap-2 pt-1">
+                            <button
+                                onClick={() => setTab('short')}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono font-bold tracking-wider transition-all ${tab === 'short'
+                                    ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-md'
+                                    : 'bg-neutral-200/60 dark:bg-neutral-800/80 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-300 dark:hover:bg-neutral-700'
+                                    }`}
+                            >
+                                <FileText size={14} />
+                                短い版
+                            </button>
+                            <button
+                                onClick={() => setTab('long')}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono font-bold tracking-wider transition-all ${tab === 'long'
+                                    ? 'bg-rose-900 text-white dark:bg-rose-500 dark:text-white shadow-md'
+                                    : 'bg-neutral-200/60 dark:bg-neutral-800/80 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-300 dark:hover:bg-neutral-700'
+                                    }`}
+                            >
+                                <Microscope size={14} />
+                                長い版（論文全文）
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                {/* スクロール可能なコンテンツ */}
-                <div className="flex-1 overflow-y-auto px-6 md:px-8 py-6 space-y-6">
-                    {/* 一言説明（常時表示） */}
-                    <div className="p-4 bg-gradient-to-r from-orange-50 to-rose-50 dark:from-orange-950/40 dark:to-rose-950/40 rounded-2xl border border-orange-100 dark:border-orange-900/50 shadow-sm">
-                        <p className="text-xs md:text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed font-medium">
-                            🐡 <strong>【一言で言うと】</strong>{ONE_LINE}
-                        </p>
+                {/* スクロール可能な文章ビューワー（最高の可読性） */}
+                <div className="flex-1 overflow-y-auto px-6 sm:px-8 py-7 space-y-8 bg-white dark:bg-neutral-950 scrollbar-thin scrollbar-thumb-neutral-300 dark:scrollbar-thumb-neutral-800">
+                    {/* 一言説明（常時表示カード） */}
+                    <div className="relative p-5 bg-gradient-to-br from-orange-500/5 via-rose-500/5 to-transparent dark:from-orange-500/10 dark:via-rose-500/10 rounded-xl border border-orange-500/20 dark:border-orange-500/30">
+                        <div className="flex gap-3">
+                            <span className="text-base flex-shrink-0">🐡</span>
+                            <div className="space-y-1">
+                                <span className="block text-xs font-mono font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">
+                                    一言で説明
+                                </span>
+                                <p className="text-sm sm:text-[15px] text-neutral-800 dark:text-neutral-200 leading-relaxed font-medium">
+                                    {ONE_LINE}
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
+                    {/* 短い版コンテンツ */}
                     {tab === 'short' && (
                         <div className="space-y-8">
                             {SHORT_SECTIONS.map((sec, i) => (
-                                <div key={i} className="space-y-3">
+                                <div key={i} className="group space-y-3 pb-6 border-b border-neutral-100 dark:border-neutral-900 last:border-0">
                                     {sec.heading && (
-                                        <h3 className="text-lg font-black text-neutral-900 dark:text-white border-l-4 border-orange-500 pl-3">
+                                        <h3 className="text-lg font-bold tracking-tight text-neutral-900 dark:text-white flex items-center gap-2">
+                                            <span className="w-1.5 h-4 bg-orange-500 rounded-full" />
                                             {sec.heading}
                                         </h3>
                                     )}
                                     <BodyText text={sec.body} />
                                     {sec.term && (
-                                        <div className="flex flex-wrap gap-2 mt-2">
+                                        <div className="flex flex-wrap gap-1.5 pt-1">
                                             {sec.term.map((t, j) => (
                                                 <TermBadge key={j} word={t.word} def={t.def} />
                                             ))}
@@ -285,40 +410,38 @@ export const Interaction2026Modal = ({ onClose }: { onClose: () => void }) => {
                         </div>
                     )}
 
+                    {/* 長い版コンテンツ (論文フルテキスト) */}
                     {tab === 'long' && (
                         <div className="space-y-10">
                             {LONG_SECTIONS.map((sec, i) => (
-                                <div key={i} className="space-y-3">
+                                <div key={i} className="space-y-4 pb-8 border-b border-neutral-100 dark:border-neutral-900 last:border-0">
                                     <div>
-                                        <h3 className="text-xl font-black text-neutral-900 dark:text-white border-l-4 border-rose-500 pl-4 leading-snug">
+                                        <h3 className="text-lg sm:text-xl font-bold tracking-tight text-neutral-900 dark:text-white leading-snug">
                                             {sec.heading}
                                         </h3>
                                         {sec.sub && (
-                                            <p className="mt-1 ml-5 text-base font-bold text-rose-600 dark:text-rose-400">
-                                                {sec.sub}
+                                            <p className="mt-1 text-sm font-mono font-medium text-rose-600 dark:text-rose-400 tracking-wide">
+                                                — {sec.sub}
                                             </p>
                                         )}
                                     </div>
                                     <BodyText text={sec.body} />
                                     {sec.items && (
-                                        <ul className="ml-4 space-y-1">
+                                        <ul className="my-3 grid grid-cols-1 sm:grid-cols-2 gap-2 p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border border-neutral-200/60 dark:border-neutral-800/60">
                                             {sec.items.map((item, j) => (
-                                                <li key={j} className="text-neutral-700 dark:text-neutral-300 text-sm flex gap-2">
-                                                    <span className="text-orange-500 flex-shrink-0">▸</span>
+                                                <li key={j} className="text-xs font-mono text-neutral-700 dark:text-neutral-300 flex items-center gap-2">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
                                                     {item}
                                                 </li>
                                             ))}
                                         </ul>
                                     )}
                                     {sec.terms && (
-                                        <div className="flex flex-wrap gap-2 mt-2">
+                                        <div className="flex flex-wrap gap-1.5 pt-1">
                                             {sec.terms.map((t, j) => (
                                                 <TermBadge key={j} word={t.word} def={t.def} />
                                             ))}
                                         </div>
-                                    )}
-                                    {i < LONG_SECTIONS.length - 1 && (
-                                        <div className="border-b border-neutral-100 dark:border-neutral-800 pt-4" />
                                     )}
                                 </div>
                             ))}
@@ -327,30 +450,30 @@ export const Interaction2026Modal = ({ onClose }: { onClose: () => void }) => {
                 </div>
 
                 {/* フッター */}
-                <div className="flex-shrink-0 px-8 py-5 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/80">
-                    <div className="flex items-center justify-between flex-wrap gap-3">
-                        <div className="flex items-center gap-3 flex-wrap">
-                            <div className="flex items-center gap-2 text-sm text-neutral-500">
-                                <BookOpen size={14} />
+                <div className="flex-shrink-0 px-6 sm:px-8 py-4 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/90">
+                    <div className="flex items-center justify-between flex-wrap gap-4">
+                        <div className="flex items-center gap-4 flex-wrap text-xs font-mono text-neutral-500 dark:text-neutral-400">
+                            <div className="flex items-center gap-1.5">
+                                <BookOpen size={14} className="text-orange-500" />
                                 <span>インタラクション2026 · 1B33</span>
                             </div>
                             <a
                                 href="https://www.interaction-ipsj.org/proceedings/2026/data/pdf/1B33.pdf"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-1.5 text-sm font-bold text-orange-600 dark:text-orange-400 hover:underline"
+                                className="flex items-center gap-1 font-bold text-orange-600 dark:text-orange-400 hover:underline"
                             >
-                                <ExternalLink size={13} />
+                                <ExternalLink size={12} />
                                 論文PDF
                             </a>
                             <a
                                 href="https://www.interaction-ipsj.org/2026/"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-1.5 text-sm font-bold text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
+                                className="flex items-center gap-1 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors"
                             >
-                                <ExternalLink size={13} />
-                                会議公式サイト
+                                <ExternalLink size={12} />
+                                会議サイト
                             </a>
                         </div>
                         <ShareButton />
