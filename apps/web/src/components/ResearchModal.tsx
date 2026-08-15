@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
-import { X, Share2, Copy, Check, ExternalLink } from 'lucide-react';
+import { X, ExternalLink } from 'lucide-react';
 
 // ────────────────────────────────────────────────────────────────
 // Canvas: ECG waveform background (8 channels = 8 PCA components)
