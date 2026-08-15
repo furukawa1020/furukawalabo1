@@ -54,7 +54,7 @@ function usePulseCanvas(ref: React.RefObject<HTMLCanvasElement>) {
             }
 
             // Draw rings
-            rings.forEach((ring, i) => {
+            rings.forEach((ring) => {
                 const age = t - ring.born;
                 const progress = Math.min(age / 4.0, 1);
                 ring.r = ring.maxR * progress;
