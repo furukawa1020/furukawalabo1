@@ -1,417 +1,378 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
-import { X, ExternalLink } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { X, Share2, Copy, Check, BookOpen, FileText, Microscope, ExternalLink } from 'lucide-react';
 
-// ────────────────────────────────────────────────────────────────
-// Canvas: ECG waveform background (8 channels = 8 PCA components)
-// ────────────────────────────────────────────────────────────────
+// ─── コンテンツ定義 ────────────────────────────────────────────────
 
-function useECGCanvas(ref: React.RefObject<HTMLCanvasElement>) {
-    useEffect(() => {
-        const canvas = ref.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+const ONE_LINE = `ストレスを当てるのではなく、「いつもの自分と今がどれくらい違うか」だけを捉え、その情報から本人特定や元データの復元がどこまでできてしまうかを攻撃実験で調べながら、「あなたはストレスです」のような断定をシステムが出せないようにした生体情報フィードバックの研究です。`;
 
-        let animId: number;
-        let t = 0;
+type Section = { heading?: string; sub?: string; body: string; term?: { word: string; def: string }[] };
 
-        const resize = () => {
-            canvas.width = canvas.offsetWidth * window.devicePixelRatio;
-            canvas.height = canvas.offsetHeight * window.devicePixelRatio;
-            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-        };
-        resize();
-        const ro = new ResizeObserver(resize);
-        ro.observe(canvas);
+const SHORT_SECTIONS: Section[] = [
+    {
+        heading: "Claim-Capped Biosignal Feedback",
+        body: "心拍や皮膚電気活動などの生体情報から、ストレスや感情状態を推定する研究は多くあります。\n\nしかし、心拍が普段より高いからといって、その原因が必ずストレスとは限りません。運動、暑さ、カフェイン、体調、興奮、仕事量、センサの誤差など、さまざまな理由が考えられます。",
+    },
+    {
+        heading: "扱うのは「普段との差」だけ",
+        body: "「あなたはストレス状態です」と当てることを目的にせず、\n\n「今の生体・行動パターンが、その人自身の普段とどれくらい違うか」\n\nだけを扱います。",
+    },
+    {
+        heading: "信号処理と圧縮",
+        body: "60秒ごとの生体信号から平均、標準偏差、中央値、傾き、周波数成分などを計算し、WESADとCASEでは208個の数値にまとめました。\n\n次に、その値を他人と比べるのではなく、本人の普段の値と比較して「自分の通常状態からどれだけずれているか」に変換します。\n\nさらにPCA（主成分分析・似た動きの数値をまとめて少ない数に圧縮する方法）を使い、208個の特徴を8個の値に圧縮しました。",
+    },
+    {
+        heading: "3種類の攻撃実験",
+        body: "圧縮後のデータに対して、\n\n● そのデータが誰のものか当てられるか\n● 元の208個の特徴をどこまで復元できるか\n● そのデータが学習用に使われたものか当てられるか\n\nという攻撃を行いました。\n\nWESADでは、「普段と違う状態」を順位づけるAUROCが0.994でした。一方で、本人特定に使える情報や元特徴を復元できる情報は、圧縮前より減少しました。\n\nただし、学習データかどうかを当てるMembership InferenceはAUC 0.690で、まだ情報が残っています。",
+        term: [{ word: "AUROC", def: "モデルが「普段と違う状態」を正しく順位づけられるかを表す指標。1.0が完璧、0.5が偶然と同じ。" }],
+    },
+    {
+        heading: "断定文をシステム側で禁止する",
+        body: "通知タイミングにも問題がありました。非baseline状態には反応できた一方、普段の状態でも60%の窓で通知条件を超えてしまいました。\n\nまた、ユーザーへ出せる文章そのものを制限しました。\n\nシステムが出せるのは：\n\n✓「現在のパターンが、普段と異なっています」\n✓「普段と少し違うようです。自分の状態を確認してみますか？」\n\n「あなたはストレス状態です」「集中できていません」「体調が悪いです」といった断定は、そもそも出力候補に入れていません。",
+    },
+    {
+        heading: "この研究が考えたいこと",
+        body: "AIが人について何を当てられるかだけでなく、何をデータとして残し、何をユーザーに言ってよいのかまで、システム側で設計する必要があるのではないか。",
+    },
+];
 
-        // 8 channels — the 8 PCA components after compression from 208
-        const channels = [
-            { freq: 0.9, phase: 0.0, alpha: 0.07, speed: 1.0 },
-            { freq: 1.7, phase: 0.8, alpha: 0.05, speed: 0.7 },
-            { freq: 2.3, phase: 1.6, alpha: 0.04, speed: 1.3 },
-            { freq: 0.5, phase: 2.4, alpha: 0.06, speed: 0.5 },
-            { freq: 3.1, phase: 3.2, alpha: 0.03, speed: 1.6 },
-            { freq: 1.2, phase: 4.0, alpha: 0.05, speed: 0.9 },
-            { freq: 4.0, phase: 4.8, alpha: 0.03, speed: 1.1 },
-            { freq: 0.7, phase: 5.6, alpha: 0.06, speed: 0.6 },
-        ];
+type LongSection = { heading: string; sub?: string; body: string; items?: string[]; terms?: { word: string; def: string }[] };
 
-        const W = () => canvas.offsetWidth;
-        const H = () => canvas.offsetHeight;
+const LONG_SECTIONS: LongSection[] = [
+    {
+        heading: "研究の背景と動機",
+        body: "本研究では、スマートウォッチやウェアラブルセンサから得られる生体情報を使いながら、ユーザーに対して「あなたはストレス状態です」のような断定をしない生体情報フィードバックの仕組みを研究しました。\n\n心拍、皮膚電気活動、呼吸、体温、加速度などの情報から、ストレスや感情状態を推定する研究はすでに数多くあります。\n\nしかし、生体情報に変化があったことと、その原因が分かることは同じではありません。\n\nたとえば心拍数が普段より高かったとしても、その原因はストレスとは限りません。運動した直後かもしれません。暑い場所にいたのかもしれません。コーヒーを飲んだ影響かもしれません。\n\nそれにもかかわらず、システムが一つの原因に決めつけて「あなたはストレス状態です」と表示すると、生体信号の曖昧な変化が、本人や周囲から固定的な評価として扱われる可能性があります。",
+    },
+    {
+        heading: "扱う情報：within-person atypicality",
+        sub: "「今の自分が、普段の自分とどれくらい違うか」",
+        body: "論文ではこれをwithin-person atypicality（個人内の非典型性）と呼んでいます。\n\nこれは「ストレスである確率」ではありません。病気、生産性、集中度、感情状態などを表す数値でもありません。\n\nあくまで「いつもの自分と比べると、現在の生体・行動パターンは少し違っている」という情報だけを扱います。",
+        terms: [{ word: "within-person atypicality（個人内の非典型性）", def: "自分自身の過去の「普段の状態」と現在を比較したときのずれ量。他人との比較ではない。" }],
+    },
+    {
+        heading: "生体信号の特徴化（60秒窓）",
+        body: "今回の実装では、生体信号を重複しない60秒単位に区切りました。その60秒間について以下を計算します：",
+        items: ["平均・標準偏差・中央値・四分位範囲・最小値・最大値", "10パーセンタイル・90パーセンタイル", "時間方向の傾き・信号のエネルギー", "最も強い周波数・歪度・尖度"],
+    },
+    {
+        heading: "本人の普段と比較する",
+        body: "たとえば、心拍が90だったとしても、それだけでは何も分かりません。普段60の人が90になった場合と、普段85の人が90になった場合では意味が違うからです。\n\n参加者ごとに普段の中央値とばらつきを計算し、現在の値をそこから比較して「本人の通常状態から、どの程度離れているか」に変換しました。\n\nただし、この処理だけでプライバシーが守られるわけではありません。本人固有の特徴が残っている可能性があるため、実際に攻撃を行って確認します。",
+    },
+    {
+        heading: "PCAによる圧縮（208個 → 8個）",
+        body: "WESADとCASEでは1窓につき208個の特徴があります。そのままでは多くの情報が残ります。\n\nPCA（主成分分析）を使い、「似た動きをする数値をまとめて、重要な変化をなるべく残しながら少ない数に圧縮する方法」で、208個を8個の値（論文ではz_pと表記）まで圧縮しました。\n\n狙いは「普段と違う」という情報は残す一方で、本人特定や元特徴の復元に使える情報を減らせないか、というものです。",
+        terms: [{ word: "PCA（主成分分析）", def: "多数の数値の中から、最も変化が大きい「方向」を見つけ出し、それを軸に少ない数の値へ変換する統計手法。" }],
+    },
+    {
+        heading: "本人識別に使われやすい情報をさらに除去",
+        body: "参加者IDを当てる分類器を作り、「どの方向の情報が、誰のデータかを見分けるのに使われているか」を調べます。\n\nその方向の情報を表現から取り除いた後、PCAで圧縮した表現をidentity-suppressed representationと呼んでいます。\n\n重要なのは、この処理をしたから匿名になるわけではない、という点です。数学的にプライバシーを保証する方式ではないため、実際に攻撃モデルで確認します。",
+        terms: [{ word: "identity-suppressed representation", def: "本人識別に使われやすい方向の情報を取り除いた後に圧縮した表現。匿名性を「保証」するものではなく、リスクを「低減する試み」。" }],
+    },
+    {
+        heading: "3種類の攻撃実験",
+        sub: "どこまで情報が残っているかを実際に調べる",
+        body: "① 本人特定（Identity Attack）\n圧縮後のデータから「このデータは参加者A、B、Cの誰のものか」を推定します。\n\n② 元特徴の復元（Reconstruction Attack）\n圧縮後の8個の値から元の208個の特徴をどこまで復元できるかを調べました。なお、復元対象は60秒窓から作った標準化済みの特徴量であり、元の生のPPG波形そのものではありません。\n\n③ 学習データかどうか当てる（Membership Inference Attack）\n「この60秒窓は学習側に含まれていたデータか」を推定しました。「この人そのものが研究参加者だったか」を当てるparticipant-levelのmembershipとは異なります。",
+        terms: [
+            { word: "Membership Inference Attack", def: "「このデータが学習に使われたか」を推定する攻撃。高精度で当てられるほど、学習データに固有の情報が残っていることを意味する。" },
+        ],
+    },
+    {
+        heading: "3つの公開データセットで評価",
+        body: "● WESAD（主評価）：15名、ストレス・感情研究でよく使われる公開データセット。526窓を使用。Neutralをbaselineとして扱い、StressとAmusementは「baselineとは異なる状態」としてまとめて扱います（分類するためではない）。\n\n● CASE（補助評価）：30名、1200窓。連続的なvalence/arousal評価あり。明確なbaselineラベルがないため、補助的な分析に使用。\n\n● SWELL-KW（境界条件の確認）：22名、1437窓。時間制約やメール割り込みを含む知識労働環境。WESADで有効だった方法が、仕事に近い文脈でも機能するかを確認。",
+    },
+    {
+        heading: "WESADの結果：普段との差の検出",
+        body: "identity-suppressed representationを使った場合：\n\nAUROC 0.994\n\n（元の特徴量そのまま: 0.750 → 個人内差分: 0.796 → PCA圧縮: 0.993 → Identity suppression後: 0.994）\n\nここで評価しているのは「ストレスを正しく分類できるか」ではなく、baseline状態とnon-baseline状態を「普段と違う状態ほど高いスコアになるよう順位づけできるか」です。",
+        terms: [{ word: "AUROC", def: "Receiver Operating Characteristic曲線の下の面積。1.0が完璧、0.5が偶然と同じレベル。普段状態と非普段状態を正しく順位づける能力を表す。" }],
+    },
+    {
+        heading: "WESADの結果：プライバシー関連",
+        body: "本人特定のIdentity Advantage：\n元特徴: 0.882 → 個人内差分: 0.811 → PCA圧縮: 0.509 → Identity suppression後: 0.455\n\n元特徴の復元（Reconstruction AUC）：\n元特徴: 0.999 → 個人内差分: 0.594 → PCA圧縮: 0.389 → Identity suppression後: 0.388\n\n「普段と違う」情報を高く保ったまま、本人特定や元特徴復元に使える情報を減らす方向性は確認されました。\n\nただし、Membership InferenceはAUC 0.690と、まだ情報が残っています。この研究では「プライバシー問題を解決した」とは主張していません。",
+    },
+    {
+        heading: "失敗結果：通知タイミングの問題",
+        body: "WESADでは、non-baseline状態に対するtrigger rateは1.000でした。\n\n一方で、baseline状態でも60%の窓で通知条件を超えてしまいました（false alarm rate = 0.600）。\n\nつまり「普段と違う状態を順位づける」ことはできても、「本当に通知すべきタイミングだけで通知する」ことはできていません。\n\nそのため、この研究では「日常利用できる通知システムが完成した」とは主張していません。",
+    },
+    {
+        heading: "WESAD以外の結果",
+        body: "CASEでは、identity-suppressed representationと参加者内のvalence/arousal変化とのSpearman相関は0.219。強い関係ではありませんでした。\n\nSWELL-KWでは、個人内差分だけの場合はAUROC 0.656でしたが、identity suppression後は0.524まで低下しました。\n\nWESADで得られた結果が、そのまま仕事環境や別のデータセットに一般化したわけではありません。論文でもSWELL-KWは成功例ではなく、うまくいかない条件を示すboundary caseとして扱っています。",
+    },
+    {
+        heading: "Claim Cap Layer：断定文を禁止する仕組み",
+        body: "システムがユーザーに言ってよい文章そのものを制限する仕組みです。\n\n出力できる内容は3段階のみ：\n\nLevel 0：何も表示しない\nLevel 1：「現在のパターンが、あなたの普段の状態と異なっています」\nLevel 2：「普段と少し違うようです。自分の状態を確認してみますか？」\n\n「あなたはストレス状態です」「集中できていません」「体調が悪いです」はそもそも出力候補に含めていません。重要なのは、スコアが高くても「普段とかなり違う」から「だからストレスである」という意味の飛躍を許さない点です。\n\n今回のClaim Capは生成AIが自由に文章を作る方式ではなく、あらかじめ許可した固定文章のみを使います。「stress」「unwell」「performance」「diagnosis」など断定や評価につながる14種類の文字列が含まれていないことを検査した結果、Unsupported Claim Rate = 0.000、Diagnostic Label Rate = 0.000でした。",
+        terms: [{ word: "Claim Cap Layer", def: "システムがユーザーに出力できる文章の種類を事前に制限する仕組み。断定的・評価的な言い回しを禁止リストとして管理する。" }],
+    },
+    {
+        heading: "この研究でできたこと・できていないこと",
+        body: "確認できたこと：\n✓ WESADでは、普段との差の情報を保持しながら本人特定・元特徴復元に使える情報を減らせる可能性\n✓ ユーザーへの出力内容をシステム側で実装として制限できること\n\nできていないこと・残っている課題：\n✗ Membership Inferenceはまだ残っている（AUC 0.690）\n✗ 通知のfalse alarm rateが0.600と高い\n✗ CASEでは効果が弱い\n✗ SWELL-KWではutilityが大きく低下\n✗ 実環境での長期評価は未実施\n✗ ユーザーが本当に役立つと感じるかは未調査",
+    },
+    {
+        heading: "この研究が最も考えたかったこと",
+        sub: "「当てられるか」だけでなく、「何をデータに残し、何をユーザーに言ってよいか」まで設計する",
+        body: "生体情報AIでは「人について、どこまで正確に当てられるか」がよく研究されます。私はそれだけでは不十分だと考えました。\n\n当てられるようになったとしても、その情報をシステムの中に残す必要があるのか。その情報をユーザーに伝える必要があるのか。伝えるとして、どこまで断定してよいのか。も設計する必要があります。\n\n目標は、生体情報を使ってユーザーについてより多くのことを言えるようにすることではありません。\n\n必要な気づきは残しながら、必要以上の情報を残さず、必要以上のことを言わないシステムを作れるか。それを技術として検討した研究です。",
+    },
+];
 
-        const draw = () => {
-            const w = W(), h = H();
-            ctx.clearRect(0, 0, w, h);
+// ─── 共有ボタン ────────────────────────────────────────────────────
 
-            channels.forEach((ch, i) => {
-                const yBase = h * 0.5;
-                const amp = h * 0.16;
-                ctx.beginPath();
-                ctx.lineWidth = 0.8;
-                ctx.strokeStyle = `rgba(34,211,238,${ch.alpha})`;
-
-                for (let px = 0; px <= w; px += 1) {
-                    const nx = px / w;
-                    // multi-harmonic wave
-                    const wave =
-                        Math.sin(nx * ch.freq * 14 + t * ch.speed + ch.phase) * 0.7 +
-                        Math.sin(nx * ch.freq * 37 + t * ch.speed * 1.3) * 0.2 +
-                        Math.sin(nx * ch.freq * 5 + t * ch.speed * 0.5) * 0.1;
-                    // QRS spike — sharp spike at approx x=42% per channel
-                    const spikeX = 0.38 + i * 0.04;
-                    const spike = Math.exp(-Math.pow((nx - spikeX) / 0.006, 2)) * 2.4;
-                    const y = yBase + (wave + spike) * amp * 0.45;
-                    px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
-                }
-                ctx.stroke();
-            });
-
-            // faint horizontal scan line
-            const scan = ((t * 60) % w);
-            const scanGrad = ctx.createLinearGradient(scan - 60, 0, scan + 20, 0);
-            scanGrad.addColorStop(0, 'rgba(34,211,238,0)');
-            scanGrad.addColorStop(0.7, 'rgba(34,211,238,0.04)');
-            scanGrad.addColorStop(1, 'rgba(34,211,238,0)');
-            ctx.fillStyle = scanGrad;
-            ctx.fillRect(scan - 60, 0, 80, h);
-
-            t += 0.012;
-            animId = requestAnimationFrame(draw);
-        };
-        draw();
-
-        return () => { cancelAnimationFrame(animId); ro.disconnect(); };
-    }, [ref]);
-}
-
-// ────────────────────────────────────────────────────────────────
-// Share
-// ────────────────────────────────────────────────────────────────
-
-const ShareBar = () => {
+const ShareButton = () => {
     const [copied, setCopied] = useState(false);
     const url = `${window.location.origin}/research`;
-    const text = `Claim-Capped Biosignal Feedback — 「ストレスを当てる」ではなく「普段との差」だけを扱い、断定文をシステム側で禁止した研究 / EAI MobiQuitous 2026`;
-    const copy = () => { navigator.clipboard.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 2000); };
+    const text = "Claim-Capped Biosignal Feedback — 「ストレスを当てる」のではなく「普段との差」だけを扱い、断定を禁止した生体情報フィードバック研究";
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(url);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}&via=HATAKE55555`;
+
     return (
-        <div className="flex items-center gap-3">
+        <div className="flex gap-2 flex-wrap">
             <a
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}&via=HATAKE55555`}
-                target="_blank" rel="noopener noreferrer"
-                className="text-[11px] font-mono tracking-widest text-cyan-400/60 hover:text-cyan-400 transition-colors uppercase"
+                href={tweetUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full text-sm font-bold hover:opacity-80 transition-opacity"
             >
-                Share →
+                <Share2 size={14} />
+                X でシェア
             </a>
-            <button onClick={copy} className="text-[11px] font-mono tracking-widest text-cyan-400/60 hover:text-cyan-400 transition-colors uppercase">
-                {copied ? 'Copied.' : 'Copy URL'}
+            <button
+                onClick={handleCopy}
+                className="flex items-center gap-2 px-4 py-2 bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-full text-sm font-bold hover:opacity-80 transition-opacity"
+            >
+                {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+                {copied ? "コピーしました" : "URLをコピー"}
             </button>
         </div>
     );
 };
 
-// ────────────────────────────────────────────────────────────────
-// Content
-// ────────────────────────────────────────────────────────────────
+// ─── Term（専門用語）バッジ ────────────────────────────────────────
 
-const SHORT = () => (
-    <article className="space-y-8 text-[#c8d4e0] leading-[1.85]">
-        <p className="text-lg md:text-xl font-light">
-            心拍の変化は、ストレスではないかもしれない。
-        </p>
-        <p>
-            運動、カフェイン、暑さ、興奮——同じ生理反応が何を意味するかは
-            その文脈でしか決まらない。
-            それにもかかわらず多くのシステムは「あなたはストレスです」と断言する。
-            この研究はその断定をやめた。
-        </p>
-        <blockquote className="border-l-2 border-cyan-500/40 pl-5 py-1 my-6">
-            <p className="text-base text-cyan-200/80 italic font-light leading-relaxed">
-                "Observation is a fact.&ensp;Interpretation is a claim."
+const TermBadge = ({ word, def }: { word: string; def: string }) => {
+    const [open, setOpen] = useState(false);
+    return (
+        <span className="relative inline-block">
+            <button
+                onClick={() => setOpen(v => !v)}
+                className="inline-flex items-center gap-1 px-2 py-0.5 bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 rounded-md text-xs font-mono cursor-help border border-cyan-200 dark:border-cyan-700 hover:bg-cyan-200 dark:hover:bg-cyan-800 transition-colors"
+            >
+                📖 {word}
+            </button>
+            {open && (
+                <span className="absolute z-50 left-0 top-full mt-1 w-72 p-3 bg-white dark:bg-neutral-800 border border-cyan-200 dark:border-cyan-700 rounded-xl shadow-2xl text-xs text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                    <strong className="text-cyan-600 dark:text-cyan-400">{word}</strong>：{def}
+                </span>
+            )}
+        </span>
+    );
+};
+
+// ─── テキストを段落に分割して表示 ─────────────────────────────────
+
+const BodyText = ({ text }: { text: string }) => (
+    <div className="space-y-4">
+        {text.split('\n\n').map((para, i) => (
+            <p key={i} className="text-neutral-700 dark:text-neutral-300 leading-relaxed whitespace-pre-line text-base">
+                {para}
             </p>
-            <p className="text-[12px] text-cyan-400/50 mt-2 font-mono tracking-widest uppercase">— Research Stance</p>
-        </blockquote>
-        <p>
-            扱うのはただ一つの問いだ——<br />
-            <strong className="text-white">いまの自分は、普段の自分とどれだけ違うか。</strong>
-        </p>
-        <p>
-            60秒ごとの生体信号から{' '}
-            <span className="font-mono text-cyan-300">208</span> 個の特徴量を抽出し、
-            本人基準値との差に変換する。
-            その差を{' '}<span className="font-mono text-cyan-300">PCA</span>{' '}で
-            <span className="font-mono text-cyan-300">8</span> 次元に圧縮した。
-        </p>
-        <p>
-            圧縮後のデータに対し、3種の攻撃を試みた。
-            本人特定、特徴量復元、学習データ推定——
-            それぞれがどこまで情報を引き出せるかを測る。
-        </p>
-        <div className="grid grid-cols-3 gap-4 py-2">
-            {[
-                { label: 'AUROC', val: '0.994', sub: '普段との差の検出' },
-                { label: 'Identity', val: '0.455', sub: '本人特定への抵抗' },
-                { label: 'Membership', val: '0.690', sub: 'まだ残る情報' },
-            ].map(d => (
-                <div key={d.label} className="text-center">
-                    <div className="font-mono text-2xl md:text-3xl text-cyan-300 leading-none">{d.val}</div>
-                    <div className="text-[10px] font-mono tracking-widest uppercase text-cyan-500/60 mt-1">{d.label}</div>
-                    <div className="text-[11px] text-[#8899aa] mt-0.5">{d.sub}</div>
-                </div>
-            ))}
-        </div>
-        <p>
-            最後に言語層を絞った。
-            システムが出せる文章は3種類のみ——
-            <span className="italic text-white/70">「何も表示しない」「普段と異なっています」「確認してみますか？」</span>。
-            「あなたはストレス状態です」という文は出力候補に存在しない。
-        </p>
-        <p className="text-[#667788]">
-            Unsupported Claim Rate ={' '}
-            <span className="font-mono text-cyan-300/70">0.000</span>。
-            Diagnostic Label Rate ={' '}
-            <span className="font-mono text-cyan-300/70">0.000</span>。
-        </p>
-    </article>
+        ))}
+    </div>
 );
 
-const LONG = () => (
-    <article className="space-y-10 text-[#c8d4e0] leading-[1.85]">
-        <section className="space-y-4">
-            <h3 className="font-mono text-[11px] tracking-[0.2em] uppercase text-cyan-500/60">§ 1 &nbsp; 問題意識</h3>
-            <p className="text-lg md:text-xl font-light">
-                生体情報に変化があったことと、その原因が分かることは同じではない。
-            </p>
-            <p>
-                心拍数が普段より高い。それは事実だ。しかしその事実から「ストレス」という解釈を引き出すとき、
-                そこには巨大な飛躍がある。ストレスを当てることが研究目標になると、
-                システムは必然的にラベルを出力する。そのラベルが本人や周囲から
-                固定的な評価として扱われるとき、曖昧な生理変化は意味を持ちすぎる。
-            </p>
-        </section>
+// ─── モーダル本体 ─────────────────────────────────────────────────
 
-        <section className="space-y-4">
-            <h3 className="font-mono text-[11px] tracking-[0.2em] uppercase text-cyan-500/60">§ 2 &nbsp; Within-Person Atypicality</h3>
-            <blockquote className="border-l-2 border-cyan-500/40 pl-5 py-1">
-                <p className="text-base text-cyan-200/80 italic font-light">
-                    "Observation is a fact.&ensp;Interpretation is a claim."
-                </p>
-            </blockquote>
-            <p>
-                この研究が扱うのは <span className="text-white font-medium">個人内の非典型性（within-person atypicality）</span> だ。
-                「ストレスである確率」ではない。
-                あなたの普段の状態を基準として、いまがどれだけ離れているかだけを捉える。
-                他者との比較はない。ラベルも診断もない。
-            </p>
-            <p>
-                参加者ごとに baseline の中央値とばらつきを算出し、
-                現在の特徴量を「本人通常状態からの距離」に変換する。
-                心拍{' '}<span className="font-mono text-cyan-300">90</span> が何を意味するかは、
-                普段 <span className="font-mono text-cyan-300">60</span> の人と
-                普段 <span className="font-mono text-cyan-300">85</span> の人では違う。
-            </p>
-        </section>
-
-        <section className="space-y-4">
-            <h3 className="font-mono text-[11px] tracking-[0.2em] uppercase text-cyan-500/60">§ 3 &nbsp; 208 → 8 &nbsp; 特徴量圧縮</h3>
-            <p>
-                生体信号を重複なし <span className="font-mono text-cyan-300">60</span> 秒単位で区切り、
-                各窓につき平均・標準偏差・中央値・四分位範囲・傾き・周波数成分・歪度・尖度などを計算する。
-                WESAD と CASE では 1窓 ＝ <span className="font-mono text-cyan-300">208</span> 個の数値になった。
-            </p>
-            <p>
-                この <span className="font-mono text-cyan-300">208</span> 次元を
-                PCA（主成分分析）で <span className="font-mono text-cyan-300">8</span> 次元に圧縮する。
-                目的は二つ——重要な変化を残すこと、と、余分な情報を削ること。
-                さらに、本人識別に使われやすい方向の成分を取り除いた。
-                この表現を <em>identity-suppressed representation</em>（z_p）と呼ぶ。
-            </p>
-        </section>
-
-        <section className="space-y-4">
-            <h3 className="font-mono text-[11px] tracking-[0.2em] uppercase text-cyan-500/60">§ 4 &nbsp; 攻撃実験</h3>
-            <p>
-                圧縮後のデータに対して3種の攻撃モデルを走らせた。
-            </p>
-            <div className="space-y-3">
-                {[
-                    { n: '① Identity Attack', body: 'このデータは誰のものか——参加者IDを当てる分類器。z_p では Identity Advantage が 0.455 まで低下（元特徴: 0.882）。' },
-                    { n: '② Reconstruction Attack', body: '8次元から元の208次元特徴量をどこまで復元できるか。Reconstruction AUC は 0.388 まで低下（元: 0.999）。' },
-                    { n: '③ Membership Inference Attack', body: 'この60秒窓が学習データに含まれていたか——AUC 0.690。まだ情報は残っている。これが「プライバシー解決」と言えない理由だ。' },
-                ].map(item => (
-                    <div key={item.n} className="p-4 border border-cyan-900/40 rounded-xl bg-cyan-950/10">
-                        <div className="font-mono text-[11px] tracking-widest uppercase text-cyan-500/70 mb-1">{item.n}</div>
-                        <p className="text-sm text-[#aabbcc]">{item.body}</p>
-                    </div>
-                ))}
-            </div>
-        </section>
-
-        <section className="space-y-4">
-            <h3 className="font-mono text-[11px] tracking-[0.2em] uppercase text-cyan-500/60">§ 5 &nbsp; 評価データセット</h3>
-            <div className="grid grid-cols-3 gap-3 font-mono text-center">
-                {[
-                    { ds: 'WESAD', n: '15名 / 526窓', note: '主評価' },
-                    { ds: 'CASE', n: '30名 / 1200窓', note: '補助評価' },
-                    { ds: 'SWELL-KW', n: '22名 / 1437窓', note: 'Boundary case' },
-                ].map(d => (
-                    <div key={d.ds} className="border border-cyan-900/30 rounded-lg p-3">
-                        <div className="text-cyan-300 text-sm font-bold">{d.ds}</div>
-                        <div className="text-[11px] text-[#8899aa] mt-1">{d.n}</div>
-                        <div className="text-[10px] text-cyan-500/50 mt-0.5">{d.note}</div>
-                    </div>
-                ))}
-            </div>
-            <p className="text-sm text-[#8899aa]">
-                WESAD では AUROC <span className="font-mono text-cyan-300">0.994</span>。
-                SWELL-KW では identity suppression 後に <span className="font-mono text-cyan-300">0.524</span> まで低下——
-                この方法がうまくいかない条件を示す境界事例として扱っている。
-            </p>
-        </section>
-
-        <section className="space-y-4">
-            <h3 className="font-mono text-[11px] tracking-[0.2em] uppercase text-cyan-500/60">§ 6 &nbsp; Claim Cap Layer</h3>
-            <p>
-                出力できる文章を3段階に制限した。スコアがどれほど高くても、
-                「あなたはストレス状態です」「集中できていません」への意味の飛躍を許さない設計だ。
-            </p>
-            <div className="space-y-2 font-mono text-sm">
-                {[
-                    { level: 'Level 0', text: '（何も表示しない）', dim: true },
-                    { level: 'Level 1', text: '「現在のパターンが、あなたの普段の状態と異なっています」', dim: false },
-                    { level: 'Level 2', text: '「普段と少し違うようです。自分の状態を確認してみますか？」', dim: false },
-                ].map(l => (
-                    <div key={l.level} className={`flex gap-3 ${l.dim ? 'opacity-40' : ''}`}>
-                        <span className="text-cyan-500/60 shrink-0">{l.level}</span>
-                        <span className="text-[#c8d4e0]">{l.text}</span>
-                    </div>
-                ))}
-            </div>
-            <p className="text-sm text-[#667788]">
-                Unsupported Claim Rate = <span className="font-mono text-cyan-300">0.000</span>{' '}
-                — Diagnostic Label Rate = <span className="font-mono text-cyan-300">0.000</span>
-            </p>
-        </section>
-
-        <section className="space-y-4">
-            <h3 className="font-mono text-[11px] tracking-[0.2em] uppercase text-cyan-500/60">§ 7 &nbsp; この研究が主張しないこと</h3>
-            <p>
-                ストレスを正しく診断できる研究ではない。プライバシーを数学的に保証した研究でもない。
-                日常利用できるシステムが完成したとも言えない——
-                false alarm rate は <span className="font-mono text-cyan-300">0.600</span> のままだ。
-            </p>
-            <p className="text-white/60 border-l border-white/10 pl-4 italic">
-                AIが人について何を当てられるかだけでなく、
-                何をデータとして残し、何をユーザーに言ってよいのかまで、
-                システム側で設計する必要があるのではないか。
-            </p>
-        </section>
-    </article>
-);
-
-// ────────────────────────────────────────────────────────────────
-// Modal
-// ────────────────────────────────────────────────────────────────
+type Tab = 'short' | 'long';
 
 export const ResearchModal = ({ onClose }: { onClose: () => void }) => {
-    const [tab, setTab] = useState<'short' | 'long'>('short');
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    useECGCanvas(canvasRef);
+    const [tab, setTab] = useState<Tab>('short');
 
-    const handleKey = useCallback((e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); }, [onClose]);
+    // ESCで閉じる
+    const handleKey = useCallback((e: KeyboardEvent) => {
+        if (e.key === 'Escape') onClose();
+    }, [onClose]);
+
     useEffect(() => {
         document.addEventListener('keydown', handleKey);
         document.body.style.overflow = 'hidden';
-        return () => { document.removeEventListener('keydown', handleKey); document.body.style.overflow = ''; };
+        return () => {
+            document.removeEventListener('keydown', handleKey);
+            document.body.style.overflow = '';
+        };
     }, [handleKey]);
 
     return (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center p-3 md:p-6" role="dialog" aria-modal="true">
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
-
-            {/* Window */}
+        <div
+            className="fixed inset-0 z-[999] flex items-center justify-center p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-label="研究詳細モーダル"
+        >
+            {/* オーバーレイ */}
             <div
-                className="relative z-10 w-full max-w-2xl h-[90vh] flex flex-col rounded-2xl overflow-hidden"
-                style={{ background: '#050a12', border: '1px solid rgba(34,211,238,0.12)', boxShadow: '0 0 60px rgba(34,211,238,0.06), 0 40px 80px rgba(0,0,0,0.8)' }}
-            >
-                {/* Canvas background */}
-                <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 1 }} />
+                className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+                onClick={onClose}
+            />
 
-                {/* Header */}
-                <div className="relative flex-shrink-0 px-6 pt-6 pb-5" style={{ borderBottom: '1px solid rgba(34,211,238,0.08)' }}>
-                    <div className="flex items-start justify-between gap-4">
-                        <div className="space-y-2">
-                            <div className="font-mono text-[10px] tracking-[0.25em] uppercase" style={{ color: 'rgba(34,211,238,0.5)' }}>
-                                EAI MobiQuitous 2026 &nbsp;/&nbsp; Regular Paper &nbsp;/&nbsp; 単著
+            {/* モーダルウィンドウ */}
+            <div className="relative z-10 w-full max-w-3xl h-[85vh] md:h-[90vh] flex flex-col bg-white dark:bg-neutral-900 rounded-3xl shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+
+                {/* ヘッダー */}
+                <div className="flex-shrink-0 px-6 pt-6 pb-4 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50">
+                    <div className="flex items-start justify-between gap-4 mb-3">
+                        <div>
+                            <div className="flex items-center gap-2 mb-1.5">
+                                <span className="inline-block px-2.5 py-0.5 bg-cyan-100 dark:bg-cyan-900/50 text-cyan-700 dark:text-cyan-300 text-[11px] font-bold rounded-full uppercase tracking-wider">
+                                    EAI MobiQuitous 2026 · Regular Paper
+                                </span>
+                                <span className="inline-block px-2.5 py-0.5 bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 text-[11px] font-bold rounded-full">
+                                    単著
+                                </span>
                             </div>
-                            <h2 className="text-xl md:text-2xl font-bold leading-tight" style={{ color: '#e8f4ff', letterSpacing: '-0.02em' }}>
-                                Claim-Capped<br className="md:hidden" /> Biosignal Feedback
+                            <h2 className="text-lg md:text-xl font-black text-neutral-900 dark:text-white leading-tight">
+                                Claim-Capped Biosignal Feedback
+                                <span className="block text-xs md:text-sm font-medium text-neutral-500 dark:text-neutral-400 mt-0.5">
+                                    for Privacy-Calibrated Self-Observation on Mobile and Wearable Devices
+                                </span>
                             </h2>
-                            <div className="font-mono text-[11px]" style={{ color: 'rgba(200,212,224,0.45)' }}>
-                                Kotaro Furukawa
-                            </div>
                         </div>
                         <button
                             onClick={onClose}
-                            className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full transition-colors"
-                            style={{ color: 'rgba(200,212,224,0.4)' }}
+                            className="flex-shrink-0 p-2 rounded-xl hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors"
                             aria-label="閉じる"
                         >
-                            <X size={16} />
+                            <X size={20} className="text-neutral-500" />
                         </button>
                     </div>
 
-                    {/* Tab bar */}
-                    <div className="flex gap-0 mt-5" style={{ borderBottom: '1px solid rgba(34,211,238,0.08)' }}>
-                        {(['short', 'long'] as const).map((t) => (
-                            <button
-                                key={t}
-                                onClick={() => setTab(t)}
-                                className="relative pb-3 pr-6 font-mono text-[11px] tracking-[0.15em] uppercase transition-colors"
-                                style={{ color: tab === t ? 'rgba(34,211,238,0.9)' : 'rgba(200,212,224,0.3)' }}
+                    {/* タブ */}
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setTab('short')}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${tab === 'short'
+                                ? 'bg-cyan-500 text-white shadow-md shadow-cyan-500/30'
+                                : 'bg-neutral-200/70 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-300 dark:hover:bg-neutral-700'
+                                }`}
+                        >
+                            <FileText size={15} />
+                            短い版
+                        </button>
+                        <button
+                            onClick={() => setTab('long')}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${tab === 'long'
+                                ? 'bg-purple-500 text-white shadow-md shadow-purple-500/30'
+                                : 'bg-neutral-200/70 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                                }`}
+                        >
+                            <Microscope size={15} />
+                            長い版（全内容）
+                        </button>
+                    </div>
+                </div>
+
+                {/* スクロール可能なコンテンツ */}
+                <div className="flex-1 overflow-y-auto px-6 md:px-8 py-6 space-y-6">
+                    {/* 一言説明（スクロールエリアの上部に常時表示） */}
+                    <div className="p-4 bg-gradient-to-r from-cyan-50 to-purple-50 dark:from-cyan-950/40 dark:to-purple-950/40 rounded-2xl border border-cyan-100 dark:border-cyan-900/50 shadow-sm">
+                        <p className="text-xs md:text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed font-medium">
+                            💡 <strong>【一言で言うと】</strong>{ONE_LINE}
+                        </p>
+                    </div>
+
+                    {tab === 'short' && (
+                        <div className="space-y-8">
+                            {SHORT_SECTIONS.map((sec, i) => (
+                                <div key={i} className="space-y-3">
+                                    {sec.heading && (
+                                        <h3 className="text-lg font-black text-neutral-900 dark:text-white border-l-4 border-cyan-500 pl-3">
+                                            {sec.heading}
+                                        </h3>
+                                    )}
+                                    <BodyText text={sec.body} />
+                                    {sec.term && (
+                                        <div className="flex flex-wrap gap-2 mt-2">
+                                            {sec.term.map((t, j) => (
+                                                <TermBadge key={j} word={t.word} def={t.def} />
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {tab === 'long' && (
+                        <div className="space-y-10">
+                            {LONG_SECTIONS.map((sec, i) => (
+                                <div key={i} className="space-y-3">
+                                    <div>
+                                        <h3 className="text-xl font-black text-neutral-900 dark:text-white border-l-4 border-purple-500 pl-4 leading-snug">
+                                            {sec.heading}
+                                        </h3>
+                                        {sec.sub && (
+                                            <p className="mt-1 ml-5 text-base font-bold text-purple-600 dark:text-purple-400">
+                                                {sec.sub}
+                                            </p>
+                                        )}
+                                    </div>
+                                    <BodyText text={sec.body} />
+                                    {sec.items && (
+                                        <ul className="ml-4 space-y-1">
+                                            {sec.items.map((item, j) => (
+                                                <li key={j} className="text-neutral-700 dark:text-neutral-300 text-sm flex gap-2">
+                                                    <span className="text-cyan-500 flex-shrink-0">▸</span>
+                                                    {item}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                    {sec.terms && (
+                                        <div className="flex flex-wrap gap-2 mt-2">
+                                            {sec.terms.map((t, j) => (
+                                                <TermBadge key={j} word={t.word} def={t.def} />
+                                            ))}
+                                        </div>
+                                    )}
+                                    {i < LONG_SECTIONS.length - 1 && (
+                                        <div className="border-b border-neutral-100 dark:border-neutral-800 pt-4" />
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* フッター（共有ボタン） */}
+                <div className="flex-shrink-0 px-8 py-5 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/80">
+                    <div className="flex items-center justify-between flex-wrap gap-3">
+                        <div className="flex items-center gap-3 flex-wrap">
+                            <div className="flex items-center gap-2 text-sm text-neutral-500">
+                                <BookOpen size={14} />
+                                <span>カメラレディ完了・DOI取得待ち</span>
+                            </div>
+                            <a
+                                href="https://confyplus.eai.eu/app#manage-paper/id/367209/cid/53753/tid/5314"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1.5 text-sm font-bold text-cyan-600 dark:text-cyan-400 hover:underline"
                             >
-                                {t === 'short' ? '要旨' : '全文'}
-                                {tab === t && (
-                                    <span className="absolute bottom-0 left-0 right-6 h-px" style={{ background: 'rgba(34,211,238,0.6)' }} />
-                                )}
-                            </button>
-                        ))}
+                                <ExternalLink size={13} />
+                                論文管理ページ
+                            </a>
+                            <a
+                                href="https://mobiquitous.eai-conferences.org/2026/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1.5 text-sm font-bold text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
+                            >
+                                <ExternalLink size={13} />
+                                会議公式サイト
+                            </a>
+                        </div>
+                        <ShareButton />
                     </div>
-                </div>
-
-                {/* Scrollable content */}
-                <div className="relative flex-1 overflow-y-auto px-6 md:px-8 py-7">
-                    {tab === 'short' ? <SHORT /> : <LONG />}
-                </div>
-
-                {/* Footer */}
-                <div
-                    className="relative flex-shrink-0 flex items-center justify-between flex-wrap gap-3 px-6 py-4"
-                    style={{ borderTop: '1px solid rgba(34,211,238,0.08)', background: 'rgba(5,10,18,0.9)' }}
-                >
-                    <div className="flex items-center gap-4">
-                        <a
-                            href="https://confyplus.eai.eu/app#manage-paper/id/367209/cid/53753/tid/5314"
-                            target="_blank" rel="noopener noreferrer"
-                            className="flex items-center gap-1.5 font-mono text-[11px] tracking-widest uppercase transition-colors"
-                            style={{ color: 'rgba(34,211,238,0.5)' }}
-                            onMouseOver={e => (e.currentTarget.style.color = 'rgba(34,211,238,0.9)')}
-                            onMouseOut={e => (e.currentTarget.style.color = 'rgba(34,211,238,0.5)')}
-                        >
-                            <ExternalLink size={11} /> Paper
-                        </a>
-                        <a
-                            href="https://mobiquitous.eai-conferences.org/2026/"
-                            target="_blank" rel="noopener noreferrer"
-                            className="flex items-center gap-1.5 font-mono text-[11px] tracking-widest uppercase transition-colors"
-                            style={{ color: 'rgba(34,211,238,0.35)' }}
-                            onMouseOver={e => (e.currentTarget.style.color = 'rgba(34,211,238,0.7)')}
-                            onMouseOut={e => (e.currentTarget.style.color = 'rgba(34,211,238,0.35)')}
-                        >
-                            <ExternalLink size={11} /> Conf.
-                        </a>
-                    </div>
-                    <ShareBar />
                 </div>
             </div>
         </div>
