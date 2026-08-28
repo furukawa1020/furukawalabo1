@@ -306,7 +306,7 @@ https://coki.jp/sustainable/event/62164/
 • 日本ジオパーク全国大会 発表報告 
 https://txsc.w3.kanazawa-u.ac.jp/news/362/ 
 公開アウトプット量（現在進行形） 
-• GitHub：約225リポジトリ／100000＋contribute!! 
+• GitHub：約225リポジトリ／10,000+contribute!! 
 https://github.com/Furukawa1020 
 • Protopedia：40作品以上公開 
 https://protopedia.net/user/hatake 

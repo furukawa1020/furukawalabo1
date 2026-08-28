@@ -303,7 +303,7 @@ https://txsc.w3.kanazawa-u.ac.jp/news/362/
 第三者が編集・公開する媒体に掲載されていることは、成果物が内輪向けではなく、外部に対して一定の
 理解可能性と公共性を持つ形で提示できていることを示す。 
 公開アウトプット量（現在進行形） 
-• GitHub：約225リポジトリ／100000＋contribute!! 
+• GitHub：約225リポジトリ／10,000+contribute!! 
 https://github.com/furukawa1020 
 • Protopedia：40作品以上公開https://protopedia.net/user/hatake  
 • https://furukawalab.com/ （決済・質問箱付きフルスタックポートフォリオサイト 
