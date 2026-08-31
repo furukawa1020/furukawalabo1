@@ -12,12 +12,17 @@ sections:
         detail: インタラクティブ発表（プレミアム）採択：「ストレスを“測る”から“感じる”へ― 膨張型インターフェースによる主観的体験の観察法」
   - name: 受賞（大学以降）
     gallery:
+      - /images/awards/award-m5flick.png
       - /images/awards/award-gold.jpg
       - /images/awards/award-1.jpg
       - /images/awards/award-2.jpg
       - /images/awards/award-3.jpg
       - /images/awards/award-4.jpg
     items:
+      - year: 2026
+        title: M5Stack Global Innovation Contest 2026
+        detail: Special Mentions - Game Innovation Award：「M5flick Punch A Giant Cushion To Type Japanese」
+        detail_secondary: 公式結果 https://m5stack.com/global-innovation-contest-2026/results
       - year: 2025
         title: 技育博2025 vol.5（サポーターズ）
         detail: スポンサー賞（株式会社ゆめみ賞）：「お寿司deゲーミングピアノ！」

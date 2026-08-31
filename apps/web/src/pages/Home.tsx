@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Trophy, Code, Star, Activity, Award, BookOpen } from 'lucide-react';
+import { ArrowRight, Trophy, Code, Star, Activity, Award, BookOpen, Gamepad2 } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -67,6 +67,12 @@ export const Home = () => {
                             desc={t('highlights.interaction.desc')}
                             onReadMore={() => setShowInteraction(true)}
                             href="https://www.interaction-ipsj.org/2026/"
+                        />
+                        <HighlightCard
+                            icon={<Gamepad2 className="text-orange-500" />}
+                            title={t('highlights.m5stack.title')}
+                            desc={t('highlights.m5stack.desc')}
+                            href="https://www.hackster.io/fkotaro0530/m5flick-punch-a-giant-cushion-to-type-japanese-645afa"
                         />
                         <HighlightCard
                             icon={<Trophy className="text-pink-500" />}

@@ -34,6 +34,7 @@
         {
             "name": "受賞（大学以降）",
             "gallery": [
+                "/images/awards/award-m5flick.png",
                 "/images/awards/award-gold.jpg",
                 "/images/awards/award-1.jpg",
                 "/images/awards/award-2.jpg",
@@ -42,6 +43,13 @@
                 "/images/awards/award-geekcamp.jpg"
             ],
             "items": [
+                {
+                    "year": "2026",
+                    "title": "M5Stack Global Innovation Contest 2026",
+                    "detail": "Special Mentions - Game Innovation Award：「M5flick Punch A Giant Cushion To Type Japanese」",
+                    "detail_secondary": "公式結果: https://m5stack.com/global-innovation-contest-2026/results",
+                    "url": "https://www.hackster.io/fkotaro0530/m5flick-punch-a-giant-cushion-to-type-japanese-645afa"
+                },
                 {
                     "year": "2026",
                     "title": "みらい共創Award2026（CoLabField主催）",
