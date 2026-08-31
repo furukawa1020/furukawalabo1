@@ -67,12 +67,16 @@ export const Home = () => {
                             desc={t('highlights.interaction.desc')}
                             onReadMore={() => setShowInteraction(true)}
                             href="https://www.interaction-ipsj.org/2026/"
+                            hrefLabel="公式サイト"
                         />
                         <HighlightCard
                             icon={<Gamepad2 className="text-orange-500" />}
                             title={t('highlights.m5stack.title')}
                             desc={t('highlights.m5stack.desc')}
                             href="https://www.hackster.io/fkotaro0530/m5flick-punch-a-giant-cushion-to-type-japanese-645afa"
+                            hrefLabel="作品ページ (Hackster)"
+                            href2="https://m5stack.com/global-innovation-contest-2026/results"
+                            href2Label="公式結果ページ"
                         />
                         <HighlightCard
                             icon={<Trophy className="text-pink-500" />}
@@ -186,7 +190,7 @@ const LatestContent = () => {
     );
 };
 
-const HighlightCard = ({ icon, title, desc, onReadMore, href, href2 }: { icon: React.ReactNode, title: string, desc: string, onReadMore?: () => void, href?: string, href2?: string }) => (
+const HighlightCard = ({ icon, title, desc, onReadMore, href, hrefLabel = "論文ページ", href2, href2Label = "公式サイト" }: { icon: React.ReactNode, title: string, desc: string, onReadMore?: () => void, href?: string, hrefLabel?: string, href2?: string, href2Label?: string }) => (
     <div className="p-6 bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-100 dark:border-neutral-700 hover:shadow-md transition-shadow flex flex-col">
         <div className="mb-4 text-neutral-900 dark:text-white p-3 bg-neutral-100 dark:bg-neutral-700/50 rounded-xl w-fit">
             {icon}
@@ -211,7 +215,7 @@ const HighlightCard = ({ icon, title, desc, onReadMore, href, href2 }: { icon: R
                     className="flex items-center gap-1.5 text-sm font-bold text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
                 >
                     <ArrowRight size={13} />
-                    論文ページ
+                    {hrefLabel}
                 </a>
             )}
             {href2 && (
@@ -222,7 +226,7 @@ const HighlightCard = ({ icon, title, desc, onReadMore, href, href2 }: { icon: R
                     className="flex items-center gap-1.5 text-sm font-bold text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
                 >
                     <ArrowRight size={13} />
-                    公式サイト
+                    {href2Label}
                 </a>
             )}
         </div>
