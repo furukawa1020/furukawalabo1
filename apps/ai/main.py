@@ -67,7 +67,7 @@ async def lifespan(app: FastAPI):
 
     if GEMINI_API_KEY:
         genai.configure(api_key=GEMINI_API_KEY)
-        print("Gemini API configured (gemini-1.5-flash)")
+        print("Gemini API configured (gemini-3.8-flash)")
     else:
         print("WARNING: GEMINI_API_KEY not set — fallback mode only")
 
@@ -98,7 +98,7 @@ class ChatRequest(BaseModel):
 # ---------------------------------------------------------------------------
 @app.get("/health")
 def health():
-    mode = "gemini-1.5-flash" if GEMINI_API_KEY else "fallback"
+    mode = "gemini-3.8-flash" if GEMINI_API_KEY else "fallback"
     return {"status": "ok", "mode": mode, "service": "ai-agent-haku"}
 
 
@@ -113,7 +113,7 @@ def omikuji():
 
     if GEMINI_API_KEY:
         try:
-            model = genai.GenerativeModel("gemini-1.5-flash")
+            model = genai.GenerativeModel("gemini-3.8-flash")
             prompt = (
                 f"あなたは元気いっぱいの幼児語キャラ「はくちゃん」です。"
                 f"短いおみくじ一言（2文以内）を書いてください。"
@@ -139,7 +139,7 @@ def chat(req: ChatRequest):
     try:
         system = SYSTEM_PROMPT.format(knowledge=knowledge_base)
         model = genai.GenerativeModel(
-            "gemini-1.5-flash",
+            "gemini-3.8-flash",
             system_instruction=system,
         )
 
