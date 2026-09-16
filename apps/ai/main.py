@@ -156,8 +156,9 @@ def chat(req: ChatRequest):
         return {"reply": response.text.strip(), "sources": []}
 
     except Exception as e:
-        print(f"Gemini chat error: {e}")
+        err_msg = str(e)
+        print(f"Gemini chat error: {err_msg}")
         return {
-            "reply": "ごめんね！ちょっとエラーが起きちゃった〜！もう一回話しかけてみて！🐶💦",
+            "reply": f"ごめんね！ちょっとエラーが起きちゃった〜！\n【開発用エラー情報】: {err_msg}",
             "sources": [],
         }
