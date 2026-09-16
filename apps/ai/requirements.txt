@@ -1,9 +1,5 @@
 fastapi
 uvicorn
-langchain==0.2.14
-langchain-community==0.2.12
-langchain-text-splitters==0.2.2
-huggingface-hub
-faiss-cpu
+google-generativeai>=0.7.0
 python-multipart
 requests
