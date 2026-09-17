@@ -1,85 +1,152 @@
 sections:
-  - name: 学外発表
-    items:
-      - year: 2025
-        title: 第15回日本ジオパーク全国大会（十勝岳大会）
-        detail: ポスター発表「白山手取川ジオパーク資源を活用した観光商品開発の試み」（2025.9）
-        date: 2025-09
-  - name: 学会・採択
-    items:
-      - year: 2026
-        title: インタラクション2026
-        detail: インタラクティブ発表（プレミアム）採択：「ストレスを“測る”から“感じる”へ― 膨張型インターフェースによる主観的体験の観察法」
-  - name: 受賞（大学以降）
-    gallery:
-      - /images/awards/award-m5flick.png
-      - /images/awards/award-gold.jpg
-      - /images/awards/award-1.jpg
-      - /images/awards/award-2.jpg
-      - /images/awards/award-3.jpg
-      - /images/awards/award-4.jpg
-    items:
-      - year: 2026
-        title: M5Stack Global Innovation Contest 2026
-        detail: Special Mentions - Game Innovation Award：「M5flick Punch A Giant Cushion To Type Japanese」
-        detail_secondary: 公式結果 https://m5stack.com/global-innovation-contest-2026/results
-      - year: 2025
-        title: 技育博2025 vol.5（サポーターズ）
-        detail: スポンサー賞（株式会社ゆめみ賞）：「お寿司deゲーミングピアノ！」
-      - year: 2025
-        title: 技育博2025 vol.2（サポーターズ）
-        detail: 企業賞（株式会社ゆめみ賞）：「めんふぐ」
-      - year: 2025
-        title: ヒーローズリーグ2025
-        detail: MAID賞：「FrogEcho 〜カエルの合唱!!!〜」
-      - year: 2025
-        title: ヒーローズリーグ2025
-        detail: xorium賞：「めんふぐ」
-      - year: 2025
-        title: 学生アイデアファクトリー2025
-        detail: Springer Nature Gold賞（ポスター賞）
-        detail_secondary: ファイナリスト（8人）選出
-  - name: 起業・チーム活動
-    items:
-      - year: 2025
-        title: 金沢大学の教員と共同で起業準備中（Bloomlandlabo）
-        detail: 起業準備プロジェクトで、技術設計・実装・外部検証を主に担当
-  - name: コミュニティ・運営
-    items:
-      - year: 2024
-        title: 地域創造カフェ 初代代表
-        detail: 学内コミュニティ
-      - year: 2023
-        title: しらみね大学村システム部
-        detail: 地域フィールドワーク企画・運営
-  - name: 大会実績（大学入学前）
-    items:
-      - year: 2018-2023
-        title: ロボカップジュニア（サッカー・ライトウェイト）
-        detail: ジャパンオープン（全国）4年連続出場、最高11位・同順位8位 / 日本大会2021（オンライン）出場
-        detail_secondary: 2018 郡上ノード優勝 / 2019 大垣オープン準優勝 / 2021・2023 郡上ノード3位 / 大垣オープンビギナーズ賞・ベストプレゼンテーション賞受賞
-        image: /images/robocup-main.jpg
-  - name: 企業実務経験
-    items:
-      - year: 2024
-        title: 大同工業
-        detail: 標準化活動、実装・評価プロセス、TPSに基づく改善・品質工学等（ハードウェア実務）
-  - name: その他・資格／実績
-    items:
-      - year: 2015
-        title: 書道
-        detail: 師範資格（弥今本圖師範）
-      - year: 2015
-        title: 中学
-        detail: 市美術展 入選
-      - year: 2025
-        title: 金沢大学公式サイト
-        detail: インタビュー記事掲載（2025-12-05）
-  - name: 公開・アウトプット量
-    items:
-      - year: 2025-2026
-        title: GitHub
-        detail: 直近1年で約225リポジトリ作成・10,000+contribute!!
-      - year: 2025-2026
-        title: Protopedia
-        detail: 40作品以上公開（計72いいね）。今年はRTX5060で「金沢競馬予想AI」など3作品公開＋4作品制作中。
+- name: 学外発表
+  items:
+  - year: '2025'
+    title: 第15回日本ジオパーク全国大会（十勝岳大会）
+    detail: ポスター発表「白山手取川ジオパーク資源を活用した観光商品開発の試み」（2025.9）
+    date: 2025-09
+    url: https://txsc.w3.kanazawa-u.ac.jp/news/362/
+- name: 学会・採択
+  items:
+  - year: '2026'
+    title: EAI MobiQuitous 2026 — 査読付き Regular Paper 採択（単著）
+    detail: 'Kotaro Furukawa, "Claim-Capped Biosignal Feedback for Privacy-Calibrated
+      Self-Observation on Mobile and Wearable Devices." 23rd EAI International Conference
+      on Mobile and Ubiquitous Systems: Computing, Networking and Services, 2026.'
+    detail_secondary: カメラレディ完了・DOI取得待ち（出版予定）
+    url: https://mobiquitous.eai-conferences.org/2026/
+    url_paper: https://confyplus.eai.eu/app#manage-paper/id/367209/cid/53753/tid/5314
+  - year: '2026'
+    title: インタラクション2026
+    detail: インタラクティブ発表（プレミアム）採択：「ストレスを〈測る〉から〈感じる〉へ― 膨張型インターフェースによる主観的体験の観察法」
+    url: https://www.interaction-ipsj.org/2026/
+- name: 受賞（大学以降）
+  gallery:
+  - /images/awards/openai-codex-2026.jpg
+  - /images/awards/electric-sheep-2026.jpg
+  - /images/awards/award-m5flick.png
+  - /images/awards/award-gold.jpg
+  - /images/awards/award-1.jpg
+  - /images/awards/award-2.jpg
+  - /images/awards/award-3.jpg
+  - /images/awards/award-4.jpg
+  - /images/awards/award-geekcamp.jpg
+  items:
+  - year: '2026.09'
+    title: OpenAI Codex Student Builder Fest 2026
+    detail: 優勝。チーム Poietra で参加。応募264チームから24チームに選抜され、上位4チームによる最終プレゼンを経て優勝。Codexを活用したIssue実装を担当。
+    detail_secondary: 優勝特典として OpenAI DevDay [2026] San Francisco に招待。上位4チームへのChatGPT
+      Pro 12か月分。
+    url: https://codex-student-hack-fes.openai.chatgpt.site/?utm_source=chatgpt.com
+  - year: '2026.09'
+    title: 全国学生対抗SFプロトタイピング ハッカソン Electric Sheep 2026
+    detail: THE NEXT MOVE賞 (Presented by 株式会社アイシン)。ハードウェア／駆動部の設計・実装を担当。株式会社アイシン提供の「THE
+      NEXT MOVE賞」をチームで受賞。
+    detail_secondary: 副賞としてギフト券10万円分、アイシン試験場特別見学会・共創ディスカッション、スーパー耐久シリーズ第7戦＠富士スピードウェイのペアチケット等を獲得。
+    url: https://www.nagoyatv.com/hackathon-electricsheep/?utm_source=chatgpt.com
+  - year: '2026'
+    title: M5Stack Global Innovation Contest 2026
+    detail: Special Mentions - Game Innovation Award：「M5flick Punch A Giant Cushion
+      To Type Japanese」
+    detail_secondary: '公式結果: https://m5stack.com/global-innovation-contest-2026/results'
+    url: https://www.hackster.io/fkotaro0530/m5flick-punch-a-giant-cushion-to-type-japanese-645afa
+  - year: '2026'
+    title: みらい共創Award2026（CoLabField主催）
+    detail: CoLabField特別賞「めんふぐ 〜ストレスを〈測る〉から〈感じる〉へ〜」
+    url: https://colabfield.org/post-20260701/
+  - year: '2026'
+    title: SecHack365'26 研究駆動コース
+    detail: 採択
+    url: https://sechack365.nict.go.jp/
+  - year: '2026'
+    title: 日本財団HUMAIプログラム 第二期
+    detail: 奨励金A 採択
+    url: https://zen.ac.jp/humai
+  - year: '2026'
+    title: 技育CAMPハッカソン2026 vol.1 第2部
+    detail: サポーターズ賞：「脈アリ！？脈ナシ！？教えて！AI君！」
+    url: https://geek.supporterz.jp/
+  - year: '2025'
+    title: 異能ベーションジェネレーションアワード
+    detail: ノミネート：「ストレスを〈測る〉から〈感じる〉へ― 膨張型インターフェースによる主観的体験の観察法」
+    detail_secondary: 古川 耕太郎 (石川県)
+    url: https://inno-vation.jp/nominate/2025/
+  - year: '2025'
+    title: 技育博2025 vol.5（サポーターズ）
+    detail: スポンサー賞（株式会社ゆめみ賞）：「お寿司deゲーミングピアノ！」
+    url: https://geek.supporterz.jp/
+  - year: '2025'
+    title: 技育博2025 vol.2（サポーターズ）
+    detail: 企業賞（株式会社ゆめみ賞）：「めんふぐ」
+    url: https://geek.supporterz.jp/
+  - year: '2025'
+    title: ヒーローズリーグ2025
+    detail: MAID賞：「FrogEcho 〜カエルの合唱!!!〜」
+    url: https://protopedia.net/event/hl2025
+  - year: '2025'
+    title: ヒーローズリーグ2025
+    detail: xorium賞：「めんふぐ」
+    url: https://protopedia.net/event/hl2025
+  - year: '2025'
+    title: 学生アイデアファクトリー2025
+    detail: Springer Nature Gold賞（ポスター賞）
+    detail_secondary: 受賞作品：「ストレスは挑戦か、不安か、それとも？〜意味づけの多様性を可視化するフグ型インタフェース〜」
+    url: https://coki.jp/sustainable/event/62164/
+- name: 起業・チーム活動
+  items:
+  - year: '2025'
+    title: 金沢大学の教員と共同で起業準備中（Bloomlandlabo）
+    detail: 起業準備プロジェクトで、技術設計・実装・外部検証を主に担当
+- name: コミュニティ・運営
+  items:
+  - year: '2026'
+    title: 100Program
+    detail: アラムナイメンター
+    url: https://100program.jp/
+  - year: '2026'
+    title: STECH
+    detail: 所属（上位1%の学生エンジニアが集う審査制コミュニティ）
+    url: https://jinnen.co.jp/
+  - year: '2024'
+    title: 地域創造カフェ 初代代表
+    detail: 学内コミュニティ
+  - year: 2025〜
+    title: しらみね大学村 システム部
+    detail: 地域フィールドワーク企画・運営
+  - year: '2024'
+    title: しらみね大学村
+    detail: 所属
+- name: 大会実績（大学入学前）
+  items:
+  - year: 2018-2023
+    title: ロボカップジュニア（サッカー・ライトウェイト）
+    detail: ジャパンオープン（全国）4年連続出場、最高11位・同順位8位 / 日本大会2021（オンライン）出場
+    detail_secondary: 2018 郡上ノード優勝 / 2019 大垣オープン準優勝 / 2021・2023 郡上ノード3位 / 大垣オープンビギナーズ賞・ベストプレゼンテーション賞受賞
+    image: /images/robocup-main.jpg
+- name: 企業実務経験
+  items:
+  - year: '2024'
+    title: 大同工業（アルバイト）
+    detail: 標準化活動、実装・評価プロセス、TPSに基づく改善・品質工学等（ハードウェア実務）
+- name: その他・資格／実績
+  items:
+  - year: '2015'
+    title: 書道
+    detail: 師範資格（弥今本圖師範）
+  - year: '2015'
+    title: 中学
+    detail: 市美術展 入選
+  - year: '2025'
+    title: 金沢大学公式サイト
+    detail: インタビュー記事掲載（2025-12-05）
+    url: https://innov.w3.kanazawa-u.ac.jp/articles/articles-3769/
+- name: 公開・アウトプット量
+  items:
+  - year: 2025-2026
+    title: GitHub
+    detail: 240 OSSリポジトリ公開・10,000+contribute!!・25 Stars
+    url: https://github.com/furukawa1020
+  - year: 2025-2026
+    title: Protopedia
+    detail: 50作品以上公開中！（100いいね以上）。今年はRTX5060で「金沢競馬予想AI」など3作品公開＋4作品制作中。
+    url: https://protopedia.net/user/hatake

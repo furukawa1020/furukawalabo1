@@ -34,6 +34,8 @@
         {
             "name": "受賞（大学以降）",
             "gallery": [
+                "/images/awards/openai-codex-2026.jpg",
+                "/images/awards/electric-sheep-2026.jpg",
                 "/images/awards/award-m5flick.png",
                 "/images/awards/award-gold.jpg",
                 "/images/awards/award-1.jpg",
@@ -43,6 +45,20 @@
                 "/images/awards/award-geekcamp.jpg"
             ],
             "items": [
+                {
+                    "year": "2026.09",
+                    "title": "OpenAI Codex Student Builder Fest 2026",
+                    "detail": "優勝。チーム Poietra で参加。応募264チームから24チームに選抜され、上位4チームによる最終プレゼンを経て優勝。Codexを活用したIssue実装を担当。",
+                    "detail_secondary": "優勝特典として OpenAI DevDay [2026] San Francisco に招待。上位4チームへのChatGPT Pro 12か月分。",
+                    "url": "https://codex-student-hack-fes.openai.chatgpt.site/?utm_source=chatgpt.com"
+                },
+                {
+                    "year": "2026.09",
+                    "title": "全国学生対抗SFプロトタイピング ハッカソン Electric Sheep 2026",
+                    "detail": "THE NEXT MOVE賞 (Presented by 株式会社アイシン)。ハードウェア／駆動部の設計・実装を担当。株式会社アイシン提供の「THE NEXT MOVE賞」をチームで受賞。",
+                    "detail_secondary": "副賞としてギフト券10万円分、アイシン試験場特別見学会・共創ディスカッション、スーパー耐久シリーズ第7戦＠富士スピードウェイのペアチケット等を獲得。",
+                    "url": "https://www.nagoyatv.com/hackathon-electricsheep/?utm_source=chatgpt.com"
+                },
                 {
                     "year": "2026",
                     "title": "M5Stack Global Innovation Contest 2026",
