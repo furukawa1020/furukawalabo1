@@ -6,7 +6,13 @@
 [dev]
   framework = "#static"
 
-# Edge Function: OGP injection for SNS crawlers on blog pages
+# Edge Function: SEO prerender for all search crawlers (Googlebot, Bingbot etc.)
+# クローラーには全実績テキストを含む静的HTMLを返す
+[[edge_functions]]
+  function = "seo"
+  path = "/*"
+
+# Edge Function: OGP injection for SNS crawlers on blog pages (legacy, keep for OGP)
 [[edge_functions]]
   function = "ogp"
   path = "/blog"

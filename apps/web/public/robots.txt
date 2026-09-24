@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://furukawa.netlify.app/sitemap.xml
+Sitemap: https://furukawalab.com/sitemap.xml
+
+# 古川耕太郎（Kotaro Furukawa / hatake / furukawa1020）
+# エンジニア・研究者・プロトタイパー
+# 受託開発・業務委託・プロトタイプ開発受付中
+# Contact: https://furukawalab.com/contact
