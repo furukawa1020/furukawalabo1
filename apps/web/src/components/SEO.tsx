@@ -31,7 +31,7 @@ export const SEO = ({
             <meta property="og:type" content={type} />
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:creator" content="@HATAKE55555" />
-            <meta name="keywords" content="古川耕太郎, Kotaro Furukawa, hatake, furukawa, furukawa1020, ko1020, ポートフォリオ, アーカイブ, 作品集" />
+            <meta name="keywords" content="古川耕太郎, Kotaro Furukawa, hatake, furukawa, furukawa1020, ko1020, ポートフォリオ, アーカイブ, 作品集, 受託開発, 業務委託, プロトタイプ開発, フリーランス, エンジニア採用, ハードウェア開発, IoT, React, FastAPI, M5Stack, AI開発, OpenAI, Gemini" />
 
             <script type="application/ld+json">
                 {JSON.stringify({
@@ -40,13 +40,21 @@ export const SEO = ({
                     "name": "古川耕太郎",
                     "alternateName": ["Kotaro Furukawa", "はたけ/Furukawa", "hatake", "furukawa", "furukawa1020", "ko1020", "古川 耕太郎"],
                     "url": "https://furukawalab.com/",
+                    "email": "k.furu1020@gmail.com",
+                    "jobTitle": "エンジニア / 研究者 / プロトタイパー",
+                    "description": siteDesc,
+                    "knowsAbout": ["React", "TypeScript", "FastAPI", "Ruby on Rails", "M5Stack", "IoT", "HCI", "生体信号処理", "AI開発", "プロトタイプ開発", "受託開発", "ハッカソン"],
+                    "hasOccupation": {
+                        "@type": "Occupation",
+                        "name": "フリーランスエンジニア / 研究者",
+                        "description": "受託開発・業務委託・プロトタイプ開発・AI開発・ハードウェア開発を受け付けています。"
+                    },
                     "sameAs": [
                         "https://twitter.com/HATAKE55555",
                         "https://github.com/furukawa1020",
                         "https://protopedia.net/prototyper/hatake",
                         "https://www.instagram.com/ko1020/"
-                    ],
-                    "description": siteDesc
+                    ]
                 })}
             </script>
         </Helmet>

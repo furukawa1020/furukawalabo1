@@ -77,11 +77,23 @@ export const Achievements = () => {
 
     return (
         <>
-            <SEO title="Achievements" description="受賞歴・活動実績・登壇情報" />
+            <SEO
+                title="Achievements — 受賞・実績・論文・受託開発"
+                description="古川耕太郎の受賞歴・論文採択・ハッカソン優勝・受託開発・プロトタイプ開発実績一覧。採用・業務委託・プロトタイプ開発のご相談はContactへ。OpenAI優勝・EAI MobiQuitous採択・M5Stack受賞など。"
+            />
             {showResearch && <ResearchModal onClose={() => setShowResearch(false)} />}
             {showInteraction && <Interaction2026Modal onClose={() => setShowInteraction(false)} />}
             <div className="container mx-auto px-6 pt-32 pb-24">
-                <h1 className="text-4xl font-bold mb-16 text-center tracking-tight">Achievements</h1>
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-12">
+                    <h1 className="text-4xl font-bold tracking-tight text-center md:text-left">Achievements</h1>
+                    <a
+                        href="/resume"
+                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium bg-black dark:bg-white text-white dark:text-black rounded-full hover:opacity-80 transition-opacity whitespace-nowrap"
+                    >
+                        <FileText size={14} />
+                        職務経歴書・印刷用
+                    </a>
+                </div>
 
                 <div className="max-w-4xl mx-auto space-y-16">
                     {data.sections.map((section, idx) => (

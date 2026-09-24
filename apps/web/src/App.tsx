@@ -14,6 +14,7 @@ import { Home } from './pages/Home';
 import { Research } from './pages/Research';
 import { Works } from './pages/Works';
 import { Achievements } from './pages/Achievements';
+import { Resume } from './pages/Resume';
 import { Blog } from './pages/Blog';
 import { Donate } from './pages/Donate';
 import { About } from './pages/About';
@@ -135,6 +136,7 @@ function App() {
                             <Route path="/research" element={<Research />} />
                             <Route path="/works" element={<Works />} />
                             <Route path="/achievements" element={<Achievements />} />
+                            <Route path="/resume" element={<Resume />} />
                             <Route path="/blog" element={<Blog />} />
                             <Route path="/blog/:slug" element={<Blog />} />
                             <Route path="/donate" element={<Donate />} />

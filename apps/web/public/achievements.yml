@@ -97,6 +97,18 @@ sections:
   - year: '2025'
     title: 金沢大学の教員と共同で起業準備中（Bloomlandlabo）
     detail: 起業準備プロジェクトで、技術設計・実装・外部検証を主に担当
+- name: 受託開発・業務委託
+  items:
+  - year: 2025〜
+    title: プロトタイプ開発受諾（個人）
+    detail: ハードウェア・IoT・Webシステムのプロトタイプ開発を業務委託として受諾。M5Stack・センサー・組み込み・AI連携・Webアプリ等。
+    detail_secondary: 受諾実績：複数件（詳細はお問い合わせください）。Contactフォームより仕事のご相談を承っています。
+    url: https://furukawalab.com/contact
+  - year: 2025〜
+    title: Webサイト・アプリ開発
+    detail: React / Next.js / TypeScript等を使ったWebフロントエンド開発、FastAPI / Railsを使ったバックエンド開発の受諾実績あり。
+    detail_secondary: デザイン・実装・デプロイまで一気通貫で対応可能。
+    url: https://furukawalab.com/contact
 - name: コミュニティ・運営
   items:
   - year: '2026'
