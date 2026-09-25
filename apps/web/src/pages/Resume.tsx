@@ -58,8 +58,8 @@ export const Resume = () => {
     return (
         <>
             <SEO
-                title="職務経歴書・実績一覧 | 古川耕太郎 — 受託開発・プロトタイプ・AI・ハードウェア"
-                description="古川耕太郎（Kotaro Furukawa）の職務経歴書・実績一覧。受託開発・業務委託・プロトタイプ開発・Web・IoT・AI・ハードウェア実装。採用・仕事のご相談はContactより。"
+                title="職務経歴書・実績一覧 | 古川耕太郎 — 製造業DX・プロトタイプ受託開発・AI・ハードウェア"
+                description="古川耕太郎（Kotaro Furukawa）の職務経歴書・実績一覧。製造業DXでのソフトウェア開発実務、ハードウェアおよびソフトウェア両面でのプロトタイプ受託開発・業務委託・Web・IoT・AI実装。仕事・採用のご相談はContactより受諾受付中。"
             />
 
             {/* Print button — hidden in print */}
@@ -111,10 +111,10 @@ export const Resume = () => {
                     <div className="mb-10 p-5 bg-neutral-50 border border-neutral-200 rounded-lg">
                         <h2 className="text-base font-bold mb-3 uppercase tracking-widest text-neutral-500">Summary</h2>
                         <p className="text-sm leading-relaxed text-neutral-800">
-                            金沢大学に在学中の学生エンジニア・研究者・プロトタイパー。
-                            ハードウェア（M5Stack・Arduino・センサー・駆動系）からWebフルスタック（React・Rails・FastAPI）・AI（Gemini・Codex・生体信号解析）まで一気通貫で実装できます。
-                            EAI MobiQuitous 2026 Regular Paper 採択（単著）、OpenAI Codex Student Builder Fest 2026 優勝など、研究と実装の両面で実績多数。
-                            受託開発・業務委託・プロトタイプ開発を随時受け付けています。
+                            金沢大学在学のエンジニア・研究者・プロトタイパー。
+                            大同工業等における製造業DXでのソフトウェア開発実務・ハードウェア実務、TPS改善・品質工学の経験を保有。
+                            ハードウェア（M5Stack・Arduino・センサー・機械駆動部）およびソフトウェア（React・Next.js・FastAPI・Rails・AI連携）の両面におけるプロトタイプ受託開発を業務委託として多数受諾・納品。
+                            EAI MobiQuitous 2026 Regular Paper 採択（単著）、OpenAI Codex Student Builder Fest 2026 優勝など研究・開発実績多数。受託開発・業務委託・案件相談を随時受け付けています。
                         </p>
                     </div>
 

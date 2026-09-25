@@ -31,7 +31,7 @@ export const SEO = ({
             <meta property="og:type" content={type} />
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:creator" content="@HATAKE55555" />
-            <meta name="keywords" content="古川耕太郎, Kotaro Furukawa, hatake, furukawa, furukawa1020, ko1020, ポートフォリオ, アーカイブ, 作品集, 受託開発, 業務委託, プロトタイプ開発, フリーランス, エンジニア採用, ハードウェア開発, IoT, React, FastAPI, M5Stack, AI開発, OpenAI, Gemini" />
+            <meta name="keywords" content="古川耕太郎, Kotaro Furukawa, hatake, furukawa, furukawa1020, ko1020, ポートフォリオ, アーカイブ, 作品集, 製造業DX, ソフトウェア開発実務, ハードウェアプロトタイプ, ソフトウェアプロトタイプ, 受託開発, 業務委託, プロトタイプ開発, フリーランス, エンジニア採用, 仕事受付中, ハードウェア開発, IoT, React, FastAPI, M5Stack, AI開発, OpenAI, Gemini" />
 
             <script type="application/ld+json">
                 {JSON.stringify({
@@ -43,11 +43,11 @@ export const SEO = ({
                     "email": "k.furu1020@gmail.com",
                     "jobTitle": "エンジニア / 研究者 / プロトタイパー",
                     "description": siteDesc,
-                    "knowsAbout": ["React", "TypeScript", "FastAPI", "Ruby on Rails", "M5Stack", "IoT", "HCI", "生体信号処理", "AI開発", "プロトタイプ開発", "受託開発", "ハッカソン"],
+                    "knowsAbout": ["製造業DX", "ソフトウェア開発実務", "ハードウェアプロトタイプ受託開発", "ソフトウェアプロトタイプ受託開発", "React", "TypeScript", "FastAPI", "Ruby on Rails", "M5Stack", "IoT", "HCI", "生体信号処理", "AI開発", "プロトタイプ開発", "受託開発", "ハッカソン"],
                     "hasOccupation": {
                         "@type": "Occupation",
                         "name": "フリーランスエンジニア / 研究者",
-                        "description": "受託開発・業務委託・プロトタイプ開発・AI開発・ハードウェア開発を受け付けています。"
+                        "description": "製造業DXでのソフトウェア開発実務、ハードウェアおよびソフトウェア両面でのプロトタイプ受託開発・業務委託・AI開発を受け付けています。"
                     },
                     "sameAs": [
                         "https://twitter.com/HATAKE55555",
