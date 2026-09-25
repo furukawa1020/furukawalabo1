@@ -92,8 +92,8 @@ export const Resume = () => {
                         <h1 className="text-3xl font-bold tracking-tight mb-1">古川 耕太郎</h1>
                         <p className="text-lg text-neutral-600 mb-4">Kotaro Furukawa — エンジニア / 研究者 / プロトタイパー</p>
                         <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-neutral-700">
-                            <a href="mailto:k.furu1020@gmail.com" className="flex items-center gap-1.5 hover:text-black">
-                                <Mail size={13} /> k.furu1020@gmail.com
+                            <a href="mailto:f.kotaro.0530@gmail.com" className="flex items-center gap-1.5 hover:text-black">
+                                <Mail size={13} /> f.kotaro.0530@gmail.com
                             </a>
                             <a href="https://furukawalab.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-black">
                                 <Globe size={13} /> furukawalab.com
@@ -191,7 +191,7 @@ export const Resume = () => {
 
                     {/* Print footer */}
                     <div className="hidden print:block mt-8 pt-4 border-t border-neutral-300 text-xs text-neutral-400 text-center">
-                        furukawalab.com / k.furu1020@gmail.com — {new Date().getFullYear()}
+                        furukawalab.com / f.kotaro.0530@gmail.com — {new Date().getFullYear()}
                     </div>
                 </div>
             </div>

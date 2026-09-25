@@ -40,7 +40,7 @@ export const SEO = ({
                     "name": "古川耕太郎",
                     "alternateName": ["Kotaro Furukawa", "はたけ/Furukawa", "hatake", "furukawa", "furukawa1020", "ko1020", "古川 耕太郎"],
                     "url": "https://furukawalab.com/",
-                    "email": "k.furu1020@gmail.com",
+                    "email": "f.kotaro.0530@gmail.com",
                     "jobTitle": "エンジニア / 研究者 / プロトタイパー",
                     "description": siteDesc,
                     "knowsAbout": ["製造業DX", "ソフトウェア開発実務", "ハードウェアプロトタイプ受託開発", "ソフトウェアプロトタイプ受託開発", "React", "TypeScript", "FastAPI", "Ruby on Rails", "M5Stack", "IoT", "HCI", "生体信号処理", "AI開発", "プロトタイプ開発", "受託開発", "ハッカソン"],

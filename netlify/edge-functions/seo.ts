@@ -175,7 +175,7 @@ function buildHtml(meta: PageMeta, canonicalUrl: string): string {
     "name": "古川耕太郎",
     "alternateName": ["Kotaro Furukawa", "hatake", "furukawa1020", "ko1020"],
     "url": "https://furukawalab.com/",
-    "email": "k.furu1020@gmail.com",
+    "email": "f.kotaro.0530@gmail.com",
     "jobTitle": "エンジニア / 研究者 / プロトタイパー",
     "sameAs": [
       "https://twitter.com/HATAKE55555",

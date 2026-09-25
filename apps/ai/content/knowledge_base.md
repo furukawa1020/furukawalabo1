@@ -193,8 +193,9 @@ Instead of optimizing each layer for accuracy, we optimize the whole chain for "
     - **Art**: City Art Exhibition Accepted (Middle School).
     - **Calligraphy**: **Shihan** (Instructor License - 弥今本圖師範) obtained in 2015.
 
-- **Work Experience**:
-    - **Daido Industry (2024)**: Hardware standardization, TPS-based improvement, Quality Engineering.
+- **Work Experience & Contract Development (実務・受託開発)**:
+    - **Daido Industry (2024)**: 製造業DXにおけるソフトウェア開発実務、標準化活動、評価プロセス、TPS（トヨタ生産方式）改善、品質工学、現場DX（ハードウェア＆ソフトウェア実務）。
+    - **Contract Prototype Development (受託開発・業務委託 2025~)**: ハードウェア（M5Stack・Arduino・センサー・組み込み・機械駆動部）およびソフトウェア（React・Next.js・FastAPI・Rails・AI連携）の両面におけるプロトタイプ受託開発を業務委託として受諾・納品。製造業DXツールやAI連携Webツールの受諾開発実績多数。仕事のご依頼・受諾相談はContactページより受付中。
     - **Bloomlandlabo (2025)**: Startup preparation with Kanazawa University faculty (Tech Lead).
 
 ## 2. Works & Output (制作物)
